@@ -8,6 +8,7 @@
 //  ==--==
 
 import { isInfinite } from '@Math/Utils'
+import { IEquatable } from './IEquitable'
 
 export class Complex implements IEquatable<Complex>, IFormattable {
   //  --------------SECTION: Private Data members ----------- //
