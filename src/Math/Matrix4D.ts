@@ -263,10 +263,10 @@ export class Matrix4D {
     c2: number,
   ): Matrix4D {
     let result: Matrix4D = Matrix4D.Identity()
-    result[(c1, c1)] = Math.Cos(angle)
+    result[(c1, c1)] = Math.cos(angle)
     result[(c1, c2)] = Math.sin(angle) * -1
     result[(c2, c1)] = Math.sin(angle)
-    result[(c2, c2)] = Math.Cos(angle)
+    result[(c2, c2)] = Math.cos(angle)
     return result
   }
 }

@@ -3,6 +3,10 @@
 ///  This is really just a wrapper around a Mobius transformation, but also includes a reflection in a generalized circle.
 ///  (Reflections can't be defined with a Mobius transformation.)
 ///  NOTE: The order in which the two elements are applied is important.  We will apply the Mobius part of the isometry first.
+
+import { CircleNE } from '@Geometry/Circle'
+import { Polygon } from '@Geometry/Polygon'
+
 ///  </summary>    export class Isometry extends ITransform {
 class Isometry implements ITransform {
   // constructor () {
@@ -246,7 +250,7 @@ class Isometry implements ITransform {
     )
   }
 
-  #CalculateFromTwoPolygonsInternal(
+  CalculateFromTwoPolygonsInternal(
     home: Polygon,
     boundary: Polygon,
     homeVertexCircle: CircleNE,

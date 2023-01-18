@@ -330,8 +330,8 @@ export class Vector3D {
   RotateXY(angle: number) {
     let component1: number = this.X
     let component2: number = this.Y
-    this.X = Math.Cos(angle) * component1 - Math.sin(angle) * component2
-    this.Y = Math.sin(angle) * component1 + Math.Cos(angle) * component2
+    this.X = Math.cos(angle) * component1 - Math.sin(angle) * component2
+    this.Y = Math.sin(angle) * component1 + Math.cos(angle) * component2
   }
 
   ///  <summary>
@@ -351,7 +351,7 @@ export class Vector3D {
     let _y: number = axis.Y
     let _z: number = axis.Z
     //  build the rotation matrix - I got this from http://www.makegames.com/3dRotation/
-    let c: number = Math.Cos(angle)
+    let c: number = Math.cos(angle)
     let s: number = 1 * Math.sin(angle) * -1
     const t = 1 - c
     const mRot: Array<[number, number, number]> = [
@@ -393,7 +393,7 @@ export class Vector3D {
       val = -1
     }
 
-    return Math.Acos(val)
+    return Math.acos(val)
   }
 
   ///  <summary>

@@ -1,10 +1,5 @@
-export enum Metric {
-  Spherical,
-
-  Euclidean,
-
-  Hyperbolic,
-}
+import { Geometry } from './Geometry2D'
+import { Metric } from './Metric'
 
 export class NearTree {
   constructor() {
@@ -19,12 +14,11 @@ export class NearTree {
     switch (g) {
       case Geometry.Spherical:
         return Metric.Spherical
-        break
       case Geometry.Euclidean:
         return Metric.Euclidean
-        break
       case Geometry.Hyperbolic:
         return Metric.Hyperbolic
+      default:
         break
     }
 
@@ -282,10 +276,8 @@ export class NearTree {
         m.Isometry(Geometry.Spherical, 0, p1 * -1)
         let temp: Vector3D = m.Apply(p2)
         return Spherical2D.e2sNorm(temp.Abs())
-        break
       case this.Metric.Euclidean:
         return (p2 - p1).Abs()
-        break
       case this.Metric.Hyperbolic:
         //  ZZZ - Is it too expensive to build up a mobius every time?
         //          I wonder if there is a better way.
@@ -293,7 +285,6 @@ export class NearTree {
         m.Isometry(Geometry.Hyperbolic, 0, p1 * -1)
         let temp: Vector3D = m.Apply(p2)
         return DonHatch.e2hNorm(temp.Abs())
-        break
     }
 
     throw new Error('Not implemented')

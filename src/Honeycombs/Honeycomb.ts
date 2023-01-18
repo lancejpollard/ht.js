@@ -225,7 +225,7 @@ export class Honeycomb {
     let t1: number =
       Math.sin(Honeycomb.PiOverNSafe(p)) *
       Math.sin(Honeycomb.PiOverNSafe(r))
-    let t2: number = Math.Cos(Honeycomb.PiOverNSafe(q))
+    let t2: number = Math.cos(Honeycomb.PiOverNSafe(q))
     if (Tolerance.Equal(t1, t2)) {
       return Geometry.Euclidean
     }
@@ -245,13 +245,13 @@ export class Honeycomb {
     let pir: number = Honeycomb.PiOverNSafe(r)
     let pi_hpq: number = Honeycomb.Pi_hpq(p, q)
     let inRadius: number =
-      Math.sin(pip) * (Math.Cos(pir) / Math.sin(pi_hpq))
+      Math.sin(pip) * (Math.cos(pir) / Math.sin(pi_hpq))
     switch (Honeycomb.GetGeometry(p, q, r)) {
       case Geometry.Hyperbolic:
         return DonHatch.acosh(inRadius)
         break
       case Geometry.Spherical:
-        return Math.Acos(inRadius)
+        return Math.acos(inRadius)
         break
     }
 
@@ -287,15 +287,15 @@ export class Honeycomb {
     let pi_hpq: number = Honeycomb.Pi_hpq(p, q)
     let pi_hqr: number = Honeycomb.Pi_hpq(q, r)
     let circumRadius: number =
-      Math.Cos(pip) *
-      (Math.Cos(piq) *
-        (Math.Cos(pir) / (Math.sin(pi_hpq) * Math.sin(pi_hqr))))
+      Math.cos(pip) *
+      (Math.cos(piq) *
+        (Math.cos(pir) / (Math.sin(pi_hpq) * Math.sin(pi_hqr))))
     switch (Honeycomb.GetGeometry(p, q, r)) {
       case Geometry.Hyperbolic:
         return DonHatch.acosh(circumRadius)
         break
       case Geometry.Spherical:
-        return Math.Acos(circumRadius)
+        return Math.acos(circumRadius)
         break
     }
 
@@ -308,7 +308,7 @@ export class Honeycomb {
     let pi_hqr: number = Honeycomb.Pi_hpq(q, r)
     let edgeLength: number =
       2 *
-      DonHatch.acosh(Math.Cos(pip) * (Math.sin(pir) / Math.sin(pi_hqr)))
+      DonHatch.acosh(Math.cos(pip) * (Math.sin(pir) / Math.sin(pi_hqr)))
     return edgeLength
   }
 
@@ -317,8 +317,8 @@ export class Honeycomb {
     let pip: number = Honeycomb.PiOverNSafe(p)
     let piq: number = Honeycomb.PiOverNSafe(q)
     let temp: number =
-      Math.Pow(Math.Cos(pip), 2) + Math.Pow(Math.Cos(piq), 2)
-    let hab: number = pi / Math.Acos(Math.sqrt(temp))
+      Math.Pow(Math.cos(pip), 2) + Math.Pow(Math.cos(piq), 2)
+    let hab: number = pi / Math.acos(Math.sqrt(temp))
     //  Infinity safe.
     let pi_hpq: number = pi / hab
     if (isInfinite(hab)) {

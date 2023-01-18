@@ -630,7 +630,7 @@ export class H3UtilBall {
       return
     }
 
-    let distToCenter: number = m_pRadius / Math.Cos(sectorAngle / 2)
+    let distToCenter: number = m_pRadius / Math.cos(sectorAngle / 2)
     center = v1 + v2
     center.Normalize()
     center = center * distToCenter
@@ -1408,7 +1408,7 @@ export class SphericalCoords {
       return new Vector3D()
     }
 
-    return new Vector3D(r, Math.Acos(v.Z / r), Math.atan2(v.Y, v.X))
+    return new Vector3D(r, Math.acos(v.Z / r), Math.atan2(v.Y, v.X))
   }
 
   //  r,theta,phi -> x,y,z
@@ -1418,9 +1418,9 @@ export class SphericalCoords {
     }
 
     return new Vector3D(
-      v.X * (Math.sin(v.Y) * Math.Cos(v.Z)),
+      v.X * (Math.sin(v.Y) * Math.cos(v.Z)),
       v.X * (Math.sin(v.Y) * Math.sin(v.Z)),
-      v.X * Math.Cos(v.Y),
+      v.X * Math.cos(v.Y),
     )
   }
 }

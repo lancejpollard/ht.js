@@ -85,7 +85,7 @@ export class S3 {
     let angle: number = 0
     for (let i: number = 0; i <= circleDivisions; i++) {
       let sinTheta: number = Math.sin(angle)
-      let cosTheta: number = Math.Cos(angle)
+      let cosTheta: number = Math.cos(angle)
 
       const point = new Vector3D(
         (1 + c) * cosTheta,

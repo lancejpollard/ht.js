@@ -87,7 +87,7 @@ export class Mobius implements ITransform {
     //  This indicates a rotation by T around the origin followed by moving the origin to P (and -P to the origin).
     //
     //  I figured out that the other cases can be handled with simple variations of the C coefficients.
-    let T: Complex = new Complex(Math.Cos(angle), Math.sin(angle))
+    let T: Complex = new Complex(Math.cos(angle), Math.sin(angle))
     this.A = T
     this.B = P
     this.D = 1

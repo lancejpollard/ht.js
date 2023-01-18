@@ -102,7 +102,7 @@ export class SphericalModels {
       throw new Error('Argument Error')
     }
 
-    let v: Vector3D = new Vector3D(1, 2 * Math.Acos(dist), 0)
+    let v: Vector3D = new Vector3D(1, 2 * Math.acos(dist), 0)
     v = Sterographic.SphereToPlane(
       SphericalCoords.SphericalToCartesian(v),
     )
@@ -170,7 +170,7 @@ export class SphericalModels {
     let spherical: Vector3D = new Vector3D(
       1,
       lat,
-      Math.PI * (v.X / Math.Cos(lat - Math.PI / 2)),
+      Math.PI * (v.X / Math.cos(lat - Math.PI / 2)),
     )
     let onBall: Vector3D =
       SphericalCoords.SphericalToCartesian(spherical)

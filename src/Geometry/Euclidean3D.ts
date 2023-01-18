@@ -228,7 +228,7 @@ export class Euclidean3D {
     let v2: Vector3D = nl
     let angle: number = v1.AngleTo(v2)
     nl.Normalize()
-    return pl + nl * (signedDistance / Math.Cos(angle))
+    return pl + nl * (signedDistance / Math.cos(angle))
     //  XXX - needs improvement.
   }
 
@@ -298,7 +298,7 @@ export class Euclidean3D {
       //  where cos( alpha ) = distance / sphereRadius;
       console.assert(!Tolerance.Zero(sphereRadius))
       let alpha: number = Utils.RadiansToDegrees(
-        Math.Acos(distance / sphereRadius),
+        Math.acos(distance / sphereRadius),
       )
       //  Rotation vector.
       let rotationVector: Vector3D = (pl - sphereCenter).Cross(nl)

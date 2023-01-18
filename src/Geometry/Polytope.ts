@@ -2,47 +2,6 @@ import { GraphEdge } from '@Math/Graph'
 import { Polygon } from './Polygon'
 import { Vector3D } from './Vector3D'
 
-export class CycleEqualityComparer
-  implements IEqualityComparer<Array<number>>
-{
-  Equals(c1: Array<number>, c2: Array<number>): boolean {
-    if (c1.Count != c2.Count) {
-      return false
-    }
-
-    let sorted1: Array<number> = c1.OrderBy(() => {}, i).ToArray()
-    let sorted2: Array<number> = c2.OrderBy(() => {}, i).ToArray()
-    for (let i: number = 0; i < sorted1.Length; i++) {
-      if (sorted1[i] != sorted2[i]) {
-        return false
-      }
-    }
-
-    return true
-  }
-
-  GetHashCode(cycle: Array<number>): number {
-    let hCode: number = 0
-    for (let idx: number in cycle) {
-      hCode = hCode | idx.GetHashCode()
-    }
-
-    // The operator should be an XOR ^ instead of an OR, but not available in CodeDOM
-    return hCode.GetHashCode()
-  }
-}
-
-//  The various projections we can do on a polytope.
-export enum PolytopeProjection {
-  CellCentered,
-
-  FaceCentered,
-
-  EdgeCentered,
-
-  VertexCentered,
-}
-
 export class SkewPolyhedron {
   static BuildDuoprism(num: number): Array<Polygon> {
     let angleInc: number = 2 * (Math.PI / num)
@@ -55,33 +14,33 @@ export class SkewPolyhedron {
         let polyPoints: Array<Vector3D> = new Array<Vector3D>()
         polyPoints.Add(
           new Vector3D(
-            Math.Cos(angle2),
+            Math.cos(angle2),
             Math.sin(angle2),
-            Math.Cos(angle1),
+            Math.cos(angle1),
             Math.sin(angle1),
           ),
         )
         polyPoints.Add(
           new Vector3D(
-            Math.Cos(angle2),
+            Math.cos(angle2),
             Math.sin(angle2),
-            Math.Cos(angle1 + angleInc),
+            Math.cos(angle1 + angleInc),
             Math.sin(angle1 + angleInc),
           ),
         )
         polyPoints.Add(
           new Vector3D(
-            Math.Cos(angle2 + angleInc),
+            Math.cos(angle2 + angleInc),
             Math.sin(angle2 + angleInc),
-            Math.Cos(angle1 + angleInc),
+            Math.cos(angle1 + angleInc),
             Math.sin(angle1 + angleInc),
           ),
         )
         polyPoints.Add(
           new Vector3D(
-            Math.Cos(angle2 + angleInc),
+            Math.cos(angle2 + angleInc),
             Math.sin(angle2 + angleInc),
-            Math.Cos(angle1),
+            Math.cos(angle1),
             Math.sin(angle1),
           ),
         )

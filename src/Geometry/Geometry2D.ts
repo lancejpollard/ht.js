@@ -120,8 +120,8 @@ export class Geometry2D {
     switch (g) {
       case Geometry.Spherical:
         //  Spherical law of cosines
-        return Math.Acos(
-          (Math.Cos(alpha) + Math.Cos(beta) * Math.Cos(gamma)) /
+        return Math.acos(
+          (Math.cos(alpha) + Math.cos(beta) * Math.cos(gamma)) /
             (Math.sin(beta) * Math.sin(gamma)),
         )
       case Geometry.Euclidean:
@@ -132,7 +132,7 @@ export class Geometry2D {
         //  Hyperbolic law of cosines
         //  http://en.wikipedia.org/wiki/Hyperbolic_law_of_cosines
         return DonHatch.acosh(
-          (Math.Cos(alpha) + Math.Cos(beta) * Math.Cos(gamma)) /
+          (Math.cos(alpha) + Math.cos(beta) * Math.cos(gamma)) /
             (Math.sin(beta) * Math.sin(gamma)),
         )
       default:

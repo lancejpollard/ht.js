@@ -53,12 +53,12 @@ export class Surface {
     let psi: number = 0.5
     psi = psi * Math.PI
     let sinpsi: number = Math.sin(psi)
-    let cospsi: number = Math.Cos(psi)
+    let cospsi: number = Math.cos(psi)
     let g: number = (u - cospsi * v) / sinpsi
     let s: number = Math.exp(g)
     let r: number = (2 * sinpsi) / (s + 1 / s)
     let t: number = r * ((s - 1 / s) * 0.5)
-    return new Vector3D(u - t, r * Math.Cos(v), r * Math.sin(v))
+    return new Vector3D(u - t, r * Math.cos(v), r * Math.sin(v))
   }
 
   static Dini(uv: Vector3D, a: number, b: number): Vector3D {
@@ -74,13 +74,13 @@ export class Surface {
     // double x = Math.log( uv.Y );
     let y: number = uv.X
     let pSinEta: number = p * Math.sin(eta)
-    let chi: number = (x - y * Math.Cos(eta)) / pSinEta
+    let chi: number = (x - y * Math.cos(eta)) / pSinEta
     if (x <= -4 || x > 4 || y < 3 * Math.PI * -1 || y > 3 * Math.PI) {
       return UtilsInfinity.InfinityVector
     }
 
     let result: Vector3D = new Vector3D(
-      pSinEta * (Surface.Sech(chi) * Math.Cos(y / p)),
+      pSinEta * (Surface.Sech(chi) * Math.cos(y / p)),
       pSinEta * (Surface.Sech(chi) * Math.sin(y / p)),
       x - pSinEta * Math.Tanh(chi),
     )

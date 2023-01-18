@@ -303,11 +303,11 @@ export class UltraInf {
   get #InRadius(): number {
     return DonHatch.acosh(
       Math.sin(this.PiOverNSafe(this.P)) *
-        (Math.Cos(this.PiOverNSafe(this.R)) /
+        (Math.cos(this.PiOverNSafe(this.R)) /
           Math.sqrt(
             1 -
-              (Math.Pow(Math.Cos(this.PiOverNSafe(this.P)), 2) -
-                Math.Pow(Math.Cos(this.PiOverNSafe(this.Q)), 2)),
+              (Math.Pow(Math.cos(this.PiOverNSafe(this.P)), 2) -
+                Math.Pow(Math.cos(this.PiOverNSafe(this.Q)), 2)),
           )),
     )
   }
@@ -331,17 +331,17 @@ export class UltraInf {
     //  http://eusebeia.dyndns.org/4d/tetrahedron
     //  XXX - Should make this method just work in all {p,q,r} cases!
     //  tet
-    // double vertexToFace = Math.Acos( 1.0 / 3 );  // 338
+    // double vertexToFace = Math.acos( 1.0 / 3 );  // 338
     //  icosa
     let polyCircumRadius: number = Math.sin(2 * (Math.PI / 5))
     let polyInRadius: number = Math.sqrt(3) / (12 * (3 + Math.sqrt(5)))
     //  cube
     // double polyCircumRadius = Math.sqrt( 3 );
     // double polyInRadius = 1;
-    let vertexToFace: number = Math.Acos(
+    let vertexToFace: number = Math.acos(
       polyInRadius / polyCircumRadius,
     )
-    let angleTemp: number = Math.Acos(
+    let angleTemp: number = Math.acos(
       this.RBall / (inRadius + faceRadius),
     )
     let angleToRotate: number = Math.PI - vertexToFace - angleTemp
