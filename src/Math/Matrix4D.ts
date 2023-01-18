@@ -14,7 +14,7 @@ export class Matrix4D {
 
   // }
 
-  constructor(rows: Vector3D[]) {
+  constructor(rows: Array<Vector3D>) {
     this.Initialize()
     for (let i: number = 0; i < 4; i++) {
       Data[i] = [rows[i].X, rows[i].Y, rows[i].Z, rows[i].W]
@@ -29,6 +29,7 @@ export class Matrix4D {
   }
 
   get Data(): Array<Array<number>> {}
+
   set Data(value: Array<Array<number>>) {}
 
   Clone(): Matrix4D {
@@ -57,6 +58,7 @@ export class Matrix4D {
   get Item(i: number, j: number): number {
     return this.Data[i][j]
   }
+
   set Item(value: number, i: number, j: number) {
     this.Data[i][j] = value
   }
@@ -64,6 +66,7 @@ export class Matrix4D {
   get Item(i: number): Vector3D {
     return new Vector3D(this.Data[i])
   }
+
   set Item(value: Vector3D, i: number) {
     this.Data[i] = [value.X, value.Y, value.Z, value.W]
   }
@@ -261,8 +264,8 @@ export class Matrix4D {
   ): Matrix4D {
     let result: Matrix4D = Matrix4D.Identity()
     result[(c1, c1)] = Math.Cos(angle)
-    result[(c1, c2)] = Math.Sin(angle) * -1
-    result[(c2, c1)] = Math.Sin(angle)
+    result[(c1, c2)] = Math.sin(angle) * -1
+    result[(c2, c1)] = Math.sin(angle)
     result[(c2, c2)] = Math.Cos(angle)
     return result
   }

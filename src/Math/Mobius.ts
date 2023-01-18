@@ -12,13 +12,21 @@ export class Mobius implements ITransform {
   constructor(z1: Complex, z2: Complex, z3: Complex) {
     this.MapPoints(z1, z2, z3)
   }
+
   get A(): Complex {}
+
   set A(value: Complex) {}
+
   get B(): Complex {}
+
   set B(value: Complex) {}
+
   get C(): Complex {}
+
   set C(value: Complex) {}
+
   get D(): Complex {}
+
   set D(value: Complex) {}
 
   /* override */ ToString(): string {
@@ -79,7 +87,7 @@ export class Mobius implements ITransform {
     //  This indicates a rotation by T around the origin followed by moving the origin to P (and -P to the origin).
     //
     //  I figured out that the other cases can be handled with simple variations of the C coefficients.
-    let T: Complex = new Complex(Math.Cos(angle), Math.Sin(angle))
+    let T: Complex = new Complex(Math.Cos(angle), Math.sin(angle))
     this.A = T
     this.B = P
     this.D = 1

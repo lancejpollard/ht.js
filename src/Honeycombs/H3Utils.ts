@@ -634,7 +634,7 @@ export class H3UtilBall {
     center = v1 + v2
     center.Normalize()
     center = center * distToCenter
-    radius = distToCenter * Math.Sin(sectorAngle / 2)
+    radius = distToCenter * Math.sin(sectorAngle / 2)
   }
 
   static OrthogonalCircle(v1: Vector3D, v2: Vector3D): Circle3D {
@@ -1418,8 +1418,8 @@ export class SphericalCoords {
     }
 
     return new Vector3D(
-      v.X * (Math.Sin(v.Y) * Math.Cos(v.Z)),
-      v.X * (Math.Sin(v.Y) * Math.Sin(v.Z)),
+      v.X * (Math.sin(v.Y) * Math.Cos(v.Z)),
+      v.X * (Math.sin(v.Y) * Math.sin(v.Z)),
       v.X * Math.Cos(v.Y),
     )
   }

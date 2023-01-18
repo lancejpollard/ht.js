@@ -1,4 +1,5 @@
-import { Tolerance } from '@Math/Utils'
+import { DonHatch } from '@Math/DonHatch'
+import { isInfinite, Tolerance } from '@Math/Utils'
 import { Spherical2D } from './Spherical2D'
 
 export enum Geometry {
@@ -42,10 +43,10 @@ export class Geometry2D {
         break
       case Geometry.Hyperbolic:
         if (isInfinite(hypot)) {
-          return DiskRadius
+          return this.DiskRadius
         }
 
-        return DonHatch.h2eNorm(hypot) * DiskRadius
+        return DonHatch.h2eNorm(hypot) * this.DiskRadius
         break
       default:
         break
@@ -83,7 +84,7 @@ export class Geometry2D {
     let gamma: number = Geometry2D.PiOverNSafe(p)
     //  The one we want.
     if (g == Geometry.Euclidean) {
-      return EuclideanHypotenuse * Math.Sin(gamma)
+      return this.EuclideanHypotenuse * Math.sin(gamma)
     }
 
     return Geometry2D.GetTriangleSide(g, gamma, beta, alpha)
@@ -100,7 +101,7 @@ export class Geometry2D {
     //  The one we want.
     let gamma: number = Geometry2D.PiOverNSafe(p)
     if (g == Geometry.Euclidean) {
-      return this.EuclideanHypotenuse * Math.Sin(beta)
+      return this.EuclideanHypotenuse * Math.sin(beta)
     }
 
     return Geometry2D.GetTriangleSide(g, beta, gamma, alpha)
@@ -121,21 +122,20 @@ export class Geometry2D {
         //  Spherical law of cosines
         return Math.Acos(
           (Math.Cos(alpha) + Math.Cos(beta) * Math.Cos(gamma)) /
-            (Math.Sin(beta) * Math.Sin(gamma)),
+            (Math.sin(beta) * Math.sin(gamma)),
         )
-        break
       case Geometry.Euclidean:
         //  Not determined in this geometry.
         console.assert(false)
         return 0
-        break
       case Geometry.Hyperbolic:
         //  Hyperbolic law of cosines
         //  http://en.wikipedia.org/wiki/Hyperbolic_law_of_cosines
         return DonHatch.acosh(
           (Math.Cos(alpha) + Math.Cos(beta) * Math.Cos(gamma)) /
-            (Math.Sin(beta) * Math.Sin(gamma)),
+            (Math.sin(beta) * Math.sin(gamma)),
         )
+      default:
         break
     }
 

@@ -1,7 +1,11 @@
+import { GraphEdge } from '@Math/Graph'
+import { Polygon } from './Polygon'
+import { Vector3D } from './Vector3D'
+
 export class CycleEqualityComparer
-  implements IEqualityComparer<List<number>>
+  implements IEqualityComparer<Array<number>>
 {
-  Equals(c1: List<number>, c2: List<number>): boolean {
+  Equals(c1: Array<number>, c2: Array<number>): boolean {
     if (c1.Count != c2.Count) {
       return false
     }
@@ -17,7 +21,7 @@ export class CycleEqualityComparer
     return true
   }
 
-  GetHashCode(cycle: List<number>): number {
+  GetHashCode(cycle: Array<number>): number {
     let hCode: number = 0
     for (let idx: number in cycle) {
       hCode = hCode | idx.GetHashCode()
@@ -27,8 +31,6 @@ export class CycleEqualityComparer
     return hCode.GetHashCode()
   }
 }
-
-export class Polytope {}
 
 //  The various projections we can do on a polytope.
 export enum PolytopeProjection {
@@ -45,42 +47,42 @@ export class SkewPolyhedron {
   static BuildDuoprism(num: number): Array<Polygon> {
     let angleInc: number = 2 * (Math.PI / num)
     //  Torus in two directions.
-    let polys: List<Polygon> = new List<Polygon>()
+    let polys: Array<Polygon> = new Array<Polygon>()
     let angle1: number = angleInc / 2
     for (let i: number = 0; i < num; i++) {
       let angle2: number = angleInc / 2
       for (let j: number = 0; j < num; j++) {
-        let polyPoints: List<Vector3D> = new List<Vector3D>()
+        let polyPoints: Array<Vector3D> = new Array<Vector3D>()
         polyPoints.Add(
           new Vector3D(
             Math.Cos(angle2),
-            Math.Sin(angle2),
+            Math.sin(angle2),
             Math.Cos(angle1),
-            Math.Sin(angle1),
+            Math.sin(angle1),
           ),
         )
         polyPoints.Add(
           new Vector3D(
             Math.Cos(angle2),
-            Math.Sin(angle2),
+            Math.sin(angle2),
             Math.Cos(angle1 + angleInc),
-            Math.Sin(angle1 + angleInc),
+            Math.sin(angle1 + angleInc),
           ),
         )
         polyPoints.Add(
           new Vector3D(
             Math.Cos(angle2 + angleInc),
-            Math.Sin(angle2 + angleInc),
+            Math.sin(angle2 + angleInc),
             Math.Cos(angle1 + angleInc),
-            Math.Sin(angle1 + angleInc),
+            Math.sin(angle1 + angleInc),
           ),
         )
         polyPoints.Add(
           new Vector3D(
             Math.Cos(angle2 + angleInc),
-            Math.Sin(angle2 + angleInc),
+            Math.sin(angle2 + angleInc),
             Math.Cos(angle1),
-            Math.Sin(angle1),
+            Math.sin(angle1),
           ),
         )
         let poly: Polygon = new Polygon()
@@ -244,16 +246,16 @@ export class SkewPolyhedron {
     edgeLength: number,
     p: number,
   ): Array<Polygon> {
-    let lookup: Record<number, List<GraphEdge>> = new Record<
+    let lookup: Record<number, Array<GraphEdge>> = new Record<
       number,
-      List<GraphEdge>
+      Array<GraphEdge>
     >()
     for (let i: number = 0; i < coords.Length; i++) {
-      lookup[i] = new List<GraphEdge>()
+      lookup[i] = new Array<GraphEdge>()
     }
 
     //  First find all the edges.
-    let allEdges: List<GraphEdge> = new List<GraphEdge>()
+    let allEdges: Array<GraphEdge> = new Array<GraphEdge>()
     for (let i: number = 0; i < coords.Length; i++) {
       for (let j: number = i + 1; j < coords.Length; j++) {
         if (Tolerance.Equal(coords[i].Dist(coords[j]), edgeLength)) {
@@ -266,24 +268,24 @@ export class SkewPolyhedron {
     }
 
     //  Find all cycles of length p.
-    let cycles: List<List<number>> = new List<List<number>>()
+    let cycles: Array<Array<number>> = new Array<Array<number>>()
     for (let i: number = 0; i < coords.Length; i++) {
-      cycles.Add(new List<number>([i]))
+      cycles.Add(new Array<number>([i]))
     }
 
     cycles = SkewPolyhedron.FindCyclesRecursive(cycles, p, lookup)
     //  Find the distinct ones.
-    for (let cycle: List<number> in cycles) {
+    for (let cycle: Array<number> in cycles) {
       //  Don't include the start vertex.
       //  This is important for the Distinct check below.
       cycle.RemoveAt(cycle.Count - 1)
     }
 
-    cycles = cycles.Distinct(new CycleEqualityComparer()).ToList()
+    cycles = cycles.Distinct(new CycleEqualityComparer()).ToArray()
     //  Now turn into polygons.
-    let result: List<Polygon> = new List<Polygon>()
-    for (let cycle: List<number> in cycles) {
-      let points: List<Vector3D> = new List<Vector3D>()
+    let result: Array<Polygon> = new Array<Polygon>()
+    for (let cycle: Array<number> in cycles) {
+      let points: Array<Vector3D> = new Array<Vector3D>()
       for (let i: number in cycle) {
         points.Add(coords[i])
       }
@@ -325,20 +327,20 @@ export class SkewPolyhedron {
   ///  http://mathoverflow.net/questions/67960/cycle-of-length-4-in-an-undirected-graph
   ///  </summary>
   static #FindCyclesRecursive(
-    cycles: List<List<number>>,
+    cycles: Array<Array<number>>,
     cycleLength: number,
-    lookup: Record<number, List<GraphEdge>>,
-  ): List<List<number>> {
+    lookup: Record<number, Array<GraphEdge>>,
+  ): Array<Array<number>> {
     if (cycles[0].Count - 1 == cycleLength) {
       //  Return the ones where we ended where we started.
-      let result: List<List<number>> = cycles
+      let result: Array<Array<number>> = cycles
         .Where(() => {}, c.First() == c.Last())
-        .ToList()
+        .ToArray()
       return result
     }
 
-    let newCycles: List<List<number>> = new List<List<number>>()
-    for (let cycle: List<number> in cycles) {
+    let newCycles: Array<Array<number>> = new Array<Array<number>>()
+    for (let cycle: Array<number> in cycles) {
       let last: number = cycle.Last()
       for (let newEdge: GraphEdge in lookup[last]) {
         let next: number = newEdge.Opposite(last)
@@ -346,7 +348,7 @@ export class SkewPolyhedron {
           continue
         }
 
-        let newCycle: List<number> = new List<number>(cycle)
+        let newCycle: Array<number> = new Array<number>(cycle)
         newCycle.Add(next)
         newCycles.Add(newCycle)
       }

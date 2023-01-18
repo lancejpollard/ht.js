@@ -1,31 +1,34 @@
+import { MeshTriangle } from './MeshTriangle'
+import { Polygon } from './Polygon'
+import { Tile } from './Tile'
+import { Vector3D } from './Vector3D'
+
 export class Mesh {
   constructor() {
-    Triangles = new List<Triangle>()
+    this.MeshTriangles = new Array<MeshTriangle>()
   }
 
-  get Triangles(): List<Triangle> {}
-
-  set Triangles(value: List<Triangle>) {}
+  MeshTriangles: Array<MeshTriangle>
 
   Append(m: Mesh) {
-    this.Triangles.AddRange(m.Triangles)
+    this.MeshTriangles.AddRange(m.MeshTriangles)
   }
 
   BuildIndexes(
     /* out */ verts: Array<Vector3D>,
     /* out */ normals: Array<Vector3D>,
-    /* out */ faces: List<Array<number>>,
+    /* out */ faces: Array<Array<number>>,
   ) {
     let vertMap: Record<Vector3D, number> = new Record<
       Vector3D,
       number
     >()
-    let triMap: Record<Vector3D, List<Triangle>> = new Record<
+    let triMap: Record<Vector3D, Array<MeshTriangle>> = new Record<
       Vector3D,
-      List<Triangle>
+      Array<MeshTriangle>
     >()
     let current: number = 0
-    for (let tri: Triangle in this.Triangles) {
+    for (let tri: MeshTriangle in this.MeshTriangles) {
       let idx: number
       if (!vertMap.TryGetValue(tri.a, /* out */ idx)) {
         current++
@@ -42,35 +45,35 @@ export class Mesh {
       }
 
       vertMap[tri.c] = current
-      let list: List<Triangle>
+      let list: Array<MeshTriangle>
       if (!triMap.TryGetValue(tri.a, /* out */ list)) {
-        list = new List<Triangle>()
+        list = new Array<MeshTriangle>()
       }
 
-      triMap[tri.a] = new List<Triangle>()
+      triMap[tri.a] = new Array<MeshTriangle>()
       list.Add(tri)
       if (!triMap.TryGetValue(tri.b, /* out */ list)) {
-        list = new List<Triangle>()
+        list = new Array<MeshTriangle>()
       }
 
-      triMap[tri.b] = new List<Triangle>()
+      triMap[tri.b] = new Array<MeshTriangle>()
       list.Add(tri)
       if (!triMap.TryGetValue(tri.c, /* out */ list)) {
-        list = new List<Triangle>()
+        list = new Array<MeshTriangle>()
       }
 
-      triMap[tri.c] = new List<Triangle>()
+      triMap[tri.c] = new Array<MeshTriangle>()
       list.Add(tri)
     }
 
-    let _verts: List<Vector3D> = new List<Vector3D>()
-    let _normals: List<Vector3D> = new List<Vector3D>()
+    let _verts: Array<Vector3D> = new Array<Vector3D>()
+    let _normals: Array<Vector3D> = new Array<Vector3D>()
     for (let kvp in vertMap) {
       let v: Vector3D = kvp.Key
       _verts.Add(v)
       let normal: Vector3D = new Vector3D()
-      let tris: List<Triangle> = triMap[v]
-      for (let tri: Triangle in tris) {
+      let tris: Array<MeshTriangle> = triMap[v]
+      for (let tri: MeshTriangle in tris) {
         normal = normal + tri.Normal
       }
 
@@ -80,15 +83,16 @@ export class Mesh {
 
     verts = _verts.ToArray()
     normals = _normals.ToArray()
-    faces = new List<Array<number>>()
-    for (let tri: Triangle in this.Triangles) {
+    faces = new Array<Array<number>>()
+    for (let tri: MeshTriangle in this.MeshTriangles) {
       faces.Add([vertMap[tri.a], vertMap[tri.b], vertMap[tri.c]])
     }
   }
 
   Clone(): Mesh {
     let clone: Mesh = new Mesh()
-    clone.Triangles = this.Triangles.Select(() => {}, t).ToList()
+    clone.MeshTriangles = this.MeshTriangles.Select(() => {},
+    t).ToArray()
     return clone
   }
 
@@ -96,24 +100,24 @@ export class Mesh {
   ///  Scale our mesh (useful for shapeways models)
   ///  </summary>
   Scale(scale: number) {
-    for (let i: number = 0; i < this.Triangles.Count; i++) {
-      this.Triangles[i] = new Mesh.Triangle(
-        this.Triangles[i].a * scale,
-        this.Triangles[i].b * scale,
-        this.Triangles[i].c * scale,
+    for (let i: number = 0; i < this.MeshTriangles.Count; i++) {
+      this.MeshTriangles[i] = new Mesh.MeshTriangle(
+        this.MeshTriangles[i].a * scale,
+        this.MeshTriangles[i].b * scale,
+        this.MeshTriangles[i].c * scale,
       )
     }
   }
 
   Rotate(angle: number) {
-    for (let i: number = 0; i < this.Triangles.Count; i++) {
-      let a: Vector3D = this.Triangles[i].a
-      let b: Vector3D = this.Triangles[i].b
-      let c: Vector3D = this.Triangles[i].c
+    for (let i: number = 0; i < this.MeshTriangles.Count; i++) {
+      let a: Vector3D = this.MeshTriangles[i].a
+      let b: Vector3D = this.MeshTriangles[i].b
+      let c: Vector3D = this.MeshTriangles[i].c
       a.RotateXY(angle)
       b.RotateXY(angle)
       c.RotateXY(angle)
-      this.Triangles[i] = new Mesh.Triangle(a, b, c)
+      this.MeshTriangles[i] = new Mesh.MeshTriangle(a, b, c)
     }
   }
 
@@ -121,11 +125,11 @@ export class Mesh {
   ///  Transform our mesh by some arbitrary function.
   ///  </summary>
   Transform(transform: System.Func<Vector3D, Vector3D>) {
-    for (let i: number = 0; i < this.Triangles.Count; i++) {
-      this.Triangles[i] = new Mesh.Triangle(
-        transform(this.Triangles[i].a),
-        transform(this.Triangles[i].b),
-        transform(this.Triangles[i].c),
+    for (let i: number = 0; i < this.MeshTriangles.Count; i++) {
+      this.MeshTriangles[i] = new Mesh.MeshTriangle(
+        transform(this.MeshTriangles[i].a),
+        transform(this.MeshTriangles[i].b),
+        transform(this.MeshTriangles[i].c),
       )
     }
   }
@@ -156,11 +160,11 @@ export class Mesh {
       // TODO: Warning!!!, inline IF is not supported ?
       i == d1.Length - 1
       i + 1
-      this.Triangles.Add(
-        new Mesh.Triangle(d1[idx1], d2[idx1], d1[idx2]),
+      this.MeshTriangles.Add(
+        new Mesh.MeshTriangle(d1[idx1], d2[idx1], d1[idx2]),
       )
-      this.Triangles.Add(
-        new Mesh.Triangle(d1[idx2], d2[idx1], d2[idx2]),
+      this.MeshTriangles.Add(
+        new Mesh.MeshTriangle(d1[idx2], d2[idx1], d2[idx2]),
       )
     }
   }
@@ -186,8 +190,8 @@ export class Mesh {
     )
     boundaryConfig.Shrink = 1.01
     let boundary: Tile = Tiling.CreateBaseTile(boundaryConfig)
-    Mesh.AddSymmetryTriangles(mesh, tiling, boundary.Drawn)
-    // AddSymmetryTriangles( mesh, tiling, null );
+    Mesh.AddSymmetryMeshTriangles(mesh, tiling, boundary.Drawn)
+    // AddSymmetryMeshTriangles( mesh, tiling, null );
     return mesh
   }
 
@@ -200,14 +204,14 @@ export class Mesh {
     return p
   }
 
-  static #AddSymmetryTriangles(
+  static #AddSymmetryMeshTriangles(
     mesh: Mesh,
     tiling: Tiling,
     boundary: Polygon,
   ) {
     //  Assume template centered at the origin.
     let template: Polygon = tiling.Tiles.First().Boundary
-    let templateTris: List<Triangle> = new List<Triangle>()
+    let templateTris: Array<MeshTriangle> = new Array<MeshTriangle>()
     for (let seg: Segment in template.Segments) {
       let num: number = 1 + <number>(seg.Length * m_divisions)
       let a: Vector3D = new Vector3D()
@@ -237,7 +241,7 @@ export class Mesh {
         let v1: Vector3D = coords[elements[idx1]]
         let v2: Vector3D = coords[elements[idx2]]
         let v3: Vector3D = coords[elements[idx3]]
-        templateTris.Add(new Triangle(v1, v2, v3))
+        templateTris.Add(new MeshTriangle(v1, v2, v3))
       }
     }
 
@@ -266,8 +270,8 @@ export class Mesh {
         )
       }
 
-      for (let tri: Triangle in templateTris) {
-        let transformed: Triangle = new Triangle(
+      for (let tri: MeshTriangle in templateTris) {
+        let transformed: MeshTriangle = new MeshTriangle(
           m.Apply(tri.a),
           m.Apply(tri.b),
           m.Apply(tri.c),
@@ -277,7 +281,7 @@ export class Mesh {
     }
   }
 
-  static #MeshEdges(
+  static MeshEdges(
     mesh: Mesh,
     tile: Tile,
     completed: HashSet<Vector3D>,
@@ -332,12 +336,12 @@ export class Mesh {
       if (foundIncident) {
         Mesh.CheckAndAdd(
           mesh,
-          new Mesh.Triangle(boundarySeg.P1, d1.P1, d2.P1),
+          new Mesh.MeshTriangle(boundarySeg.P1, d1.P1, d2.P1),
           boundary,
         )
         Mesh.CheckAndAdd(
           mesh,
-          new Mesh.Triangle(boundarySeg.P2, d2.P2, d1.P2),
+          new Mesh.MeshTriangle(boundarySeg.P2, d2.P2, d1.P2),
           boundary,
         )
       }
@@ -348,12 +352,12 @@ export class Mesh {
       for (let j: number = 0; j < num; j++) {
         Mesh.CheckAndAdd(
           mesh,
-          new Mesh.Triangle(list1[j], list1[j + 1], list2[j + 1]),
+          new Mesh.MeshTriangle(list1[j], list1[j + 1], list2[j + 1]),
           boundary,
         )
         Mesh.CheckAndAdd(
           mesh,
-          new Mesh.Triangle(list2[j], list1[j], list2[j + 1]),
+          new Mesh.MeshTriangle(list2[j], list1[j], list2[j + 1]),
           boundary,
         )
       }
@@ -362,7 +366,7 @@ export class Mesh {
     }
   }
 
-  static #Check(tri: Triangle, boundary: Polygon): boolean {
+  static Check(tri: MeshTriangle, boundary: Polygon): boolean {
     if (
       boundary == null ||
       (boundary.IsPointInside(tri.a) &&
@@ -375,50 +379,9 @@ export class Mesh {
     return false
   }
 
-  static #CheckAndAdd(mesh: Mesh, tri: Triangle, boundary: Polygon) {
+  static CheckAndAdd(mesh: Mesh, tri: MeshTriangle, boundary: Polygon) {
     if (Mesh.Check(tri, boundary)) {
-      mesh.Triangles.Add(tri)
+      mesh.MeshTriangles.Add(tri)
     }
-  }
-}
-
-export class MeshTriangle {
-  constructor(_a: Vector3D, _b: Vector3D, _c: Vector3D) {
-    a = _a
-    b = _b
-    c = _c
-    color = new Vector3D(1, 1, 1)
-  }
-
-  a: Vector3D
-
-  b: Vector3D
-
-  c: Vector3D
-
-  //  The reason we use a vector here is so the components
-  //  can be interpreted in different color schemes (HLS, RGB, etc.)
-  color: Vector3D
-
-  get Normal(): Vector3D {
-    //  Doing this in drawn out steps was because I was having floating point issues for small triangles.
-    //  This mid-way normalization solved this.
-    let v1: Vector3D = this.b - this.a
-    let v2: Vector3D = this.c - this.a
-    v1.Normalize()
-    v2.Normalize()
-    let n: Vector3D = v1.Cross(v2)
-    n.Normalize()
-    return n
-  }
-
-  get Center(): Vector3D {
-    return (this.a + (this.b + this.c)) / 3
-  }
-
-  ChangeOrientation() {
-    let t: Vector3D = this.b
-    this.b = this.c
-    this.c = t
   }
 }

@@ -93,7 +93,7 @@ export class Circle3D {
     return points.ToArray()
   }
 
-  static #From3Points(
+  static From3Points(
     v1: Vector3D,
     v2: Vector3D,
     v3: Vector3D,

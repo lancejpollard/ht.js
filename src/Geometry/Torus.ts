@@ -60,9 +60,9 @@ export class Torus {
       let angle2: number = 0
       for (let j: number = 0; j < n2; j++) {
         t.Vertices[i][j].X = r1 * Math.Cos(angle1)
-        t.Vertices[i][j].Y = r1 * Math.Sin(angle1)
+        t.Vertices[i][j].Y = r1 * Math.sin(angle1)
         t.Vertices[i][j].Z = r2 * Math.Cos(angle2)
-        t.Vertices[i][j].W = r2 * Math.Sin(angle2)
+        t.Vertices[i][j].W = r2 * Math.sin(angle2)
         angle2 = angle2 + angleInc2
       }
 

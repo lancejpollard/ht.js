@@ -385,7 +385,7 @@ export class Slicer {
       c.Center,
       /* clockwise:*/ true,
     )
-    if (newSeg.Angle > System.Math.PI) {
+    if (newSeg.Angle > Math.PI) {
       newSeg.Clockwise = false
     }
 

@@ -1,3 +1,7 @@
+import { Tolerance } from '@Math/Utils'
+import { Circle3D } from './Circle3D'
+import { Vector3D } from './Vector3D'
+
 export class Sphere {
   constructor() {
     this.Reset()

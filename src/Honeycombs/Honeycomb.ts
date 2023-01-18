@@ -223,8 +223,8 @@ export class Honeycomb {
 
   static GetGeometry(p: number, q: number, r: number): Geometry {
     let t1: number =
-      Math.Sin(Honeycomb.PiOverNSafe(p)) *
-      Math.Sin(Honeycomb.PiOverNSafe(r))
+      Math.sin(Honeycomb.PiOverNSafe(p)) *
+      Math.sin(Honeycomb.PiOverNSafe(r))
     let t2: number = Math.Cos(Honeycomb.PiOverNSafe(q))
     if (Tolerance.Equal(t1, t2)) {
       return Geometry.Euclidean
@@ -245,7 +245,7 @@ export class Honeycomb {
     let pir: number = Honeycomb.PiOverNSafe(r)
     let pi_hpq: number = Honeycomb.Pi_hpq(p, q)
     let inRadius: number =
-      Math.Sin(pip) * (Math.Cos(pir) / Math.Sin(pi_hpq))
+      Math.sin(pip) * (Math.Cos(pir) / Math.sin(pi_hpq))
     switch (Honeycomb.GetGeometry(p, q, r)) {
       case Geometry.Hyperbolic:
         return DonHatch.acosh(inRadius)
@@ -264,7 +264,7 @@ export class Honeycomb {
   static MidRadius(p: number, q: number, r: number): number {
     let pir: number = Honeycomb.PiOverNSafe(r)
     let inRadius: number = Honeycomb.InRadius(p, q, r)
-    let midRadius: number = DonHatch.sinh(inRadius) / Math.Sin(pir)
+    let midRadius: number = DonHatch.sinh(inRadius) / Math.sin(pir)
     switch (Honeycomb.GetGeometry(p, q, r)) {
       case Geometry.Hyperbolic:
         return DonHatch.asinh(midRadius)
@@ -289,7 +289,7 @@ export class Honeycomb {
     let circumRadius: number =
       Math.Cos(pip) *
       (Math.Cos(piq) *
-        (Math.Cos(pir) / (Math.Sin(pi_hpq) * Math.Sin(pi_hqr))))
+        (Math.Cos(pir) / (Math.sin(pi_hpq) * Math.sin(pi_hqr))))
     switch (Honeycomb.GetGeometry(p, q, r)) {
       case Geometry.Hyperbolic:
         return DonHatch.acosh(circumRadius)
@@ -308,7 +308,7 @@ export class Honeycomb {
     let pi_hqr: number = Honeycomb.Pi_hpq(q, r)
     let edgeLength: number =
       2 *
-      DonHatch.acosh(Math.Cos(pip) * (Math.Sin(pir) / Math.Sin(pi_hqr)))
+      DonHatch.acosh(Math.Cos(pip) * (Math.sin(pir) / Math.sin(pi_hqr)))
     return edgeLength
   }
 

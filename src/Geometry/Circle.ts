@@ -1,7 +1,7 @@
 ///  <summary>
 ///  Class for generalized circles (lines are a limiting case).
 
-import { Tolerance } from '@Math/Utils'
+import { isInfinite, Tolerance } from '@Math/Utils'
 import { Euclidean2D } from './Euclidean2D'
 import { Segment, SegmentType } from './Polygon'
 import { ITransformable } from './Transformable'

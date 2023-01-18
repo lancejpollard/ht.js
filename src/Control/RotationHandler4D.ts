@@ -1,16 +1,19 @@
 ///  <summary>
 ///  Class which manages 4D view rotations
+
+import { Matrix4D } from '@Math/Matrix4D'
+
 ///  </summary>
 export class RotationHandler4D {
-  constructor() {
-    Current4dView = null
+  // constructor() {
+  //   Current4dView = null
+  // }
+
+  constructor(initialMatrix?: Matrix4D) {
+    this.Current4dView = initialMatrix
   }
 
-  constructor(initialMatrix: Matrix4D) {
-    Current4dView = initialMatrix
-  }
-
-  #ViewMat4d: Matrix4D = Matrix4D.Identity()
+  ViewMat4d: Matrix4D = Matrix4D.Identity()
 
   ///  <summary>
   ///  The current viewpoint.
@@ -18,6 +21,7 @@ export class RotationHandler4D {
   get Current4dView(): Matrix4D {
     return this.ViewMat4d
   }
+
   set Current4dView(value: Matrix4D) {
     if (value == null) {
       this.ViewMat4d = Matrix4D.Identity()
@@ -66,7 +70,7 @@ export class RotationHandler4D {
     this.ApplySpinDelta(spinDelta)
   }
 
-  #ApplySpinDelta(spinDelta: Matrix4D) {
+  ApplySpinDelta(spinDelta: Matrix4D) {
     let delta: Matrix4D = Matrix4D.Identity() + spinDelta
     delta = Matrix4D.GramSchmidt(delta)
     //  Orthonormalize

@@ -302,7 +302,7 @@ export class UltraInf {
   ///  </summary>
   get #InRadius(): number {
     return DonHatch.acosh(
-      Math.Sin(this.PiOverNSafe(this.P)) *
+      Math.sin(this.PiOverNSafe(this.P)) *
         (Math.Cos(this.PiOverNSafe(this.R)) /
           Math.sqrt(
             1 -
@@ -333,7 +333,7 @@ export class UltraInf {
     //  tet
     // double vertexToFace = Math.Acos( 1.0 / 3 );  // 338
     //  icosa
-    let polyCircumRadius: number = Math.Sin(2 * (Math.PI / 5))
+    let polyCircumRadius: number = Math.sin(2 * (Math.PI / 5))
     let polyInRadius: number = Math.sqrt(3) / (12 * (3 + Math.sqrt(5)))
     //  cube
     // double polyCircumRadius = Math.sqrt( 3 );

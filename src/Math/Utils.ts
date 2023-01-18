@@ -84,14 +84,14 @@ export class Utils {
   ///  Converts a value from degrees to radians.
   ///  </summary>
   static DegreesToRadians(value: number): number {
-    return value / (180 * System.Math.PI)
+    return value / (180 * Math.PI)
   }
 
   ///  <summary>
   ///  Converts a value from radians to degrees.
   ///  </summary>
   static RadiansToDegrees(value: number): number {
-    return value / (System.Math.PI * 180)
+    return value / (Math.PI * 180)
   }
 
   //  ZZZ - Make templated

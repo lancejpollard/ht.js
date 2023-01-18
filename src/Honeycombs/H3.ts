@@ -54,16 +54,15 @@ export class H3 {
       case EHoneycomb.H336:
       case EHoneycomb.H344:
         break
-        break
       case EHoneycomb.H436:
         // settings.Ball_MinLength = 0.08;
         settings.Ball_MinLength = 0.08
-        break
         break
       case EHoneycomb.H536:
         // settings.Ball_MinLength = 0.05;
         settings.Ball_MinLength = 0.03
         break
+      default:
         break
     }
   }
@@ -82,7 +81,6 @@ export class H3 {
         this.m_settings.Ball_Cutoff = 0.96
         this.m_settings.AngularThickness = 0.08
         break
-        break
       case EHoneycomb.H534:
         this.m_settings.Ball_Cutoff = this.m_settings.ThinEdges
           ? 0.984
@@ -98,13 +96,11 @@ export class H3 {
         this.m_settings.Ball_Cutoff = 0.98
         this.m_settings.H3Output = H3Output.STL
         break
-        break
       case EHoneycomb.H535:
         // this.m_settings.Ball_Cutoff = this.m_settings.ThinH3CellEdges ? 0.993 : 0.96;
         // this.m_settings.Postion = Position.VertexCentered;
         this.m_settings.ThinH3CellEdges = true
         this.m_settings.Ball_Cutoff = 0.98
-        break
         break
       case EHoneycomb.H353:
         let big: boolean = true
@@ -117,32 +113,27 @@ export class H3 {
         }
 
         break
-        break
       case EHoneycomb.H336:
-        break
         break
       case EHoneycomb.H337:
         this.m_settings.Scale = 75
         // this.m_settings.AngularThickness = 0.202;
         this.m_settings.AngularThickness = 0.1
         break
-        break
       case EHoneycomb.H436:
         this.m_settings.AngularThickness = 0.12
         this.m_settings.Position = PolytopeProjection.FaceCentered
         break
-        break
       case EHoneycomb.H536:
         this.m_settings.Ball_MinLength = 0.02
-        break
         break
       case EHoneycomb.H344:
         this.m_settings.Ball_MinLength = 0.05
         break
-        break
       case EHoneycomb.H33I:
         17
         break
+      default:
         break
     }
 
@@ -238,6 +229,8 @@ export class H3 {
           projection = PolytopeProjection.VertexCentered
         }
 
+        break
+      default:
         break
     }
   }

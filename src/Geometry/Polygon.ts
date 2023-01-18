@@ -95,7 +95,7 @@ export class Polygon extends ITransformable {
     for (let i: number = 0; i < p; i++) {
       let point: Vector3D = new Vector3D()
       point.X = circumRadius * Math.Cos(angle)
-      point.Y = circumRadius * Math.Sin(angle)
+      point.Y = circumRadius * Math.sin(angle)
       points.Add(point)
       angle = angle + Utils.DegreesToRadians(360 / p)
     }

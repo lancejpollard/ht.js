@@ -171,9 +171,9 @@ export class MouseHandler {
     m_lastY = e.Y
   }
 
-  #m_stopWatch: Stopwatch = new Stopwatch()
+  m_stopWatch: Stopwatch = new Stopwatch()
 
-  #MouseUp(sender: Object, e: MouseEventArgs) {
+  MouseUp(sender: Object, e: MouseEventArgs) {
     //  NOTE: The mousedown checks make sure we had a mouse down call and fixes a problem I was seeing
     //          where where unintended sticker clicks could happen when loading a log file.
     if (-1 == m_downX || -1 == m_downY) {
@@ -301,11 +301,11 @@ export class MouseHandler {
 
   m_spinHandler: Action
 
-  get #CtrlDown(): boolean {
+  get CtrlDown(): boolean {
     return (Form.ModifierKeys & Keys.Control) == Keys.Control
   }
 
-  get #ShiftDown(): boolean {
+  get ShiftDown(): boolean {
     return (Form.ModifierKeys & Keys.Shift) == Keys.Shift
   }
 }
