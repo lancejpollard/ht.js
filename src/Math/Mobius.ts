@@ -1,9 +1,11 @@
+import { Complex } from '@Geometry/Complex'
+
 export class Mobius implements ITransform {
   constructor(a: Complex, b: Complex, c: Complex, d: Complex) {
-    A = a
-    B = b
-    C = c
-    D = d
+    this.A = a
+    this.B = b
+    this.C = c
+    this.D = d
   }
 
   ///  <summary>
@@ -13,30 +15,16 @@ export class Mobius implements ITransform {
     this.MapPoints(z1, z2, z3)
   }
 
-  get A(): Complex {}
+  A: Complex
 
-  set A(value: Complex) {}
+  B: Complex
 
-  get B(): Complex {}
+  C: Complex
 
-  set B(value: Complex) {}
+  D: Complex
 
-  get C(): Complex {}
-
-  set C(value: Complex) {}
-
-  get D(): Complex {}
-
-  set D(value: Complex) {}
-
-  /* override */ ToString(): string {
-    return string.Format(
-      'A:{0} B:{1} C:{2} D:{3}',
-      this.A,
-      this.B,
-      this.C,
-      this.D,
-    )
+  ToString(): string {
+    return `A: ${this.A} B: ${this.B} C: ${this.C} D: ${this.D}`
   }
 
   static Operator(m1: Mobius, m2: Mobius): Mobius {

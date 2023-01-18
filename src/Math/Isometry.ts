@@ -5,7 +5,9 @@
 ///  NOTE: The order in which the two elements are applied is important.  We will apply the Mobius part of the isometry first.
 
 import { CircleNE } from '@Geometry/Circle'
+import { Complex } from '@Geometry/Complex'
 import { Polygon } from '@Geometry/Polygon'
+import { Mobius } from './Mobius'
 
 ///  </summary>    export class Isometry extends ITransform {
 class Isometry implements ITransform {
