@@ -113,14 +113,15 @@ export class SkewPolyhedron {
     let result: Array<Polygon> = LookForPolys(coords, 2, 6)
     //  Nice starting orientation.
     let m: Matrix4D = new Matrix4D()
-    m.Data = []
-    ;[0.23, -0.72, 0.6, 0.26]
-    ;[-0.02, 0.38, 0.72, -0.59]
-    ;[0.97, 0.22, -0.11, -0.03]
-    ;[0.06, -0.54, -0.34, -0.77]
+    m.Data = [
+      [0.23, -0.72, 0.6, 0.26],
+      [-0.02, 0.38, 0.72, -0.59],
+      [0.97, 0.22, -0.11, -0.03],
+      [0.06, -0.54, -0.34, -0.77],
+    ]
 
     m = Matrix4D.GramSchmidt(m)
-    for (let poly: Polygon in result) {
+    for (let poly of result) {
       poly.Rotate(m)
     }
 
