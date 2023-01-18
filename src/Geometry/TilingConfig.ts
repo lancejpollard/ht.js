@@ -2,7 +2,8 @@
 ///  Information we need for a tiling.
 
 import { Mobius } from '@Math/Mobius'
-import { Geometry, Geometry2D } from './Geometry2D'
+import { Geometry } from './Geometry'
+import { Geometry2D } from './Geometry2D'
 import { Polygon, Segment } from './Polygon'
 import { Vector3D } from './Vector3D'
 

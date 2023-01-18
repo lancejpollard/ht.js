@@ -49,3 +49,48 @@ find . -name "*.ts" -type f | wc -l
 # count lines in files with extension
 find . -name '*.ts' -type f | xargs wc -l
 ```
+
+## Ideas
+
+The ideal is to have tiles, faces, points, and edges, and work with each
+tile like that.
+
+```ts
+const grid = new Grid(3, 7, {
+  point: {
+    visibility: 'hidden',
+  },
+  edge: {
+    width: 8,
+    fill: 'black',
+  },
+  face: {
+    fill: 'gray',
+  },
+})
+
+grid.addEventListener('keyup', e => {
+  if (e.key === 'up') {
+    grid.orient(grid.center.tiles[0])
+  }
+})
+
+grid.addEventListener('tile:click', event => {
+  grid.focus(event.currentTarget)
+})
+
+grid.addEventListener('tile:dblclick', event => {
+  grid.orient(event.currentTarget)
+})
+
+grid.rotate(90)
+
+grid.center.edges.forEach(point => {
+  point.style.fill = 'red'
+})
+
+function render() {
+  grid.render()
+  requestAnimationFrame(render)
+}
+```
