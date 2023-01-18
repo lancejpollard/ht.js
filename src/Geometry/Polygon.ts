@@ -368,9 +368,7 @@ export class Polygon extends ITransformable {
   ///  </summary>
   Cycle(num: number) {
     if (num < 0 || num > this.NumSides) {
-      throw new Error('Argument Error')(
-        'Cycle called with invalid input.',
-      )
+      throw new Error('Cycle called with invalid input.')
     }
 
     for (let i: number = 0; i < num; i++) {

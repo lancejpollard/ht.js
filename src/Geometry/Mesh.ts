@@ -144,9 +144,7 @@ export class Mesh {
     close: boolean = true,
   ) {
     if (d1.Length != d2.Length) {
-      throw new Error('Argument Error')(
-        'Edges must have the same length.',
-      )
+      throw new Error('Edges must have the same length.')
     }
 
     let end: number = d1.Length

@@ -44,9 +44,7 @@ export class Circle3D {
     circle.Center = cen
     circle.Radius = (p1 - cen).Abs()
     if (!Tolerance.Equal(circle.Radius, (p2 - cen).Abs())) {
-      throw new Error('Argument Error')(
-        'Points are not on the same circle.',
-      )
+      throw new Error('Points are not on the same circle.')
     }
 
     let normal: Vector3D = (p2 - cen).Cross(p1 - cen)

@@ -47,7 +47,7 @@ export class Euclidean3D {
     point: Vector3D,
   ): Vector3D {
     if (!normalVector.Normalize()) {
-      throw new Error('Argument Error')('Invalid normal vector.')
+      throw new Error('Invalid normal vector.')
     }
 
     let dist: number = Euclidean3D.DistancePointPlane(
