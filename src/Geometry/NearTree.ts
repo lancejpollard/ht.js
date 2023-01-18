@@ -131,7 +131,7 @@ export class NearTree {
     location: Vector3D,
     searchRadius: number,
   ): boolean {
-    let result: List<NearTreeObject> = new List<NearTreeObject>()
+    let result: Array<NearTreeObject> = new Array<NearTreeObject>()
     let found: boolean =
       0 !=
       this.FindCloseObjectsRecursive(
@@ -207,7 +207,7 @@ export class NearTree {
   }
 
   #FindCloseObjectsRecursive(
-    /* ref */ closeObjects: List<NearTreeObject>,
+    /* ref */ closeObjects: Array<NearTreeObject>,
     location: Vector3D,
     searchRadius: number,
   ): number {

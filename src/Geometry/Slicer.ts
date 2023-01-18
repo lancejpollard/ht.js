@@ -21,9 +21,9 @@ export class Slicer {
     c: CircleNE,
     g: Geometry,
     thickness: number,
-    /* out */ output: List<Polygon>,
+    /* out */ output: Array<Polygon>,
   ) {
-    output = new List<Polygon>()
+    output = new Array<Polygon>()
     //  Setup the two slicing circles.
     let c2: CircleNE = c.Clone()
     let c1: CircleNE = c.Clone()
@@ -37,8 +37,8 @@ export class Slicer {
     c2.Transform(m)
     //  ZZZ - alter Clip method to work on Polygons and use that.
     //  Slice it up.
-    let sliced2: List<Polygon>
-    let sliced1: List<Polygon>
+    let sliced2: Array<Polygon>
+    let sliced1: Array<Polygon>
     Slicer.SlicePolygon(p, c1, /* out */ sliced1)
     Slicer.SlicePolygon(p, c2, /* out */ sliced2)
     //  Keep the ones we want.
@@ -64,7 +64,7 @@ export class Slicer {
   static SlicePolygon(
     p: Polygon,
     c: Circle,
-    /* out */ output: List<Polygon>,
+    /* out */ output: Array<Polygon>,
   ): boolean {
     return Slicer.SlicePolygonInternal(p, c, /* out */ output)
   }
@@ -73,13 +73,13 @@ export class Slicer {
   ///  Clip the drawn polygons in a set of tiles, using a circle.
   ///  </summary>
   static Clip(
-    /* ref */ tiles: List<Tile>,
+    /* ref */ tiles: Array<Tile>,
     c: Circle,
     keepInside: boolean,
   ) {
-    let newTiles: List<Tile> = new List<Tile>()
+    let newTiles: Array<Tile> = new Array<Tile>()
     for (let t: Tile in tiles) {
-      let sliced: List<Polygon>
+      let sliced: Array<Polygon>
       Slicer.SlicePolygon(t.Drawn, c, /* out */ sliced)
       for (let p: Polygon in sliced) {
         let insideCircle: boolean =
@@ -99,14 +99,14 @@ export class Slicer {
   static #SlicePolygonInternal(
     p: Polygon,
     c: Circle,
-    /* out */ output: List<Polygon>,
+    /* out */ output: Array<Polygon>,
   ): boolean {
     //  Our approach:
     //  (1) Find the intersection points, and splice them into the polygon. (splicing in is the main diff from old algorithm.)
     //  (2) From each intersection point, walk the polygon.
     //  (3) When you are at an intersection point, always turn left, which may involve adding a new segment of the slicing circle.
     //  (4) We'll have to check for duplicate polygons in the resulting list, and remove them.
-    output = new List<Polygon>()
+    output = new Array<Polygon>()
     //  We must be a digon at a minimum.
     if (p.NumSides < 2) {
       return false
@@ -121,7 +121,8 @@ export class Slicer {
 
     //  Cycle through our segments and splice in all the intersection points.
     let diced: Polygon = new Polygon()
-    let iPoints: List<IntersectionPoint> = new List<IntersectionPoint>()
+    let iPoints: Array<IntersectionPoint> =
+      new Array<IntersectionPoint>()
     for (let i: number = 0; i < p.NumSides; i++) {
       let s: Segment = p.Segments[i]
       let intersections: Array<Vector3D> = c.GetIntersectionPoints(s)
@@ -232,7 +233,7 @@ export class Slicer {
     //
     //  Remove duplicate polygons.
     //
-    output = output.Distinct(new PolygonEqualityComparer()).ToList()
+    output = output.Distinct(new PolygonEqualityComparer()).ToArray()
     return true
   }
 
@@ -245,9 +246,9 @@ export class Slicer {
     segmentToSplit: Segment,
     iLocation: Vector3D,
     diced: Polygon,
-    iPoints: List<IntersectionPoint>,
+    iPoints: Array<IntersectionPoint>,
   ): Segment {
-    let split: List<Segment>
+    let split: Array<Segment>
     if (segmentToSplit.Split(iLocation, /* out */ split)) {
       console.assert(split.Count == 2)
       diced.Segments.Add(split[0])
@@ -281,7 +282,7 @@ export class Slicer {
     walking: Polygon,
     c: Circle,
     pair: number,
-    iPoints: List<IntersectionPoint>,
+    iPoints: Array<IntersectionPoint>,
     increment: boolean,
   ): Polygon {
     let newPoly: Polygon = new Polygon()
@@ -341,7 +342,7 @@ export class Slicer {
   ///  Get a pair of intersection points.
   ///  </summary>
   static #GetPairPoints(
-    iPoints: List<IntersectionPoint>,
+    iPoints: Array<IntersectionPoint>,
     pair: number,
     increment: boolean,
     /* out */ iPoint1: IntersectionPoint,
@@ -362,7 +363,7 @@ export class Slicer {
   ///  </summary>
   static #SmallerSplicedArc(
     c: Circle,
-    iPoints: List<IntersectionPoint>,
+    iPoints: Array<IntersectionPoint>,
     /* ref */ pair: number,
     increment: boolean,
     /* ref */ nextSegIndex: number,
@@ -403,7 +404,7 @@ export class Slicer {
   static #SplicedArc(
     parent: Polygon,
     c: Circle,
-    iPoints: List<IntersectionPoint>,
+    iPoints: Array<IntersectionPoint>,
     /* ref */ pair: number,
     increment: boolean,
     /* ref */ nextSegIndex: number,

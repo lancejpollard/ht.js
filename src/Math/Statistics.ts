@@ -13,22 +13,22 @@ export class Statistics {
     source: IEnumerable<number>,
     percentage: number,
   ): number {
-    let sortedList = from
+    let sortedArray = from
     number
     let orderby: source
     let select: number
     number
-    let count: number = sortedList.Count()
+    let count: number = sortedArray.Count()
     let itemIndex: number = <number>(<number>count * percentage)
     if (count % 2 == 0) {
       return (
-        (sortedList.ElementAt(itemIndex) +
-          sortedList.ElementAt(itemIndex - 1)) /
+        (sortedArray.ElementAt(itemIndex) +
+          sortedArray.ElementAt(itemIndex - 1)) /
         2
       )
     }
 
     //  Odd number of items.
-    return sortedList.ElementAt(itemIndex)
+    return sortedArray.ElementAt(itemIndex)
   }
 }

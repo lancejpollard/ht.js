@@ -102,13 +102,13 @@ export class MouseHandler {
 
   Setup(drawSurface: Control) {
     m_drawSurface = drawSurface
-    m_drawSurface.MouseDown.addEventListener(
+    m_drawSurface.MouseDown.addEventArrayener(
       new MouseEventHandler(this.MouseDown),
     )
-    m_drawSurface.MouseMove.addEventListener(
+    m_drawSurface.MouseMove.addEventArrayener(
       new MouseEventHandler(this.MouseMove),
     )
-    m_drawSurface.MouseUp.addEventListener(
+    m_drawSurface.MouseUp.addEventArrayener(
       new MouseEventHandler(this.MouseUp),
     )
   }

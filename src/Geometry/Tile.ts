@@ -1,8 +1,8 @@
 export class Tile {
   // constructor () {
   //     Isometry = new Isometry();
-  //     EdgeIncidences = new List<Tile>();
-  //     VertexIndicences = new List<Tile>();
+  //     EdgeIncidences = new Array<Tile>();
+  //     VertexIndicences = new Array<Tile>();
   // }
 
   constructor(boundary: Polygon, drawn: Polygon, geometry: Geometry) {
@@ -62,16 +62,16 @@ export class Tile {
   ///  <summary>
   ///  Used to track edge-adjacent tiles in a tiling.
   ///  </summary>
-  get EdgeIncidences(): List<Tile> {}
+  get EdgeIncidences(): Array<Tile> {}
 
-  set EdgeIncidences(value: List<Tile>) {}
+  set EdgeIncidences(value: Array<Tile>) {}
 
   ///  <summary>
   ///  Used to track vertex-adjacent tiles in a tiling.
   ///  </summary>
-  get VertexIndicences(): List<Tile> {}
+  get VertexIndicences(): Array<Tile> {}
 
-  set VertexIndicences(value: List<Tile>) {}
+  set VertexIndicences(value: Array<Tile>) {}
 
   Clone(): Tile {
     let newTile: Tile = new Tile()

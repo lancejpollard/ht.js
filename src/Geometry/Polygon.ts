@@ -39,7 +39,7 @@ export class HighToleranceVectorEqualityComparer extends IEqualityComparer<Vecto
 
 export class Polygon extends ITransformable {
   constructor() {
-    Segments = new List<Segment>()
+    Segments = new Array<Segment>()
     Center = new Vector3D()
   }
 
@@ -47,9 +47,9 @@ export class Polygon extends ITransformable {
 
   set Center(value: Vector3D) {}
 
-  get Segments(): List<Segment> {}
+  get Segments(): Array<Segment> {}
 
-  set Segments(value: List<Segment>) {}
+  set Segments(value: Array<Segment>) {}
 
   ///  <summary>
   ///  Create a new polygon from a set of points.
@@ -74,7 +74,7 @@ export class Polygon extends ITransformable {
 
   Clone(): Polygon {
     let newPoly: Polygon = new Polygon()
-    // newPoly.Segments = new List<Segment>( Segments );
+    // newPoly.Segments = new Array<Segment>( Segments );
     for (let s: Segment in this.Segments) {
       newPoly.Segments.Add(s.Clone())
     }
@@ -85,7 +85,7 @@ export class Polygon extends ITransformable {
 
   CreateRegular(p: number, q: number) {
     this.Segments.Clear()
-    let points: List<Vector3D> = new List<Vector3D>()
+    let points: Array<Vector3D> = new Array<Vector3D>()
     let g: Geometry = Geometry2D.GetGeometry(p, q)
     let circumRadius: number = Geometry2D.GetNormalizedCircumRadius(
       p,
@@ -147,7 +147,7 @@ export class Polygon extends ITransformable {
   ///  centered at the origin with the first vertex on the x axis.
   ///  </summary>
   static CreateEuclidean(n: number): Polygon {
-    let polyPoints: List<Vector3D> = new List<Vector3D>()
+    let polyPoints: Array<Vector3D> = new Array<Vector3D>()
     let centralAngle: number = 2 * (Math.PI / n)
     for (let i: number = 0; i < n; i++) {
       let v: Vector3D = new Vector3D(1, 0)
@@ -166,7 +166,7 @@ export class Polygon extends ITransformable {
     p2: Vector3D,
     normal: Vector3D,
   ): Polygon {
-    let polyPoints: List<Vector3D> = new List<Vector3D>()
+    let polyPoints: Array<Vector3D> = new Array<Vector3D>()
     let centralAngle: number = 2 * (Math.PI / n)
     let direction: Vector3D = p2 - p1
     direction.RotateAboutAxis(normal, Math.PI / 2)
@@ -268,7 +268,7 @@ export class Polygon extends ITransformable {
   ///  Returns only the vertices of the polygon.
   ///  </summary>
   get Vertices(): Array<Vector3D> {
-    let points: List<Vector3D> = new List<Vector3D>()
+    let points: Array<Vector3D> = new Array<Vector3D>()
     for (let s: Segment in this.Segments) {
       points.Add(s.P1)
     }
@@ -280,7 +280,7 @@ export class Polygon extends ITransformable {
   ///  Returns all edge midpoints of the polygon.
   ///  </summary>
   get EdgeMidpoints(): Array<Vector3D> {
-    let points: List<Vector3D> = new List<Vector3D>()
+    let points: Array<Vector3D> = new Array<Vector3D>()
     for (let s: Segment in this.Segments) {
       points.Add(s.Midpoint)
     }
@@ -289,7 +289,7 @@ export class Polygon extends ITransformable {
   }
 
   get EdgePoints(): Array<Vector3D> {
-    let points: List<Vector3D> = new List<Vector3D>()
+    let points: Array<Vector3D> = new Array<Vector3D>()
     let arcResolution: number = Utils.DegreesToRadians(4.5)
     for (let i: number = 0; i < this.NumSides; i++) {
       let s: Segment = this.Segments[i]
@@ -474,7 +474,7 @@ export class Polygon extends ITransformable {
   ///  Gets the intersection points between us and a generalized circle.
   ///  </summary>
   GetIntersectionPoints(line: Circle): Array<Vector3D> {
-    let iPoints: List<Vector3D> = new List<Vector3D>()
+    let iPoints: Array<Vector3D> = new Array<Vector3D>()
     for (let i: number = 0; i < this.NumSides; i++) {
       iPoints.AddRange(line.GetIntersectionPoints(this.Segments[i]))
     }
@@ -576,13 +576,13 @@ export class Polygon extends ITransformable {
     }
 
     //  Get all of the the boundary intersection points.
-    let iPoints: List<Vector3D> =
-      this.GetIntersectionPoints(ray).ToList()
+    let iPoints: Array<Vector3D> =
+      this.GetIntersectionPoints(ray).ToArray()
     //  Keep only the positive, distinct ones.
     iPoints = iPoints
       .Where(() => {}, v.X > p.X)
       .Distinct(new HighToleranceVectorEqualityComparer())
-      .ToList()
+      .ToArray()
     //  Even number of intersection points means we're outside, odd means inside
     let inside: boolean = Utils.Odd(iPoints.Count)
     return inside
@@ -790,7 +790,7 @@ export class Segment implements ITransformable {
   ///  Return the vertices from subdividing ourselves.
   ///  </summary>
   Subdivide(numSegments: number): Array<Vector3D> {
-    let ret: List<Vector3D> = new List<Vector3D>()
+    let ret: Array<Vector3D> = new Array<Vector3D>()
     if (numSegments < 1) {
       console.assert(false)
       return ret.ToArray()
@@ -1014,8 +1014,8 @@ export class Segment implements ITransformable {
   ///  The new segments will be ordered in the same way as us (from p1 -> point and point -> p2 ).
   ///  </summary>
   ///  <returns>True if the segment was split, false otherwise (if passed in point is not on segment or an endpoint).</returns>
-  Split(point: Vector3D, /* out */ split: List<Segment>): boolean {
-    split = new List<Segment>()
+  Split(point: Vector3D, /* out */ split: Array<Segment>): boolean {
+    split = new Array<Segment>()
     if (!this.IsPointOn(point)) {
       console.assert(false)
       return false

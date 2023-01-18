@@ -158,7 +158,7 @@ export class Euclidean2D {
     p2 = v * r1
     p1 = v * r1
     let temp: number = (r1 * r1 - r2 * r2 + d * d) / (2 * d)
-    let angle: number = Math.Acos(temp / r1)
+    let angle: number = Math.acos(temp / r1)
     console.assert(
       !Tolerance.Zero(angle) && !Tolerance.Equal(angle, Math.PI),
     )
@@ -215,7 +215,7 @@ export class Euclidean2D {
       p1.Normalize()
       p1 = p1 * r
       p2 = p1
-      let angle: number = Math.Acos(d / r)
+      let angle: number = Math.acos(d / r)
       p1.RotateXY(angle)
       p2.RotateXY(angle * -1)
       //  Back out.

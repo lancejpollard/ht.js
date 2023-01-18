@@ -310,7 +310,7 @@ class Isometry implements ITransform {
     vertices: Array<Vector3D>,
     isometry: Isometry,
   ): Array<Vector3D> {
-    let result: List<Vector3D> = new List<Vector3D>()
+    let result: Array<Vector3D> = new Array<Vector3D>()
     for (let i: number = 0; i < vertices.Length; i++) {
       let transformed: Vector3D = isometry.Apply(vertices[i])
       result.Add(transformed)

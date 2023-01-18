@@ -1,3 +1,4 @@
+import { isInfinite } from '@Math/Utils'
 import { Vector3D } from './Vector3D'
 
 export class Circle3D {
@@ -80,7 +81,7 @@ export class Circle3D {
   ///  Calculate n points around the circle
   ///  </summary>
   Subdivide(n: number): Array<Vector3D> {
-    let points: List<Vector3D> = new List<Vector3D>()
+    let points: Array<Vector3D> = new Array<Vector3D>()
     let start: Vector3D = this.Normal.Perpendicular()
     start = start * this.Radius
     let angleInc: number = 2 * (Math.PI / n)
