@@ -1,3 +1,6 @@
+import { Mobius } from '@Math/Mobius'
+import { Complex } from './Complex'
+import { Geometry } from './Geometry'
 import { SphericalModels } from './SphericalModels'
 import { Vector3D } from './Vector3D'
 
@@ -151,14 +154,14 @@ export class HyperbolicModels {
     //  disk -> ellipse
     //  Complex result = alpha * z + beta / z;
     let off: number = cen.Abs()
-    let foil: System.Func<Complex, Complex>
-    // w *= 1 + Math.sqrt( 2 );
-    // Vector3D cen = new Vector3D( -off, -off );
-    let rad: number = 1 + off
-    //  cen.Dist( new Vector3D( 1, 0 ) );
-    z = z * rad
-    z = z + cen.ToComplex()
-    return z
+    let foil: System.Func<Complex, Complex> = (foil = z => {
+      //w *= 1 + Math.Sqrt( 2 );
+      //Vector3D cen = new Vector3D( -off, -off );
+      const rad = 1 + off // cen.Dist( new Vector3D( 1, 0 ) );
+      z *= rad
+      z += cen.ToComplex()
+      return z
+    })
 
     //  ellipse->disk
     let r1: Complex = w + Complex.Sqrt(w * w - 1)

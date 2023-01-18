@@ -2,6 +2,7 @@
 ///  Class with some hackish methods for dealing with points projected to infinite.
 
 import { Vector3D } from '@Geometry/Vector3D'
+import { isInfinite } from './Utils'
 
 ///  </summary>
 export class UtilsInfinity {
@@ -33,7 +34,7 @@ export class UtilsInfinity {
       isInfinite(input.Y) ||
       isInfinite(input.Z) ||
       isInfinite(input.W) ||
-      input.Abs() > InfiniteScale
+      input.Abs() > this.InfiniteScale
     )
   }
 
@@ -44,8 +45,8 @@ export class UtilsInfinity {
   static IsInfinite(input: number): boolean {
     return (
       Number.isNaN(input) ||
-      number.IsInfinity(input) ||
-      input >= InfiniteScale
+      isInfinite(input) ||
+      input >= this.InfiniteScale
     )
   }
 
