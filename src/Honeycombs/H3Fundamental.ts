@@ -1,17 +1,22 @@
 ///  <summary>
 ///  This class generates H3 honeycombs via a fundamental region.
+
+import { PolytopeProjection } from '@Geometry/Polytope'
+import { H3Cell } from './H3'
+import { H3Settings } from './H3Settings'
+import { EHoneycomb, Honeycomb } from './Honeycomb'
+
 ///  </summary>
 export class H3Fundamental {
-  static Generate(honeycomb: EHoneycomb, settings: H3.Settings) {
+  static Generate(honeycomb: EHoneycomb, settings: H3Settings) {
     //  XXX - Block the same as in H3.  Share code better.
-    let template: H3.Cell = null
+    let template: H3Cell = null
     let r: number
     let p: number
     let q: number
     Honeycomb.PQR(honeycomb, /* out */ p, /* out */ q, /* out */ r)
     //  Get data we need to generate the honeycomb.
-    let projection: Polytope.Projection =
-      Polytope.Projection.FaceCentered
+    let projection: PolytopeProjection = PolytopeProjection.FaceCentered
     let psi: number
     let phi: number
     let chi: number
@@ -32,7 +37,7 @@ export class H3Fundamental {
     let tiling: Tiling = new Tiling()
     let config: TilingConfig = new TilingConfig(p, q)
     tiling.GenerateInternal(config, projection)
-    let first: H3.Cell = new H3.Cell(p, H3.GenFacets(tiling))
+    let first: H3Cell = new H3Cell(p, H3.GenFacets(tiling))
     first.ToSphere()
     //  Work in ball model.
     first.ScaleToCircumSphere(1)
@@ -41,8 +46,8 @@ export class H3Fundamental {
     //  Center
     let center: Vector3D = template.Center
     //  Face
-    let facet: H3.Cell.Facet = template.Facets[0]
-    let s: Sphere = H3Models.Ball.OrthogonalSphereInterior(
+    let facet: H3Cell.Facet = template.Facets[0]
+    let s: Sphere = H3UtilBall.OrthogonalSphereInterior(
       facet.Verts[0],
       facet.Verts[1],
       facet.Verts[2],
@@ -52,7 +57,7 @@ export class H3Fundamental {
     face = face * H3Fundamental.DistOriginToOrthogonalSphere(s.Radius)
     //  Edge
     let c: Circle3D
-    H3Models.Ball.OrthogonalCircleInterior(
+    H3UtilBall.OrthogonalCircleInterior(
       facet.Verts[0],
       facet.Verts[1],
       /* out */ c,
@@ -125,7 +130,7 @@ export class H3Fundamental {
     level: number,
     tets: List<H3FundamentalTet>,
     completedH3FundamentalTets: Record<H3FundamentalTet, number>,
-    settings: H3.Settings,
+    settings: H3Settings,
   ) {
     //  Breadth first recursion.
     if (0 == tets.Count) {
@@ -209,22 +214,22 @@ export class H3FundamentalTet {
 
   #CalcFaces() {
     this.m_faces = [
-      H3Models.Ball.OrthogonalSphereInterior(
+      H3UtilBall.OrthogonalSphereInterior(
         this.Verts[0],
         this.Verts[1],
         this.Verts[2],
       ),
-      H3Models.Ball.OrthogonalSphereInterior(
+      H3UtilBall.OrthogonalSphereInterior(
         this.Verts[0],
         this.Verts[3],
         this.Verts[1],
       ),
-      H3Models.Ball.OrthogonalSphereInterior(
+      H3UtilBall.OrthogonalSphereInterior(
         this.Verts[0],
         this.Verts[2],
         this.Verts[3],
       ),
-      H3Models.Ball.OrthogonalSphereInterior(
+      H3UtilBall.OrthogonalSphereInterior(
         this.Verts[1],
         this.Verts[3],
         this.Verts[2],

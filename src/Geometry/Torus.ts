@@ -1,23 +1,22 @@
 ///  <summary>
 ///  Class to generate tori on a 3-sphere
+
+import { Vector3D } from './Vector3D'
+
 ///  </summary>
 export class Torus {
-  get Params(): TorusParameters {}
-
-  set Params(value: TorusParameters) {}
+  Params: TorusParameters | undefined
 
   ///  <summary>
   ///  Our vertices.
   ///  NOTE: Not realy a Vector3D here (need to rename my class).
   ///  </summary>
-  get Vertices(): Array<Vector3D> {}
-
-  set Vertices(value: Array<Vector3D>) {}
+  Vertices: Array<Vector3D> | undefined
 
   ///  <summary>
   ///  Size our Vertices matrix.
   ///  </summary>
-  #InitVerts() {
+  InitVerts() {
     let n1: number = this.Params.NumSegments1
     let n2: number = this.Params.NumSegments2
     this.Vertices = new Array(n1)
@@ -79,25 +78,21 @@ export class Torus {
 ///  </summary>
 export class TorusParameters {
   constructor() {
-    NumSegments2 = 50
-    NumSegments1 = 50
-    TubeRadius1 = 0.5
-    Radius = 1
+    this.NumSegments2 = 50
+    this.NumSegments1 = 50
+    this.TubeRadius1 = 0.5
+    this.Radius = 1
   }
 
   ///  <summary>
   ///  The number of segments to generate in the first direction of the torus surface.
   ///  </summary>
-  get NumSegments1(): number {}
-
-  set NumSegments1(value: number) {}
+  NumSegments1: number
 
   ///  <summary>
   ///  The number of segments to generate in the second direction of the torus surface.
   ///  </summary>
-  get NumSegments2(): number {}
-
-  set NumSegments2(value: number) {}
+  NumSegments2: number
 
   ///  <summary>
   ///  The first tube radius of our torus.
@@ -106,14 +101,10 @@ export class TorusParameters {
   ///         - This radius must be less than or equal the 3-sphere radius
   ///         - If equal 0 or equal to the 3-sphere radius, one tube will be empty (torus will be a line).
   ///  </summary>
-  get TubeRadius1(): number {}
-
-  set TubeRadius1(value: number) {}
+  TubeRadius1: number
 
   ///  <summary>
   ///  The radius of our 3-sphere
   ///  </summary>
-  get Radius(): number {}
-
-  set Radius(value: number) {}
+  Radius: number
 }

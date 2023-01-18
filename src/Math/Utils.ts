@@ -114,3 +114,9 @@ export class Utils {
     t2 = t
   }
 }
+
+export function isInfinite(val: number): boolean {
+  return (
+    val == Number.POSITIVE_INFINITY || val == Number.NEGATIVE_INFINITY
+  )
+}

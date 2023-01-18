@@ -189,7 +189,7 @@ export class MouseHandler {
         //  Using elapsed time works much better than checking how many pixels moved (as MC4D does).
         m_spinning = this.m_stopWatch.ElapsedMilliseconds < 50
         this.m_stopWatch.Stop()
-        System.Diagnostics.Trace.WriteLine(
+        console.log(
           string.Format(
             'Spinning = {0}, Elapsed = {1}',
             m_spinning,

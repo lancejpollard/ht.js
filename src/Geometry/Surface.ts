@@ -1,19 +1,17 @@
+import { UtilsInfinity } from '@Math/Infinity'
+import { Mobius } from '@Math/Mobius'
+import { isInfinite } from '@Math/Utils'
+import { Mesh } from './Mesh'
+import { Vector3D } from './Vector3D'
+
 export class Surface {
   ///  <summary>
   ///  Transform a mesh in the Poincare model to Dini's surface.
   ///  </summary>
   static Dini(mesh: Mesh): Mesh {
-    let transform: System.Func<Vector3D, Vector3D>
-    // v = DiskToUpper( v );
-    // v.Y = Math.log( v.Y );
-    // if( v.Y < 1 || v.Y > 10 )
-    //     return Infinity.InfinityVector;
-    // if( v.X < -Math.PI || v.X > Math.PI )
-    // if( v.X < -3*Math.PI || v.X > 3*Math.PI )
-    //     return Infinity.InfinityVector;
-    // v.Y = Math.log( v.Y );
-    // return v;
-    return Surface.Dini(v)
+    let transform: System.Func<Vector3D, Vector3D> = v => {
+      this.Dini(v)
+    }
 
     let result: Mesh = new Mesh()
     for (let i: number = 0; i < mesh.Triangles.Count; i++) {
@@ -34,8 +32,8 @@ export class Surface {
     return Surface.Dini2(uv)
   }
 
-  static #Sech(val: number): number {
-    return 1 / Math.Cosh(val)
+  static Sech(val: number): number {
+    return 1 / Math.cosh(val)
   }
 
   ///  <summary>
@@ -49,7 +47,7 @@ export class Surface {
     //     v *= -1;
     let v: number = uv.X
     if (u <= -4 || u > 4 || v < 6 * Math.PI * -1 || v > 6 * Math.PI) {
-      return Infinity.InfinityVector
+      return UtilsInfinity.InfinityVector
     }
 
     let psi: number = 0.5
@@ -78,7 +76,7 @@ export class Surface {
     let pSinEta: number = p * Math.Sin(eta)
     let chi: number = (x - y * Math.Cos(eta)) / pSinEta
     if (x <= -4 || x > 4 || y < 3 * Math.PI * -1 || y > 3 * Math.PI) {
-      return Infinity.InfinityVector
+      return UtilsInfinity.InfinityVector
     }
 
     let result: Vector3D = new Vector3D(
@@ -89,7 +87,7 @@ export class Surface {
     return result
   }
 
-  static #DiskToUpper(input: Vector3D): Vector3D {
+  static DiskToUpper(input: Vector3D): Vector3D {
     let m: Mobius = new Mobius()
     m.UpperHalfPlane()
     return m.Apply(input)

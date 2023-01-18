@@ -42,7 +42,7 @@ export class H3Fundamental {
     let center: Vector3D = template.Center
     //  Face
     let facet: H3.Cell.Facet = template.Facets[0]
-    let s: Sphere = H3Models.Ball.OrthogonalSphereInterior(
+    let s: Sphere = H3UtilBall.OrthogonalSphereInterior(
       facet.Verts[0],
       facet.Verts[1],
       facet.Verts[2],
@@ -52,7 +52,7 @@ export class H3Fundamental {
     face = face * H3Fundamental.DistOriginToOrthogonalSphere(s.Radius)
     //  Edge
     let c: Circle3D
-    H3Models.Ball.OrthogonalCircleInterior(
+    H3UtilBall.OrthogonalCircleInterior(
       facet.Verts[0],
       facet.Verts[1],
       /* out */ c,
@@ -209,22 +209,22 @@ export class H3FundamentalTet {
 
   #CalcFaces() {
     this.m_faces = [
-      H3Models.Ball.OrthogonalSphereInterior(
+      H3UtilBall.OrthogonalSphereInterior(
         this.Verts[0],
         this.Verts[1],
         this.Verts[2],
       ),
-      H3Models.Ball.OrthogonalSphereInterior(
+      H3UtilBall.OrthogonalSphereInterior(
         this.Verts[0],
         this.Verts[3],
         this.Verts[1],
       ),
-      H3Models.Ball.OrthogonalSphereInterior(
+      H3UtilBall.OrthogonalSphereInterior(
         this.Verts[0],
         this.Verts[2],
         this.Verts[3],
       ),
-      H3Models.Ball.OrthogonalSphereInterior(
+      H3UtilBall.OrthogonalSphereInterior(
         this.Verts[1],
         this.Verts[3],
         this.Verts[2],

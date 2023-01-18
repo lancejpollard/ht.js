@@ -163,7 +163,7 @@ export class S3 {
       let c: Vector3D = v.ProjectTo3DSafe(1)
       let p: Vector3D
       let d: number
-      H3Models.Ball.DupinCyclideSphere(
+      H3UtilBall.DupinCyclideSphere(
         c,
         r,
         Geometry.Spherical,

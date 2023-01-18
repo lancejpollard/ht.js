@@ -148,7 +148,7 @@ export class UltraInf {
     let p2s: System.Func<Vector3D, Vector3D>
     Spherical2D.PlaneToSphere(v)
     let transform: System.Func<Vector3D, Vector3D>
-    H3Models.Ball.ApplyMobius(Mobius.Scale(3), v)
+    H3UtilBall.ApplyMobius(Mobius.Scale(3), v)
     let min: number = double.MaxValue
     let cell: UltraInfCell = this.m_cells.First()
     for (let v1: Vector3D in cell.Tiles[0].Boundary.Vertices) {

@@ -500,9 +500,3 @@ export class CircleNE_EqualityComparer extends IEqualityComparer<CircleNE> {
     }
   }
 }
-
-export function isInfinite(val: number): boolean {
-  return (
-    val == Number.POSITIVE_INFINITY || val == Number.NEGATIVE_INFINITY
-  )
-}

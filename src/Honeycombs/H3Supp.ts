@@ -103,7 +103,7 @@ export class H3Supp {
         //  Append to the file vs. writing out all at once because I was running out of memory otherwise.
         mesh = new Shapeways()
         let div: number
-        H3Models.Ball.LODThin(edge.Start, edge.End, /* out */ div)
+        H3UtilBall.LODThin(edge.Start, edge.End, /* out */ div)
         mesh.Div = div
         H3.Util.AddToMeshInternal(mesh, edge.Start, edge.End)
         mesh.Mesh.Scale(settings.Scale)

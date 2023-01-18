@@ -144,8 +144,8 @@ export class PovRay {
     //  STL
     // minRad = 0.8 / 100;
     if (parameters.Halfspace) {
-      // v1 = H3Models.BallToUHS( v1 );
-      // v2 = H3Models.BallToUHS( v2 );
+      // v1 = H3UtilBallToUHS( v1 );
+      // v2 = H3UtilBallToUHS( v2 );
       points = H3Models.UHS.GeodesicPoints(v1, v2)
       if (!parameters.ThinEdges) {
       }
@@ -154,7 +154,7 @@ export class PovRay {
       return new Sphere()
     } else {
       if (g == Geometry.Hyperbolic) {
-        points = H3Models.Ball.GeodesicPoints(v1, v2, edge.Color.Z)
+        points = H3UtilBall.GeodesicPoints(v1, v2, edge.Color.Z)
       } else if (g == Geometry.Spherical) {
         points = S3.GeodesicPoints(v1, v2)
         // points = points.Select( p => { p.Normalize(); return p; } ).ToArray();
@@ -174,7 +174,7 @@ export class PovRay {
 
       let c: Vector3D
       let r: number
-      H3Models.Ball.DupinCyclideSphere(
+      H3UtilBall.DupinCyclideSphere(
         v,
         parameters.AngularThickness / 2,
         g,
@@ -196,7 +196,7 @@ export class PovRay {
   ): string {
     let c: Vector3D
     let r: number
-    H3Models.Ball.DupinCyclideSphere(
+    H3UtilBall.DupinCyclideSphere(
       vert,
       parameters.AngularThickness / 2,
       g,
@@ -460,7 +460,7 @@ export class PovRay {
     let eDist: number = DonHatch.h2eNorm(hDist)
     let cen: Vector3D
     let rad: number
-    H3Models.Ball.DupinCyclideSphere(
+    H3UtilBall.DupinCyclideSphere(
       p,
       eDist,
       /* out */ cen,
@@ -527,7 +527,7 @@ export class PovRay {
     let sb: StringBuilder = new StringBuilder()
     //  Omnitruncated, so we can reflect in any face.
     let secondPoint: Vector3D = facets[0].ReflectPoint(interiorPoint)
-    let hDist: number = H3Models.Ball.HDist(interiorPoint, secondPoint)
+    let hDist: number = H3UtilBall.HDist(interiorPoint, secondPoint)
     let inSphere: Sphere = PovRay.ConstructSphere(
       interiorPoint,
       hDist * 2,

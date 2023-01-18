@@ -9,6 +9,12 @@
 ///  The hyperbolic banana is a truncated cone in this configuration with axis the z-axis, truncated at 1 and h. The slope of the cone is the parameter for the thickness of the banana.
 ///  Choose points for approximating the cone with polygons. We have some number of circles spaced vertically up the cone, and lines perpendicular to these circles that go through the origin. The intersections between the circles and the lines are our vertices. We want the lines with equal angle spacing around the z-axis, and the circles spaced exponentially up the z-axis, with one circle at 1 and one at h.
 ///  Now map those vertices forward through all of our transformations.
+
+import { Circle3D } from '@Geometry/Sphere'
+import { Vector3D } from '@Geometry/Vector3D'
+import { DonHatch } from '@Math/DonHatch'
+import { Tolerance, Utils } from '@Math/Utils'
+
 ///  </summary>
 export class Banana {
   ///  <summary>

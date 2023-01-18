@@ -1,3 +1,6 @@
+import { isInfinite } from '@Math/Utils'
+import { Vector3D } from './Vector3D'
+
 export class Sterographic {
   static PlaneToSphereSafe(planePoint: Vector3D): Vector3D {
     if (isInfinite(planePoint)) {
