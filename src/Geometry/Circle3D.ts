@@ -2,21 +2,11 @@ import { isInfinite } from '@Math/Utils'
 import { Vector3D } from './Vector3D'
 
 export class Circle3D {
-  get Center(): Vector3D {}
+  Center: Vector3D
 
-  set Center(value: Vector3D) {}
+  Radius: number
 
-  get Radius(): number {}
-
-  set Radius(value: number) {}
-
-  get Normal(): Vector3D {}
-
-  set Normal(value: Vector3D) {}
-
-  get Color(): System.Drawing.Color {}
-
-  set Color(value: System.Drawing.Color) {}
+  Normal: Vector3D
 
   constructor(t1: Vector3D, t2: Vector3D, t3: Vector3D) {
     let center: Vector3D
