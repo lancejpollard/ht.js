@@ -493,7 +493,7 @@ export class CircleNE_EqualityComparer extends IEqualityComparer<CircleNE> {
       return (
         c.Center.GetHashCode() |
         (c.CenterNE.GetHashCode() |
-          Math.Round(c.Radius, decimals).GetHashCode())
+          Math.round(c.Radius, decimals).GetHashCode())
       )
       // The operator should be an XOR ^ instead of an OR, but not available in CodeDOM
       // The operator should be an XOR ^ instead of an OR, but not available in CodeDOM

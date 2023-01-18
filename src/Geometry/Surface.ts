@@ -19,7 +19,7 @@ export class Surface {
       let b: Vector3D = transform(mesh.Triangles[i].b)
       let c: Vector3D = transform(mesh.Triangles[i].c)
       if (isInfinite(a) || isInfinite(b) || isInfinite(c)) {
-        // TODO: Warning!!! continue If
+        continue
       }
 
       result.Triangles.Add(new Mesh.Triangle(a, b, c))

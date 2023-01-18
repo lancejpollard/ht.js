@@ -11,19 +11,18 @@ export class GraphEdge {
   }
 
   get V1(): number {}
+
   set V1(value: number) {}
 
   get V2(): number {}
+
   set V2(value: number) {}
 
   ///  <summary>
   ///  Given a vertex index, find the vertex at the other end of the edge.
   ///  </summary>
   Opposite(idx: number): number {
-    return this.V2
-    // TODO: Warning!!!, inline IF is not supported ?
-    idx == this.V1
-    this.V1
+    return idx == V1 ? V2 : V1
   }
 
   ///  <summary>
@@ -31,7 +30,7 @@ export class GraphEdge {
   ///  </summary>
   ReadEdge(line: string) {
     // string[] split = line.Split( '\t' );
-    let split: string[] = line.Split(
+    let split: Array<string> = line.Split(
       ['\t', ' '],
       System.StringSplitOptions.RemoveEmptyEntries,
     )

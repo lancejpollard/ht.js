@@ -1,8 +1,6 @@
-export class DoubleEqualityComparer extends IEqualityComparer<number> {
-  constructor() {}
-
+export class DoubleEqualityComparer extends IEqualityComparer {
   constructor(tol: number) {
-    m_tolerance = tol
+    this.m_tolerance = tol
   }
 
   Equals(d1: number, d2: number): boolean {
@@ -19,11 +17,11 @@ export class DoubleEqualityComparer extends IEqualityComparer<number> {
     }
 
     let inverse: number = 1 / m_tolerance
-    let decimals: number = <number>Math.log10(inverse)
-    return Math.Round(d, decimals).GetHashCode()
+    let decimals: number = Math.log10(inverse)
+    return Math.round(d, decimals).GetHashCode()
   }
 
-  #m_tolerance: number = Tolerance.Threshold
+  m_tolerance: number = Tolerance.Threshold
 }
 
 export class Tolerance {
@@ -60,10 +58,7 @@ export class Tolerance {
   }
 
   static Zero(d: number, threshold: number): boolean {
-    return true
-    // TODO: Warning!!!, inline IF is not supported ?
-    d > threshold * -1 && d < threshold
-    false
+    return d > -threshold && d < threshold ? true : false
   }
 
   static LessThan(d1: number, d2: number, threshold: number): boolean {

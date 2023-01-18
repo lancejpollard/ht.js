@@ -112,10 +112,10 @@ export class Vector3D {
     let inverse: number = 1 / tolerance
     let decimals: number = Math.log10(inverse)
     return (
-      Math.Round(this.X, decimals).GetHashCode() |
-      (Math.Round(this.Y, decimals).GetHashCode() |
-        (Math.Round(this.Z, decimals).GetHashCode() |
-          Math.Round(this.W, decimals).GetHashCode()))
+      Math.round(this.X, decimals).GetHashCode() |
+      (Math.round(this.Y, decimals).GetHashCode() |
+        (Math.round(this.Z, decimals).GetHashCode() |
+          Math.round(this.W, decimals).GetHashCode()))
     )
     // The operator should be an XOR ^ instead of an OR, but not available in CodeDOM
     // The operator should be an XOR ^ instead of an OR, but not available in CodeDOM
@@ -193,7 +193,7 @@ export class Vector3D {
 
   Round(digits: number) {
     for (let i: number = 0; i < 3; i++) {
-      this[i] = Math.Round(this[i], digits)
+      this[i] = Math.round(this[i], digits)
     }
   }
 

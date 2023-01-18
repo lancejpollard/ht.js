@@ -402,7 +402,7 @@ export class TextureHelper {
 
     for (let tris in edgeToTriangles.Values) {
       if (tris.Count == 1) {
-        // TODO: Warning!!! continue If
+        continue
       } else if (tris.Count == 2) {
         addIncident(tris[0], tris[1])
         addIncident(tris[1], tris[0])

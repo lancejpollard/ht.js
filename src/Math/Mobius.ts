@@ -399,20 +399,20 @@ export class Mobius implements ITransform {
   Round(digits: number) {
     let d: number = digits
     this.A = new Complex(
-      Math.Round(this.A.Real, d),
-      Math.Round(this.A.Imaginary, d),
+      Math.round(this.A.Real, d),
+      Math.round(this.A.Imaginary, d),
     )
     this.B = new Complex(
-      Math.Round(this.B.Real, d),
-      Math.Round(this.B.Imaginary, d),
+      Math.round(this.B.Real, d),
+      Math.round(this.B.Imaginary, d),
     )
     this.C = new Complex(
-      Math.Round(this.C.Real, d),
-      Math.Round(this.C.Imaginary, d),
+      Math.round(this.C.Real, d),
+      Math.round(this.C.Imaginary, d),
     )
     this.D = new Complex(
-      Math.Round(this.D.Real, d),
-      Math.Round(this.D.Imaginary, d),
+      Math.round(this.D.Real, d),
+      Math.round(this.D.Imaginary, d),
     )
   }
 }

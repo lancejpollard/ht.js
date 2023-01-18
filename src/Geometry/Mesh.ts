@@ -156,10 +156,7 @@ export class Mesh {
 
     for (let i: number = 0; i < end; i++) {
       let idx1: number = i
-      let idx2: number = 0
-      // TODO: Warning!!!, inline IF is not supported ?
-      i == d1.Length - 1
-      i + 1
+      let idx2 = i == d1.Length - 1 ? 0 : i + 1
       this.MeshTriangles.Add(
         new Mesh.MeshTriangle(d1[idx1], d2[idx1], d1[idx2]),
       )
@@ -291,7 +288,7 @@ export class Mesh {
       let boundarySeg: Segment = tile.Boundary.Segments[i]
       let d1: Segment = tile.Drawn.Segments[i]
       if (completed.Contains(boundarySeg.Midpoint)) {
-        // TODO: Warning!!! continue If
+        continue
       }
 
       //  Find the incident segment.
