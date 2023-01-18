@@ -42,7 +42,7 @@ export class Shapeways {
     //  Cylinder thickness function.
     let sizeFunc: System.Func<Vector3D, number>
     let h: number = (v - center).Z
-    return Math.Sqrt(radius * radius - h * h)
+    return Math.sqrt(radius * radius - h * h)
 
     let disks: List<Array<Vector3D>> = this.CalcDisks(
       axisPoints.ToArray(),
@@ -232,7 +232,7 @@ export class Shapeways {
   ): Array<Vector3D> {
     //  Try to optimize the number of segments.
     let numPoints: number = 8
-    // int numPoints = (int)(Math.Sqrt(radius) * divisions);
+    // int numPoints = (int)(Math.sqrt(radius) * divisions);
     numPoints = Math.Max(3, numPoints)
     numPoints = 57
     return Shapeways.CalcArcPoints(

@@ -3,70 +3,70 @@ import System;
 import System.Numerics;
 
 module R3.Geometry {
-    
+
     export enum HyperbolicModel {
-        
+
         Poincare,
-        
+
         Klein,
-        
+
         Pseudosphere,
-        
+
         Hyperboloid,
-        
+
         Band,
-        
+
         UpperHalfPlane,
-        
+
         Orthographic,
-        
+
         Square,
-        
+
         InvertedPoincare,
-        
+
         Joukowsky,
-        
+
         Ring,
-        
+
         Azimuthal_Equidistant,
-        
+
         Azimuthal_EqualArea,
-        
+
         Schwarz_Christoffel,
     }
-    
+
     export class HyperbolicModels {
-        
+
         public static PoincareToKlein(p: Vector3D): Vector3D {
             let mag: number = (2 / (1 + p.Dot(p)));
             return (p * mag);
         }
-        
+
         public static KleinToPoincare(magSquared: number): number {
             let dot: number = magSquared;
             if ((dot > 1)) {
                 dot = 1;
             }
-            
-            return ((1 - Math.Sqrt((1 - dot))) 
+
+            return ((1 - Math.sqrt((1 - dot)))
                         / dot);
         }
-        
+
         public static KleinToPoincare(k: Vector3D): Vector3D {
             let dot: number = k.Dot(k);
             return (k * HyperbolicModels.KleinToPoincare(dot));
         }
-        
+
         public static get Upper(): Mobius {
             HyperbolicModels.Cache();
             return m_upper;
         }
-        
+
         public static get UpperInv(): Mobius {
             HyperbolicModels.Cache();
             return m_upperInv;
         }
-        
+
         ///  <summary>
         ///  This was needed for performance.  We don't want this Mobius transform calculated repeatedly.
         ///  </summary>
@@ -74,7 +74,7 @@ module R3.Geometry {
             if (m_cached) {
                 return;
             }
-            
+
             let m2: Mobius = new Mobius();
             let m1: Mobius = new Mobius();
             m2.Isometry(Geometry.Euclidean, 0, new Complex(0, -1));
@@ -83,79 +83,79 @@ module R3.Geometry {
             m_upperInv = m_upper.Inverse();
             m_cached = true;
         }
-        
+
         private static m_cached: boolean = false;
-        
+
         private static m_upper: Mobius;
-        
+
         private static m_upperInv: Mobius;
-        
+
         public static PoincareToUpper(v: Vector3D): Vector3D {
             v = Upper.Apply(v);
             return v;
         }
-        
+
         public static UpperToPoincare(v: Vector3D): Vector3D {
             v = UpperInv.Apply(v);
             return v;
         }
-        
+
         public static PoincareToOrtho(v: Vector3D): Vector3D {
             //  This may not be correct.
             //  Should probably project to hyperboloid, then remove z coord.
             return SphericalModels.StereoToGnomonic(v);
         }
-        
+
         public static OrthoToPoincare(v: Vector3D): Vector3D {
             return SphericalModels.GnomonicToStereo(v);
         }
-        
+
         public static PoincareToBand(v: Vector3D): Vector3D {
             let z: Complex = v.ToComplex();
-            z = (2 
+            z = (2
                         / (Math.PI * Complex.Log(((1 + z) / (1 - z)))));
             return Vector3D.FromComplex(z);
         }
-        
+
         public static BandToPoincare(v: Vector3D): Vector3D {
             let vc: Complex = v.ToComplex();
-            vc = ((Complex.Exp((Math.PI 
-                            * (vc / 2))) - 1) 
-                        / (Complex.Exp((Math.PI 
+            vc = ((Complex.Exp((Math.PI
+                            * (vc / 2))) - 1)
+                        / (Complex.Exp((Math.PI
                             * (vc / 2))) + 1));
             return Vector3D.FromComplex(vc);
         }
-        
+
         ///  <param name="a">The Euclidean period of the tiling in the band model.</param>
         public static BandToRing(v: Vector3D, P: number, k: number): Vector3D {
             let vc: Complex = v.ToComplex();
             let i: Complex = new Complex(0, 1);
-            vc = Complex.Exp((2 
-                            * (Math.PI 
-                            * (i 
-                            * ((vc + i) 
+            vc = Complex.Exp((2
+                            * (Math.PI
+                            * (i
+                            * ((vc + i)
                             / (k * P))))));
             return Vector3D.FromComplex(vc);
         }
-        
+
         ///  <param name="a">The Euclidean period of the tiling in the band model.</param>
         public static RingToBand(v: Vector3D, P: number, k: number): Vector3D {
             let vc: Complex = v.ToComplex();
             let i: Complex = new Complex(0, 1);
-            vc = (((P 
-                        * (k 
-                        * (i 
-                        * (Complex.Log(vc) / (2 * Math.PI))))) 
-                        - i) 
+            vc = (((P
+                        * (k
+                        * (i
+                        * (Complex.Log(vc) / (2 * Math.PI)))))
+                        - i)
                         * -1);
             return Vector3D.FromComplex(vc);
         }
-        
+
         public static RingToPoincare(v: Vector3D, P: number, k: number): Vector3D {
             let b: Vector3D = HyperbolicModels.RingToBand(v, P, k);
             return HyperbolicModels.BandToPoincare(b);
         }
-        
+
         public static JoukowskyToPoincare(v: Vector3D, cen: Vector3D): Vector3D {
             let w: Complex = v.ToComplex();
             //  Conformally map disk to ellipse with a > 1 and b = 1;
@@ -163,26 +163,26 @@ module R3.Geometry {
             //  https://www.physicsforums.com/threads/conformal-mapping-unit-circle-ellipse.218014/
             let a: number = 0.9;
             let b: number = 1;
-            let alpha: number = ((a + b) 
+            let alpha: number = ((a + b)
                         / 2);
-            let beta: number = ((a - b) 
+            let beta: number = ((a - b)
                         / 2);
             //  disk -> ellipse
             //  Complex result = alpha * z + beta / z;
             let off: number = cen.Abs();
             let foil: System.Func<Complex, Complex>;
-            // w *= 1 + Math.Sqrt( 2 );
+            // w *= 1 + Math.sqrt( 2 );
             // Vector3D cen = new Vector3D( -off, -off );
             let rad: number = (1 + off);
             //  cen.Dist( new Vector3D( 1, 0 ) );
             z = (z * rad);
             z = (z + cen.ToComplex());
             return z;
-            
+
             //  ellipse->disk
-            let r1: Complex = (w + Complex.Sqrt(((w * w) 
+            let r1: Complex = (w + Complex.Sqrt(((w * w)
                             - 1)));
-            let r2: Complex = (w - Complex.Sqrt(((w * w) 
+            let r2: Complex = (w - Complex.Sqrt(((w * w)
                             - 1)));
             r1 = foil(r1);
             r2 = foil(r2);
@@ -192,28 +192,28 @@ module R3.Geometry {
             else {
                 w = r2;
             }
-            
+
             return Vector3D.FromComplex(w);
         }
-        
+
         public static EquidistantToPoincare(p: Vector3D): Vector3D {
             let result: Vector3D = p;
             result.Normalize();
             result = (result * HyperbolicModels.EquidistantToPoincare(p.Abs()));
             return result;
         }
-        
+
         private static EquidistantToPoincare(dist: number): number {
             return DonHatch.h2eNorm(dist);
         }
-        
+
         public static EqualAreaToPoincare(p: Vector3D): Vector3D {
             let result: Vector3D = p;
             result.Normalize();
             result = (result * HyperbolicModels.EqualAreaToPoincare(p.Abs()));
             return result;
         }
-        
+
         private static EqualAreaToPoincare(dist: number): number {
             let h: number = (2 * DonHatch.asinh(dist));
             return DonHatch.h2eNorm(h);

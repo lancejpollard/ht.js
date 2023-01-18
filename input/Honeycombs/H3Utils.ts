@@ -806,7 +806,7 @@ module R3.Geometry {
 
                 div1 = 13;
                 div2 = (<number>((5
-                            + (Math.Sqrt(e1.Dist(e2)) * 10))));
+                            + (Math.sqrt(e1.Dist(e2)) * 10))));
             }
 
             ///  <summary>
@@ -845,7 +845,7 @@ module R3.Geometry {
             ///  </summary>
             public static ToEHorizontal(hNorm: number, z: number): number {
                 //  https://en.wikipedia.org/wiki/Poincar%C3%A9_half-plane_model
-                let offset: number = Math.Sqrt(((DonHatch.cosh(hNorm) - 1) * (2
+                let offset: number = Math.sqrt(((DonHatch.cosh(hNorm) - 1) * (2
                                 * (z * z))));
                 return offset;
             }
@@ -1097,7 +1097,7 @@ module R3.Geometry {
             H3Models.Ball.LOD_Ideal(e1, e2, /* out */div1, /* out */div2, settings);
             let increment: number = (logHeight / div1);
             for (let i: number = (div1 * -1); (i <= div1); i += 2) {
-                points.Add(new Vector3D(0, 0, Math.Exp((increment * i))));
+                points.Add(new Vector3D(0, 0, Math.exp((increment * i))));
             }
 
             let tempMesh: Shapeways = new Shapeways();
@@ -1163,7 +1163,7 @@ module R3.Geometry {
                     h = (h + tinyOffset);
                 }
 
-                let point: Vector3D = new Vector3D(0, 0, Math.Exp(h));
+                let point: Vector3D = new Vector3D(0, 0, Math.exp(h));
                 points.Add(point);
             }
 

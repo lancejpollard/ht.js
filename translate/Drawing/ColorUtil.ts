@@ -67,16 +67,16 @@ export class ColorUtil {
     }
 
     let a: number = <number>(
-      Math.Sqrt(colors.Select(() => {}, <number>c.A * c.A).Average())
+      Math.sqrt(colors.Select(() => {}, <number>c.A * c.A).Average())
     )
     let r: number = <number>(
-      Math.Sqrt(colors.Select(() => {}, <number>c.R * c.R).Average())
+      Math.sqrt(colors.Select(() => {}, <number>c.R * c.R).Average())
     )
     let g: number = <number>(
-      Math.Sqrt(colors.Select(() => {}, <number>c.G * c.G).Average())
+      Math.sqrt(colors.Select(() => {}, <number>c.G * c.G).Average())
     )
     let b: number = <number>(
-      Math.Sqrt(colors.Select(() => {}, <number>c.B * c.B).Average())
+      Math.sqrt(colors.Select(() => {}, <number>c.B * c.B).Average())
     )
     return Color.FromArgb(a, r, g, b)
   }

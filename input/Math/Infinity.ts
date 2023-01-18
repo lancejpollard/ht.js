@@ -31,7 +31,7 @@ module R3.Geometry {
         }
 
         public static IsInfinite(input: number): boolean {
-            return (number.IsNaN(input)
+            return (Number.isNaN(input)
                         || (number.IsInfinity(input)
                         || (input >= InfiniteScale)));
         }

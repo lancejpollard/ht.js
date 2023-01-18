@@ -112,7 +112,7 @@ export class VectorND {
   }
 
   get Abs(): number {
-    return Math.Sqrt(this.MagSquared)
+    return Math.sqrt(this.MagSquared)
   }
 
   Dist(v: VectorND): number {

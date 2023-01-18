@@ -150,7 +150,7 @@ module R3.Geometry {
             let l1Squared: number = ((p2 - p1)).MagSquared();
             let l2Squared: number = ((p3 - p2)).MagSquared();
             let l3Squared: number = ((p1 - p3)).MagSquared();
-            return Math.Sqrt(Math.Max(l1Squared, Math.Max(l2Squared, l3Squared)));
+            return Math.sqrt(Math.Max(l1Squared, Math.Max(l2Squared, l3Squared)));
         }
 
         public static Coplanar(points: Vector3D[]): boolean {
@@ -178,7 +178,7 @@ module R3.Geometry {
             //  First find the distance between the sphere center and the line.
             //  This will allow us to easily determine if there are 0, 1, or 2 intersection points.
             let distance: number = Euclidean3D.DistancePointLine(nl, pl, sphereCenter);
-            if (number.IsNaN(distance)) {
+            if (Number.isNaN(distance)) {
                 return -1;
             }
 

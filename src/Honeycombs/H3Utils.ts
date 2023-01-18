@@ -40,7 +40,7 @@ export class Banana {
     )
     let increment: number = logHeight / div1
     for (let i: number = div1 * -1; i <= div1; i += 2) {
-      points.Add(new Vector3D(0, 0, Math.Exp(increment * i)))
+      points.Add(new Vector3D(0, 0, Math.exp(increment * i)))
     }
 
     let tempMesh: Shapeways = new Shapeways()
@@ -129,7 +129,7 @@ export class Banana {
         h = h + tinyOffset
       }
 
-      let point: Vector3D = new Vector3D(0, 0, Math.Exp(h))
+      let point: Vector3D = new Vector3D(0, 0, Math.exp(h))
       points.Add(point)
     }
 
@@ -1057,7 +1057,7 @@ export class H3UtilBall {
     }
 
     div1 = 13
-    div2 = 5 + Math.Sqrt(e1.Dist(e2)) * 10
+    div2 = 5 + Math.sqrt(e1.Dist(e2)) * 10
   }
 
   ///  <summary>
@@ -1160,7 +1160,7 @@ export class H3UtilUHS {
   ///  </summary>
   static ToEHorizontal(hNorm: number, z: number): number {
     //  https://en.wikipedia.org/wiki/Poincar%C3%A9_half-plane_model
-    let offset: number = Math.Sqrt(
+    let offset: number = Math.sqrt(
       (DonHatch.cosh(hNorm) - 1) * (2 * (z * z)),
     )
     return offset

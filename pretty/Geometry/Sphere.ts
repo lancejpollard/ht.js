@@ -123,7 +123,7 @@ export class Circle3D {
       (b *
         (c /
           (4 *
-            Math.Sqrt(
+            Math.sqrt(
               s * ((a + (b - s)) * ((a + (c - s)) * (b + (c - s)))),
             ))))
   }
@@ -590,7 +590,7 @@ export class Sphere {
     // if( d < Math.abs( R - r ) )
     //     return null;
     let x: number = (d * d + (r * r - R * R)) / (2 * d)
-    let y: number = Math.Sqrt(r * r - x * x)
+    let y: number = Math.sqrt(r * r - x * x)
     let result: Circle3D = new Circle3D()
     diff.Normalize()
     result.Normal = diff

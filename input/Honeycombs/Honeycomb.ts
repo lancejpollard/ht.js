@@ -320,7 +320,7 @@ module R3.Geometry {
             let pip: number = Honeycomb.PiOverNSafe(p);
             let piq: number = Honeycomb.PiOverNSafe(q);
             let temp: number = (Math.Pow(Math.Cos(pip), 2) + Math.Pow(Math.Cos(piq), 2));
-            let hab: number = (pi / Math.Acos(Math.Sqrt(temp)));
+            let hab: number = (pi / Math.Acos(Math.sqrt(temp)));
             //  Infinity safe.
             let pi_hpq: number = (pi / hab);
             if (isInfinite(hab)) {

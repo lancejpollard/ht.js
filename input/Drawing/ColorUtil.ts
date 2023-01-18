@@ -87,10 +87,10 @@ module R3.Core {
                 return Color.FromArgb(0, 0, 0, 0);
             }
 
-            let a: number = (<number>(Math.Sqrt(colors.Select(() => {  }, ((<number>(c.A)) * c.A)).Average())));
-            let r: number = (<number>(Math.Sqrt(colors.Select(() => {  }, ((<number>(c.R)) * c.R)).Average())));
-            let g: number = (<number>(Math.Sqrt(colors.Select(() => {  }, ((<number>(c.G)) * c.G)).Average())));
-            let b: number = (<number>(Math.Sqrt(colors.Select(() => {  }, ((<number>(c.B)) * c.B)).Average())));
+            let a: number = (<number>(Math.sqrt(colors.Select(() => {  }, ((<number>(c.A)) * c.A)).Average())));
+            let r: number = (<number>(Math.sqrt(colors.Select(() => {  }, ((<number>(c.R)) * c.R)).Average())));
+            let g: number = (<number>(Math.sqrt(colors.Select(() => {  }, ((<number>(c.G)) * c.G)).Average())));
+            let b: number = (<number>(Math.sqrt(colors.Select(() => {  }, ((<number>(c.B)) * c.B)).Average())));
             return Color.FromArgb(a, r, g, b);
         }
 

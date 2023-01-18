@@ -26,12 +26,12 @@ module R3.Geometry {
             //
             // VertexCircle.Radius *= (1+1.0/9);
             //  cuts adjacent cells at midpoint
-            //  Math.Sqrt(63)/6 for {3,6}
+            //  Math.sqrt(63)/6 for {3,6}
             //  (1 + 1.0/5) for {3,7}
             //  (1 + 1.0/9) for {3,8}
             //  (1 + 1.0/20) for {3,9}
             //  cuts at 1/3rd
-            //  2/Math.Sqrt(3) for {3,6}
+            //  2/Math.sqrt(3) for {3,6}
         }
 
         public get Boundary(): Polygon {

@@ -60,10 +60,10 @@ module R3.Geometry {
         }
 
         public static BuildBitruncated5Cell(): Polygon[] {
-            let a: number = (5 / Math.Sqrt(10));
-            let b: number = (1 / Math.Sqrt(6));
-            let c: number = (1 / Math.Sqrt(3));
-            let d: number = (3 / Math.Sqrt(3));
+            let a: number = (5 / Math.sqrt(10));
+            let b: number = (1 / Math.sqrt(6));
+            let c: number = (1 / Math.sqrt(3));
+            let d: number = (3 / Math.sqrt(3));
             //  http://eusebeia.dyndns.org/4d/bitrunc5cell
             let coords: Vector3D[] = [
                     new Vector3D(0, (4 * b), (4 * c), 0),
@@ -154,32 +154,32 @@ module R3.Geometry {
             let coords: Vector3D[] = [
                     new Vector3D(0, 0, 0, 2),
                     new Vector3D(0, 0, 0, -2),
-                    new Vector3D(0, 0, (3 / Math.Sqrt(3)), 1),
-                    new Vector3D(0, 0, ((3 / Math.Sqrt(3))
+                    new Vector3D(0, 0, (3 / Math.sqrt(3)), 1),
+                    new Vector3D(0, 0, ((3 / Math.sqrt(3))
                                     * -1), 1),
-                    new Vector3D(0, 0, ((3 / Math.Sqrt(3))
+                    new Vector3D(0, 0, ((3 / Math.sqrt(3))
                                     * -1), -1),
-                    new Vector3D(0, 0, (3 / Math.Sqrt(3)), -1),
-                    new Vector3D(0, (4 / Math.Sqrt(6)), ((2 / Math.Sqrt(3))
+                    new Vector3D(0, 0, (3 / Math.sqrt(3)), -1),
+                    new Vector3D(0, (4 / Math.sqrt(6)), ((2 / Math.sqrt(3))
                                     * -1), 0),
-                    (new Vector3D(0, (4 / Math.Sqrt(6)), ((2 / Math.Sqrt(3))
+                    (new Vector3D(0, (4 / Math.sqrt(6)), ((2 / Math.sqrt(3))
                                     * -1), 0) * -1),
-                    new Vector3D(0, (4 / Math.Sqrt(6)), (1 / Math.Sqrt(3)), 1),
-                    new Vector3D(0, (4 / Math.Sqrt(6)), (1 / Math.Sqrt(3)), -1),
-                    (new Vector3D(0, (4 / Math.Sqrt(6)), (1 / Math.Sqrt(3)), 1) * -1),
-                    (new Vector3D(0, (4 / Math.Sqrt(6)), (1 / Math.Sqrt(3)), -1) * -1),
-                    new Vector3D((5 / Math.Sqrt(10)), ((3 / Math.Sqrt(6))
+                    new Vector3D(0, (4 / Math.sqrt(6)), (1 / Math.sqrt(3)), 1),
+                    new Vector3D(0, (4 / Math.sqrt(6)), (1 / Math.sqrt(3)), -1),
+                    (new Vector3D(0, (4 / Math.sqrt(6)), (1 / Math.sqrt(3)), 1) * -1),
+                    (new Vector3D(0, (4 / Math.sqrt(6)), (1 / Math.sqrt(3)), -1) * -1),
+                    new Vector3D((5 / Math.sqrt(10)), ((3 / Math.sqrt(6))
                                     * -1), 0, 0),
-                    (new Vector3D((5 / Math.Sqrt(10)), ((3 / Math.Sqrt(6))
+                    (new Vector3D((5 / Math.sqrt(10)), ((3 / Math.sqrt(6))
                                     * -1), 0, 0) * -1),
-                    new Vector3D((5 / Math.Sqrt(10)), (1 / Math.Sqrt(6)), ((2 / Math.Sqrt(3))
+                    new Vector3D((5 / Math.sqrt(10)), (1 / Math.sqrt(6)), ((2 / Math.sqrt(3))
                                     * -1), 0),
-                    (new Vector3D((5 / Math.Sqrt(10)), (1 / Math.Sqrt(6)), ((2 / Math.Sqrt(3))
+                    (new Vector3D((5 / Math.sqrt(10)), (1 / Math.sqrt(6)), ((2 / Math.sqrt(3))
                                     * -1), 0) * -1),
-                    new Vector3D((5 / Math.Sqrt(10)), (1 / Math.Sqrt(6)), (1 / Math.Sqrt(3)), 1),
-                    new Vector3D((5 / Math.Sqrt(10)), (1 / Math.Sqrt(6)), (1 / Math.Sqrt(3)), -1),
-                    (new Vector3D((5 / Math.Sqrt(10)), (1 / Math.Sqrt(6)), (1 / Math.Sqrt(3)), 1) * -1),
-                    (new Vector3D((5 / Math.Sqrt(10)), (1 / Math.Sqrt(6)), (1 / Math.Sqrt(3)), -1) * -1)];
+                    new Vector3D((5 / Math.sqrt(10)), (1 / Math.sqrt(6)), (1 / Math.sqrt(3)), 1),
+                    new Vector3D((5 / Math.sqrt(10)), (1 / Math.sqrt(6)), (1 / Math.sqrt(3)), -1),
+                    (new Vector3D((5 / Math.sqrt(10)), (1 / Math.sqrt(6)), (1 / Math.sqrt(3)), 1) * -1),
+                    (new Vector3D((5 / Math.sqrt(10)), (1 / Math.sqrt(6)), (1 / Math.sqrt(3)), -1) * -1)];
             let result: Polygon[] = LookForPolys(coords, 2, 4);
             //  Nice starting orientation.
             let m: Matrix4D = new Matrix4D();

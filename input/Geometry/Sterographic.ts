@@ -91,7 +91,7 @@ module R3.Geometry {
             let normSquared: number = ((v.Z * v.Z)
                         - ((v.X * v.X)
                         + (v.Y * v.Y)));
-            let norm: number = Math.Sqrt(normSquared);
+            let norm: number = Math.sqrt(normSquared);
             norm;
         }
     }

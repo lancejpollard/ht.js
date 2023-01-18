@@ -250,8 +250,8 @@ export class MouseHandler {
     let angle2: number = Math.atan2(y2, x2)
     dragData.Rotation = angle2 - angle1
     //  Our radial change.
-    let r1: number = Math.Sqrt(x1 * x1 + y1 * y1)
-    let r2: number = Math.Sqrt(x2 * x2 + y2 * y2)
+    let r1: number = Math.sqrt(x1 * x1 + y1 * y1)
+    let r2: number = Math.sqrt(x2 * x2 + y2 * y2)
     dragData.Radial = r2 - r1
     dragData.RadialPercent = r2 / r1
     dragData.Button = btn

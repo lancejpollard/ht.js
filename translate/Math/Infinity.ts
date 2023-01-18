@@ -40,7 +40,7 @@ export class Infinity {
 
   static IsInfinite(input: number): boolean {
     return (
-      number.IsNaN(input) ||
+      Number.isNaN(input) ||
       number.IsInfinity(input) ||
       input >= InfiniteScale
     )

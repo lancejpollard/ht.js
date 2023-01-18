@@ -49,7 +49,7 @@ export class EuclideanModels {
         break
     }
 
-    let scale: number = Math.Sqrt(m * m + n * n)
+    let scale: number = Math.sqrt(m * m + n * n)
     let a: number = Euclidean2D.AngleToClock(
       new Vector3D(0, 1),
       new Vector3D(m, n),
@@ -60,7 +60,7 @@ export class EuclideanModels {
     //  Scale
     v =
       v *
-      (Math.Sqrt(2) * (Geometry2D.EuclideanHypotenuse / (2 * Math.PI)))
+      (Math.sqrt(2) * (Geometry2D.EuclideanHypotenuse / (2 * Math.PI)))
     v.RotateXY(Math.PI / 4)
     return v
   }

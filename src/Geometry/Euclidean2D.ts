@@ -1,4 +1,5 @@
 import { Tolerance } from '@Math/Utils'
+import { Circle } from './Circle'
 import { Vector3D } from './Vector3D'
 
 export class Euclidean2D {
@@ -86,14 +87,10 @@ export class Euclidean2D {
     //  This tripped me up.
     let a3: number = Euclidean2D.AngleToClock(p3 - p1, n1)
     let a4: number = Euclidean2D.AngleToClock(p4 - p1, n1)
-    let sameSide: boolean = a4 > Math.PI
-    // TODO: Warning!!!, inline IF is not supported ?
-    a3 > Math.PI
-    a4 <= Math.PI
-    let factor: number = d3 / (d3 - d4)
-    // TODO: Warning!!!, inline IF is not supported ?
-    sameSide
-    d3 / (d3 + d4)
+
+    const sameSide = a3 > Math.PI ? a4 > Math.PI : a4 <= Math.PI
+
+    const factor = sameSide ? d3 / (d3 - d4) : d3 / (d3 + d4)
     intersection = p3 + n2 * factor
     //  XXX - Unfortunately, this is happening sometimes.
     if (

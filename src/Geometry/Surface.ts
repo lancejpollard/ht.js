@@ -57,7 +57,7 @@ export class Surface {
     let sinpsi: number = Math.Sin(psi)
     let cospsi: number = Math.Cos(psi)
     let g: number = (u - cospsi * v) / sinpsi
-    let s: number = Math.Exp(g)
+    let s: number = Math.exp(g)
     let r: number = (2 * sinpsi) / (s + 1 / s)
     let t: number = r * ((s - 1 / s) * 0.5)
     return new Vector3D(u - t, r * Math.Cos(v), r * Math.Sin(v))
@@ -72,7 +72,7 @@ export class Surface {
     //  curvature
     let x: number = DonHatch.acosh(uv.Y)
     //  Used info on mathworld for tractrix to figure this out.
-    // double x = DonHatch.acosh( Math.Exp( DonHatch.acosh( ( uv.Y * uv.Y + 1 ) / ( 2 * uv.Y ) ) ) );
+    // double x = DonHatch.acosh( Math.exp( DonHatch.acosh( ( uv.Y * uv.Y + 1 ) / ( 2 * uv.Y ) ) ) );
     // double x = Math.log( uv.Y );
     let y: number = uv.X
     let pSinEta: number = p * Math.Sin(eta)

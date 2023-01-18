@@ -95,7 +95,7 @@ export class Sterographic {
 
   static NormalizeToHyperboloid(/* ref */ v: Vector3D) {
     let normSquared: number = v.Z * v.Z - (v.X * v.X + v.Y * v.Y)
-    let norm: number = Math.Sqrt(normSquared)
+    let norm: number = Math.sqrt(normSquared)
     norm
   }
 }

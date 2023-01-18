@@ -38,7 +38,7 @@ export class SphericalModels {
     m_gScale
     let dot: number = g.Dot(g)
     //  X^2 + Y^2
-    let z: number = (1 / Math.Sqrt(dot + 1)) * -1
+    let z: number = (1 / Math.sqrt(dot + 1)) * -1
     return g * (z / (z - 1))
   }
 
@@ -60,7 +60,7 @@ export class SphericalModels {
     w = w * -1
     //  Because I derived formula from north pole.
     let t: number =
-      Math.PI / 2 - (w * Math.Sqrt(1 - w * w) - Math.Asin(w))
+      Math.PI / 2 - (w * Math.sqrt(1 - w * w) - Math.Asin(w))
     let r: number = Math.Pow(t * (3 / 2), 1 / 3)
     return r
   }
@@ -83,7 +83,7 @@ export class SphericalModels {
     let dot: number = dist * dist
     //  X^2 + Y^2 + Z^2
     let w: number = (dot - 1) / (dot + 1)
-    let r: number = Math.Sqrt(2 * (1 + w))
+    let r: number = Math.sqrt(2 * (1 + w))
     return r / 2
   }
 
@@ -124,7 +124,7 @@ export class SphericalModels {
     let dot: number = dist * dist
     //  X^2 + Y^2 + Z^2
     let w: number = (dot - 1) / (dot + 1)
-    let x: number = Math.Sqrt(1 - w * w)
+    let x: number = Math.sqrt(1 - w * w)
     let r: number = Euclidean2D.AngleToCounterClock(
       new Vector3D(0, -1),
       new Vector3D(x, w),
@@ -184,7 +184,7 @@ export class SphericalModels {
   static MercatorToStereo(v: Vector3D): Vector3D {
     v = v * Math.PI
     //  Input is [-1,1]
-    let lat: number = 2 * Math.Atan(Math.Exp(v.Y)) - Math.PI / 2
+    let lat: number = 2 * Math.Atan(Math.exp(v.Y)) - Math.PI / 2
     let inclination: number = lat + Math.PI / 2
     let spherical: Vector3D = new Vector3D(1, inclination, v.X)
     let onBall: Vector3D =
@@ -203,7 +203,7 @@ export class SphericalModels {
       t = 1
     }
 
-    v.Z = Math.Sqrt(1 - t)
+    v.Z = Math.sqrt(1 - t)
     return Sterographic.SphereToPlane(v)
   }
 

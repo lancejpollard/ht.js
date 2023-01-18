@@ -227,19 +227,19 @@ export class Vector3D {
     //  ZZZ - This is what I did in MagicTile, but what about infinities?.
     //  ZZZ - Make a property
     return (
-      !number.IsNaN(this.X) &&
-      !number.IsNaN(this.Y) &&
-      !number.IsNaN(this.Z) &&
-      !number.IsNaN(this.W)
+      !Number.isNaN(this.X) &&
+      !Number.isNaN(this.Y) &&
+      !Number.isNaN(this.Z) &&
+      !Number.isNaN(this.W)
     )
   }
 
   get DNE(): boolean {
     return (
-      number.IsNaN(this.X) ||
-      number.IsNaN(this.Y) ||
-      number.IsNaN(this.Z) ||
-      number.IsNaN(this.W)
+      Number.isNaN(this.X) ||
+      Number.isNaN(this.Y) ||
+      Number.isNaN(this.Z) ||
+      Number.isNaN(this.W)
     )
   }
 
@@ -284,7 +284,7 @@ export class Vector3D {
   }
 
   Abs(): number {
-    return Math.Sqrt(this.MagSquared())
+    return Math.sqrt(this.MagSquared())
   }
 
   get IsOrigin(): boolean {

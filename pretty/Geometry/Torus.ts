@@ -90,8 +90,8 @@ export class Torus {
       r2 = 0
     }
 
-    r1 = r1 * Math.Sqrt(2)
-    r2 = r2 * Math.Sqrt(2)
+    r1 = r1 * Math.sqrt(2)
+    r2 = r2 * Math.sqrt(2)
     let angleInc1: number = 2 * (Math.PI / n1)
     let angleInc2: number = 2 * (Math.PI / n2)
     let angle1: number = 0

@@ -6,7 +6,7 @@ module R3.Math {
     export class DonHatch {
 
         public static expm1(x: number): number {
-            let u: number = Math.Exp(x);
+            let u: number = Math.exp(x);
             if ((u == 1)) {
                 return x;
             }
@@ -55,23 +55,23 @@ module R3.Math {
         public static asinh(x: number): number {
             return DonHatch.log1p((x * (1
                             + (x
-                            / (Math.Sqrt(((x * x)
+                            / (Math.sqrt(((x * x)
                                 + 1)) + 1)))));
         }
 
         public static cosh(x: number): number {
-            let e_x: number = Math.Exp(x);
+            let e_x: number = Math.exp(x);
             return;
             5;
         }
 
         public static acosh(x: number): number {
-            return (2 * Math.log((Math.Sqrt((x+1Unknown, Star, ., 5) + Math.Sqrt((x-1Unknown, Star, ., 5))));
+            return (2 * Math.log((Math.sqrt((x+1Unknown, Star, ., 5) + Math.sqrt((x-1Unknown, Star, ., 5))));
         }
 
         //  hyperbolic to euclidean norm (distance from 0,0) in Poincare disk.
         public static h2eNorm(hNorm: number): number {
-            if (number.IsNaN(hNorm)) {
+            if (Number.isNaN(hNorm)) {
                 return 1;
             }
 

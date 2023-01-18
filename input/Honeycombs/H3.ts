@@ -117,7 +117,7 @@ module R3.Geometry {
 
                     //  Calcs based on orthogonal circles.
                     //  http://mathworld.wolfram.com/OrthogonalCircles.html
-                    let d: number = Math.Sqrt((1
+                    let d: number = Math.sqrt((1
                                     + (this.Sphere.Radius * this.Sphere.Radius)));
                     let center: Vector3D = this.Sphere.Center;
                     center.Normalize();

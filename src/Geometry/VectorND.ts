@@ -1,3 +1,6 @@
+import { Tolerance } from '@Math/Utils'
+import { Vector3D } from './Vector3D'
+
 export class VectorND {
   // constructor(dimension: number) {
   //   X = new Array(dimension)
@@ -8,9 +11,9 @@ export class VectorND {
   // }
 
   constructor(v: Vector3D) {
-    X = new Array(4)
+    this.X = new Array(4)
     for (let i: number = 0; i < 4; i++) {
-      X[i] = v[i]
+      this.X[i] = v[i]
     }
   }
 
@@ -19,22 +22,20 @@ export class VectorND {
   }
 
   Clone(): VectorND {
-    return new VectorND(<Array<number>>this.X.Clone())
+    return new VectorND(this.X.Clone() as Array<number>)
   }
 
   get Dimension(): number {
-    return X.Length
+    return this.X.Length
   }
 
   set Dimension(value: number) {
-    X = new Array(value)
+    this.X = new Array(value)
   }
 
-  get X(): Array<number> {}
+  X: Array<number>
 
-  set X(value: Array<number>) {}
-
-  static Operator(v: VectorND, s: number): VectorND {
+  static divide(v: VectorND, s: number): VectorND {
     let components: Array<number> = new Array(v.Dimension)
     for (let i: number = 0; i < components.Length; i++) {
       components[i] = v.X[i] / s
@@ -44,12 +45,12 @@ export class VectorND {
   }
 
   Divide(s: number) {
-    for (let i: number = 0; i < this.Dimension; i++) {}
-
-    s
+    for (let i: number = 0; i < this.Dimension; i++) {
+      this.X[i] /= s
+    }
   }
 
-  static Operator(v: VectorND, s: number): VectorND {
+  static multiply(v: VectorND, s: number): VectorND {
     let components: Array<number> = new Array(v.Dimension)
     for (let i: number = 0; i < components.Length; i++) {
       components[i] = v.X[i] * s
@@ -58,11 +59,11 @@ export class VectorND {
     return new VectorND(components)
   }
 
-  static Operator(s: number, v: VectorND): VectorND {
+  static multiplyReverse(s: number, v: VectorND): VectorND {
     return v * s
   }
 
-  static Operator(v1: VectorND, v2: VectorND): VectorND {
+  static add(v1: VectorND, v2: VectorND): VectorND {
     console.assert(v1.Dimension == v2.Dimension)
     let components: Array<number> = new Array(v1.Dimension)
     for (let i: number = 0; i < components.Length; i++) {
@@ -72,7 +73,7 @@ export class VectorND {
     return new VectorND(components)
   }
 
-  static Operator(v: VectorND): VectorND {
+  static decrement(v: VectorND): VectorND {
     let components: Array<number> = new Array(v.Dimension)
     for (let i: number = 0; i < components.Length; i++) {
       components[i] = v.X[i] * -1
@@ -81,8 +82,8 @@ export class VectorND {
     return new VectorND(components)
   }
 
-  static Operator(v1: VectorND, v2: VectorND): VectorND {
-    return v1 + v2 * -1
+  static subtract(v1: VectorND, v2: VectorND): VectorND {
+    return v1 + -v2
   }
 
   Dot(v: VectorND): number {
@@ -114,7 +115,7 @@ export class VectorND {
   }
 
   get Abs(): number {
-    return Math.Sqrt(this.MagSquared)
+    return Math.sqrt(this.MagSquared)
   }
 
   Dist(v: VectorND): number {

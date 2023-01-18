@@ -50,7 +50,7 @@ module R3.Geometry {
             //  Cylinder thickness function.
             let sizeFunc: System.Func<Vector3D, number>;
             let h: number = (v - center).Z;
-            return Math.Sqrt(((radius * radius)
+            return Math.sqrt(((radius * radius)
                             - (h * h)));
 
             let disks: List<Vector3D[]> = this.CalcDisks(axisPoints.ToArray(), sizeFunc);
@@ -196,7 +196,7 @@ module R3.Geometry {
         public static CalcArcPoints(center: Vector3D, radius: number, v1: Vector3D, normal: Vector3D, angleTot: number): Vector3D[] {
             //  Try to optimize the number of segments.
             let numPoints: number = 8;
-            // int numPoints = (int)(Math.Sqrt(radius) * divisions);
+            // int numPoints = (int)(Math.sqrt(radius) * divisions);
             numPoints = Math.Max(3, numPoints);
             numPoints = 57;
             return Shapeways.CalcArcPoints(center, radius, v1, normal, angleTot, numPoints);

@@ -245,16 +245,16 @@ module R3.Geometry {
         public Valid(): boolean {
             //  ZZZ - This is what I did in MagicTile, but what about infinities?.
             //  ZZZ - Make a property
-            return (!number.IsNaN(this.X)
-                        && (!number.IsNaN(this.Y)
-                        && (!number.IsNaN(this.Z)
-                        && !number.IsNaN(this.W))));
+            return (!Number.isNaN(this.X)
+                        && (!Number.isNaN(this.Y)
+                        && (!Number.isNaN(this.Z)
+                        && !Number.isNaN(this.W))));
         }
 
         public get DNE(): boolean {
-            return (number.IsNaN(this.X)
-                        || (number.IsNaN(this.Y)
-                        || (number.IsNaN(this.Z) || number.IsNaN(this.W))));
+            return (Number.isNaN(this.X)
+                        || (Number.isNaN(this.Y)
+                        || (Number.isNaN(this.Z) || Number.isNaN(this.W))));
         }
 
         public static DneVector(): Vector3D {
@@ -298,7 +298,7 @@ module R3.Geometry {
         }
 
         public Abs(): number {
-            return Math.Sqrt(this.MagSquared());
+            return Math.sqrt(this.MagSquared());
         }
 
         public get IsOrigin(): boolean {

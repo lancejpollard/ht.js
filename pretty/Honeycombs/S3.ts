@@ -75,7 +75,7 @@ export class S3 {
     let a: number = s2Point.X
     let b: number = s2Point.Y
     let c: number = s2Point.Z
-    let factor: number = 1 / Math.Sqrt(1 + c)
+    let factor: number = 1 / Math.sqrt(1 + c)
     if (Tolerance.Equal(c, -1)) {
       return []
     }

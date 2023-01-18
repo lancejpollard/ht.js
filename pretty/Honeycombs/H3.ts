@@ -278,7 +278,7 @@ export class H3CellFacet {
 
     //  Calcs based on orthogonal circles.
     //  http://mathworld.wolfram.com/OrthogonalCircles.html
-    let d: number = Math.Sqrt(
+    let d: number = Math.sqrt(
       1 + this.Sphere.Radius * this.Sphere.Radius,
     )
     let center: Vector3D = this.Sphere.Center

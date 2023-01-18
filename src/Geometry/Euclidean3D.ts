@@ -202,7 +202,7 @@ export class Euclidean3D {
     let l1Squared: number = (p2 - p1).MagSquared()
     let l2Squared: number = (p3 - p2).MagSquared()
     let l3Squared: number = (p1 - p3).MagSquared()
-    return Math.Sqrt(
+    return Math.sqrt(
       Math.Max(l1Squared, Math.Max(l2Squared, l3Squared)),
     )
   }
@@ -249,7 +249,7 @@ export class Euclidean3D {
       pl,
       sphereCenter,
     )
-    if (number.IsNaN(distance)) {
+    if (Number.isNaN(distance)) {
       return -1
     }
 

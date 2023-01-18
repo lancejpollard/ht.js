@@ -1,56 +1,18 @@
 ///  <summary>
-///  The things that define us.
-///  </summary>
-export class TorusParameters {
-  constructor() {
-    NumSegments2 = 50
-    NumSegments1 = 50
-    TubeRadius1 = 0.5
-    Radius = 1
-  }
-
-  ///  <summary>
-  ///  The number of segments to generate in the first direction of the torus surface.
-  ///  </summary>
-  get NumSegments1(): number {}
-  set NumSegments1(value: number) {}
-
-  ///  <summary>
-  ///  The number of segments to generate in the second direction of the torus surface.
-  ///  </summary>
-  get NumSegments2(): number {}
-  set NumSegments2(value: number) {}
-
-  ///  <summary>
-  ///  The first tube radius of our torus.
-  ///  NOTES:
-  ///         - The second tube radius is determined by this and the 3-sphere radius.
-  ///         - This radius must be less than or equal the 3-sphere radius
-  ///         - If equal 0 or equal to the 3-sphere radius, one tube will be empty (torus will be a line).
-  ///  </summary>
-  get TubeRadius1(): number {}
-  set TubeRadius1(value: number) {}
-
-  ///  <summary>
-  ///  The radius of our 3-sphere
-  ///  </summary>
-  get Radius(): number {}
-  set Radius(value: number) {}
-}
-
-///  <summary>
 ///  Class to generate tori on a 3-sphere
 ///  </summary>
 export class Torus {
   get Params(): TorusParameters {}
+
   set Params(value: TorusParameters) {}
 
   ///  <summary>
   ///  Our vertices.
   ///  NOTE: Not realy a Vector3D here (need to rename my class).
   ///  </summary>
-  get Vertices(): Vector3D[] {}
-  set Vertices(value: Vector3D[]) {}
+  get Vertices(): Array<Vector3D> {}
+
+  set Vertices(value: Array<Vector3D>) {}
 
   ///  <summary>
   ///  Size our Vertices matrix.
@@ -90,8 +52,8 @@ export class Torus {
       r2 = 0
     }
 
-    r1 = r1 * Math.Sqrt(2)
-    r2 = r2 * Math.Sqrt(2)
+    r1 = r1 * Math.sqrt(2)
+    r2 = r2 * Math.sqrt(2)
     let angleInc1: number = 2 * (Math.PI / n1)
     let angleInc2: number = 2 * (Math.PI / n2)
     let angle1: number = 0
@@ -110,4 +72,48 @@ export class Torus {
 
     return t
   }
+}
+
+///  <summary>
+///  The things that define us.
+///  </summary>
+export class TorusParameters {
+  constructor() {
+    NumSegments2 = 50
+    NumSegments1 = 50
+    TubeRadius1 = 0.5
+    Radius = 1
+  }
+
+  ///  <summary>
+  ///  The number of segments to generate in the first direction of the torus surface.
+  ///  </summary>
+  get NumSegments1(): number {}
+
+  set NumSegments1(value: number) {}
+
+  ///  <summary>
+  ///  The number of segments to generate in the second direction of the torus surface.
+  ///  </summary>
+  get NumSegments2(): number {}
+
+  set NumSegments2(value: number) {}
+
+  ///  <summary>
+  ///  The first tube radius of our torus.
+  ///  NOTES:
+  ///         - The second tube radius is determined by this and the 3-sphere radius.
+  ///         - This radius must be less than or equal the 3-sphere radius
+  ///         - If equal 0 or equal to the 3-sphere radius, one tube will be empty (torus will be a line).
+  ///  </summary>
+  get TubeRadius1(): number {}
+
+  set TubeRadius1(value: number) {}
+
+  ///  <summary>
+  ///  The radius of our 3-sphere
+  ///  </summary>
+  get Radius(): number {}
+
+  set Radius(value: number) {}
 }

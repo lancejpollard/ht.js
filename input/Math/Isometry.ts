@@ -181,7 +181,7 @@ module R3.Math {
         }
 
         private static IsNaN(c: Complex): boolean {
-            return (number.IsNaN(c.Real) || number.IsNaN(c.Imaginary));
+            return (Number.isNaN(c.Real) || Number.isNaN(c.Imaginary));
         }
 
         ///  <summary>

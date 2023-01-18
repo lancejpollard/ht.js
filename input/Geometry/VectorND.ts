@@ -127,7 +127,7 @@ module R3.Geometry {
         }
 
         public get Abs(): number {
-            return Math.Sqrt(this.MagSquared);
+            return Math.sqrt(this.MagSquared);
         }
 
         public Dist(v: VectorND): number {

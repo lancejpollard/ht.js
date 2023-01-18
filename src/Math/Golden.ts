@@ -146,7 +146,7 @@ class Golden {
     B = b
   }
 
-  static tau: number = (1 + Math.Sqrt(5)) / 2
+  static tau: number = (1 + Math.sqrt(5)) / 2
 
   get A(): Fraction {}
 

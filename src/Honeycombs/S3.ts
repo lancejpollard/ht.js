@@ -10,12 +10,12 @@ export class S3 {
         }
 
         //  Subdivide the segment, and project points to S2.
-        let points: Vector3D[] = seg
+        let points: Array<Vector3D> = seg
           .Subdivide(segDivisions)
           .Select(() => {}, Spherical2D.PlaneToSphere(v))
           .ToArray()
         for (let point: Vector3D in points) {
-          let circlePoints: Vector3D[] = S3.OneHopfCircle(point)
+          let circlePoints: Array<Vector3D> = S3.OneHopfCircle(point)
           S3.ProjectAndAddS3Points(
             mesh,
             circlePoints,
@@ -53,7 +53,7 @@ export class S3 {
     let sizeFunc: System.Func<Vector3D, Sphere>
     new Sphere()
     for (let s2Point: Vector3D in s2Points) {
-      let circlePoints: Vector3D[] = S3.OneHopfCircle(s2Point)
+      let circlePoints: Array<Vector3D> = S3.OneHopfCircle(s2Point)
       // for( int i = 0; i < circlePoints.Length; i++ )
       //     circlePoints[i] = circlePoints[i].ProjectTo3DSafe( 1.0 );
       //  Note: effectively orthogonal projects here because EdgeSphereSweep doesn't write W coord.
@@ -68,14 +68,14 @@ export class S3 {
   static OneHopfCircle(
     s2Point: Vector3D,
     anti: boolean = false,
-  ): Vector3D[] {
+  ): Array<Vector3D> {
     let circleDivisions: number = 125
     //  Get the hopf circle.
     //  http://en.wikipedia.org/wiki/Hopf_fibration#Explicit_formulae
     let a: number = s2Point.X
     let b: number = s2Point.Y
     let c: number = s2Point.Z
-    let factor: number = 1 / Math.Sqrt(1 + c)
+    let factor: number = 1 / Math.sqrt(1 + c)
     if (Tolerance.Equal(c, -1)) {
       return []
     }
@@ -118,7 +118,7 @@ export class S3 {
         loader.Vertices[edge.V1].ConvertToReal(),
         loader.Vertices[edge.V2].ConvertToReal(),
       )
-      let points: Vector3D[] = seg.Subdivide(divisions)
+      let points: Array<Vector3D> = seg.Subdivide(divisions)
       let shrink: boolean = true
       S3.ProjectAndAddS3Points(mesh, points, shrink)
       // if( count++ > 10 )
@@ -128,7 +128,7 @@ export class S3 {
     STL.SaveMeshToSTL(mesh.Mesh, 'D:p4R3sampleout1.stl')
   }
 
-  static EdgesToStl(edges: H3.Cell.Edge[]) {
+  static EdgesToStl(edges: Array<H3.Cell.Edge>) {
     let mesh: Shapeways = new Shapeways()
     let divisions: number = 25
     for (let edge: H3.Cell.Edge in edges) {
@@ -136,7 +136,7 @@ export class S3 {
         Sterographic.R3toS3(edge.Start),
         Sterographic.R3toS3(edge.End),
       )
-      let points: Vector3D[] = seg.Subdivide(divisions)
+      let points: Array<Vector3D> = seg.Subdivide(divisions)
       S3.ProjectAndAddS3Points(mesh, points)
     }
 
@@ -151,7 +151,10 @@ export class S3 {
     STL.SaveMeshToSTL(mesh.Mesh, 'output.stl')
   }
 
-  static #ProjectAndAddS3Points(mesh: Shapeways, pointsS3: Vector3D[]) {
+  static #ProjectAndAddS3Points(
+    mesh: Shapeways,
+    pointsS3: Array<Vector3D>,
+  ) {
     let r: number = 0.02
     let projected: List<Vector3D> = new List<Vector3D>()
     let radii: List<number> = new List<number>()
@@ -180,7 +183,7 @@ export class S3 {
   ///  </summary>
   static #ProjectAndAddS3Points(
     mesh: Shapeways,
-    pointsS3: Vector3D[],
+    pointsS3: Array<Vector3D>,
     shrink: boolean,
   ) {
     let projected: List<Vector3D> = new List<Vector3D>()
@@ -271,7 +274,7 @@ export class S3 {
   ///  <summary>
   ///  Inputs and Outputs are in R3 (stereographically projected).
   ///  </summary>
-  static GeodesicPoints(v1: Vector3D, v2: Vector3D): Vector3D[] {
+  static GeodesicPoints(v1: Vector3D, v2: Vector3D): Array<Vector3D> {
     let start: Vector3D = Sterographic.R3toS3(v1)
     let end: Vector3D = Sterographic.R3toS3(v2)
     S3.AvoidNorthPole(/* ref */ start, end)
@@ -280,7 +283,7 @@ export class S3 {
     // int div = 56;        // 343
     // int div = 50;        // 333
     let seg: Segment = Segment.Line(start, end)
-    let result: Vector3D[] = seg.Subdivide(div)
+    let result: Array<Vector3D> = seg.Subdivide(div)
     for (let i: number = 0; i < result.Length; i++) {
       result[i].Normalize()
       result[i] = Sterographic.S3toR3(result[i])

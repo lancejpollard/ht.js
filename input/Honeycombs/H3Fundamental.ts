@@ -143,7 +143,7 @@ module R3.Geometry {
 
         private static DistOriginToOrthogonalSphere(r: number): number {
             //  http://mathworld.wolfram.com/OrthogonalCircles.html
-            let d: number = Math.Sqrt((1
+            let d: number = Math.sqrt((1
                             + (r * r)));
             return (d - r);
         }

@@ -1,3 +1,6 @@
+import { DonHatch } from '@Math/DonHatch'
+import { Vector3D } from './Vector3D'
+
 export class Hyperbolic2D {
   ///  <summary>
   ///  Offsets a vector by a hyperbolic distance.

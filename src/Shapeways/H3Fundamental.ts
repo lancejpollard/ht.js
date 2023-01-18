@@ -117,7 +117,7 @@ export class H3Fundamental {
 
   static #DistOriginToOrthogonalSphere(r: number): number {
     //  http://mathworld.wolfram.com/OrthogonalCircles.html
-    let d: number = Math.Sqrt(1 + r * r)
+    let d: number = Math.sqrt(1 + r * r)
     return d - r
   }
 

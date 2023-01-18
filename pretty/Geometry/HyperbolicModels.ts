@@ -40,7 +40,7 @@ export class HyperbolicModels {
       dot = 1
     }
 
-    return (1 - Math.Sqrt(1 - dot)) / dot
+    return (1 - Math.sqrt(1 - dot)) / dot
   }
 
   static KleinToPoincare(k: Vector3D): Vector3D {
@@ -149,7 +149,7 @@ export class HyperbolicModels {
     //  Complex result = alpha * z + beta / z;
     let off: number = cen.Abs()
     let foil: System.Func<Complex, Complex>
-    // w *= 1 + Math.Sqrt( 2 );
+    // w *= 1 + Math.sqrt( 2 );
     // Vector3D cen = new Vector3D( -off, -off );
     let rad: number = 1 + off
     //  cen.Dist( new Vector3D( 1, 0 ) );

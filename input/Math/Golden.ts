@@ -172,7 +172,7 @@ module R3.Math {
             B = b;
         }
 
-        public static tau: number = ((1 + Math.Sqrt(5))
+        public static tau: number = ((1 + Math.sqrt(5))
                     / 2);
 
         public get A(): Fraction {
