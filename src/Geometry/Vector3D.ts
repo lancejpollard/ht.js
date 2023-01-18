@@ -14,43 +14,23 @@ export class Vector3D {
     return self
   }
 
-  static constructFrom4dArray (vals: number[]) {
-    const self = new Vector3D(
-      vals[0],
-      vals[1],
-      vals[2],
-      vals[3],
-    )
+  static constructFrom4dArray(vals: Array<number>) {
+    const self = new Vector3D(vals[0], vals[1], vals[2], vals[3])
     return self
   }
 
-  static construct3d (x: number, y: number, z: number) {
-    const self = new Vector3D(
-      x,
-      y,
-      z,
-      0,
-    )
+  static construct3d(x: number, y: number, z: number) {
+    const self = new Vector3D(x, y, z, 0)
     return self
   }
 
-  static construct2d (x: number, y: number) {
-    const self = new Vector3D(
-      x,
-      y,
-      0,
-      0,
-    )
+  static construct2d(x: number, y: number) {
+    const self = new Vector3D(x, y, 0, 0)
     return self
   }
 
-  static construct () {
-    const self = new Vector3D(
-      0,
-      0,
-      0,
-      0,
-    )
+  static construct() {
+    const self = new Vector3D(0, 0, 0, 0)
     return self
   }
 
@@ -63,13 +43,7 @@ export class Vector3D {
   W: number
 
   /* override */ ToString(): string {
-    return string.Format(
-      '{0},{1},{2},{3}',
-      this.X,
-      this.Y,
-      this.Z,
-      this.W,
-    )
+    return `${this.X},${this.Y},${this.Z},${this.W}`
   }
 
   Save(): string {
@@ -77,24 +51,10 @@ export class Vector3D {
   }
 
   ToStringXYZOnly(): string {
-    return string.Format('{0},{1},{2}', this.X, this.Y, this.Z)
-  }
-
-  Load(s: string) {
-    let split: Array<string> = s.Split(',')
-    if (split.Length == 3 || split.Length == 4) {
-      this.X = number.Parse(split[0], CultureInfo.InvariantCulture)
-      this.Y = number.Parse(split[1], CultureInfo.InvariantCulture)
-      this.Z = number.Parse(split[2], CultureInfo.InvariantCulture)
-    }
-
-    if (split.Length == 4) {
-      this.W = number.Parse(split[3], CultureInfo.InvariantCulture)
-    }
+    return `${this.X},${this.Y},${this.Z}`
   }
 
   // Implicit vector to complex conversion operator.
-  >
   static implicitOperator(v: Vector3D): Complex {
     return v.ToComplex()
   }
@@ -215,42 +175,6 @@ export class Vector3D {
     this.W = Math.round(this.W, digits)
   }
 
-  get Item(i: number): number {
-    switch (i) {
-      case 0:
-        return this.X
-        break
-      case 1:
-        return this.Y
-        break
-      case 2:
-        return this.Z
-        break
-      case 3:
-        return this.W
-        break
-    }
-
-    throw new Error('Argument Error')
-  }
-
-  set Item(value: number, i: number) {
-    switch (i) {
-      case 0:
-        this.X = value
-        break
-      case 1:
-        this.Y = value
-        break
-      case 2:
-        this.Z = value
-        break
-      case 3:
-        this.W = value
-        break
-    }
-  }
-
   Valid(): boolean {
     //  ZZZ - This is what I did in MagicTile, but what about infinities?.
     //  ZZZ - Make a property
@@ -292,10 +216,9 @@ export class Vector3D {
     return true
   }
 
-
   // Normalize and scale.
 
-  Normalize(scale: number): boolean {
+  NormalizeWithScale(scale: number): boolean {
     if (!this.Normalize()) {
       return false
     }
@@ -333,7 +256,6 @@ export class Vector3D {
     return this.X * v.X + (this.Y * v.Y + (this.Z * v.Z + this.W * v.W))
   }
 
-
   // 3D cross product.
   // 4th component does not enter into calculations.
 
@@ -344,7 +266,6 @@ export class Vector3D {
     return Vector3D.construct3d(xVal, yVal, zVal)
   }
 
-
   // Rotate CCW in the XY plane by an angle in radians.
 
   RotateXY(angle: number) {
@@ -353,7 +274,6 @@ export class Vector3D {
     this.X = Math.cos(angle) * component1 - Math.sin(angle) * component2
     this.Y = Math.sin(angle) * component1 + Math.cos(angle) * component2
   }
-
 
   // Rotate CCW in the XY plane about a center.  Angle is in radians.
 
@@ -391,7 +311,6 @@ export class Vector3D {
     )
   }
 
-
   // Unsigned (not handed) angle between 0 and pi.
 
   AngleTo(p2: Vector3D): number {
@@ -416,7 +335,6 @@ export class Vector3D {
     return Math.acos(val)
   }
 
-
   // Finds a perpendicular vector (just one of many possible).
   // Result will be normalized.
 
@@ -437,7 +355,6 @@ export class Vector3D {
 
     return perp
   }
-
 
   // 4D -> 3D projection.
   // The "safe" part is that we won't make any points invalid (only large).
@@ -462,7 +379,6 @@ export class Vector3D {
     )
     return result
   }
-
 
   // 3D -> 2D projection.
 
@@ -493,7 +409,6 @@ export class Vector3D {
     return Vector3D.construct2d(value.Real, value.Imaginary)
   }
 }
-
 
 // For comparing vectors (for ordering, etc.)
 // NOTE: I made the comparison tolerance safe.
