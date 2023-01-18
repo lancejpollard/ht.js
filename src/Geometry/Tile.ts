@@ -42,18 +42,18 @@ export class Tile {
     return tile
   }
 
-  Boundary: Polygon
+  Boundary?: Polygon
 
-  Drawn: Polygon
+  Drawn?: Polygon
 
-  VertexCircle: CircleNE
+  VertexCircle?: CircleNE
 
-  Geometry: Geometry
+  Geometry?: Geometry
 
   // The center of this tile.
 
-  get Center(): Vector3D {
-    return this.Boundary.Center
+  get Center(): Vector3D | undefined {
+    return this.Boundary?.Center
   }
 
   // This is the isometry that will take us back to the parent tile.
@@ -61,23 +61,23 @@ export class Tile {
   // or copied during a clone.  It is meant to be set once at tiling
   // generation time.
 
-  Isometry: Isometry
+  Isometry?: Isometry
 
   // Used to track edge-adjacent tiles in a tiling.
 
-  EdgeIncidences: Array<Tile>
+  EdgeIncidences?: Array<Tile>
 
   // Used to track vertex-adjacent tiles in a tiling.
 
-  VertexIndicences: Array<Tile>
+  VertexIndicences?: Array<Tile>
 
   Clone(): Tile {
-    let newTile: Tile = Tile.construct()
-    newTile.Boundary = this.Boundary.Clone()
-    newTile.Drawn = this.Drawn.Clone()
-    newTile.VertexCircle = this.VertexCircle.Clone()
-    newTile.Geometry = this.Geometry
-    return newTile
+    let next: Tile = Tile.construct()
+    next.Boundary = this.Boundary?.Clone()
+    next.Drawn = this.Drawn?.Clone()
+    next.VertexCircle = this.VertexCircle?.Clone()
+    next.Geometry = this.Geometry
+    return next
   }
 
   Reflect(s: Segment) {

@@ -1,4 +1,5 @@
 import { Complex } from '@Geometry/Complex'
+import { Geometry } from '@Geometry/Geometry'
 
 export class Mobius implements ITransform {
   constructor(a: Complex, b: Complex, c: Complex, d: Complex) {
@@ -80,14 +81,13 @@ export class Mobius implements ITransform {
       case Geometry.Spherical:
         this.C = Complex.Conjugate(P) * (T * -1)
         break
-        break
       case Geometry.Euclidean:
         this.C = 0
-        break
         break
       case Geometry.Hyperbolic:
         this.C = Complex.Conjugate(P) * T
         break
+      default:
         break
     }
   }
