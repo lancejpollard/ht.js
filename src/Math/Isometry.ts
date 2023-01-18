@@ -1,35 +1,40 @@
-///  <summary>
-///  Class to represent an isometry.
-///  This is really just a wrapper around a Mobius transformation, but also includes a reflection in a generalized circle.
-///  (Reflections can't be defined with a Mobius transformation.)
-///  NOTE: The order in which the two elements are applied is important.  We will apply the Mobius part of the isometry first.
-
-import { CircleNE } from '@Geometry/Circle'
+import { Circle, CircleNE } from '@Geometry/Circle'
 import { Complex } from '@Geometry/Complex'
 import { Polygon } from '@Geometry/Polygon'
+import { ITransform } from '@Geometry/Transformable'
 import { Mobius } from './Mobius'
 
-///  </summary>    export class Isometry extends ITransform {
+// Class to represent an isometry.
+// This is really just a wrapper around a Mobius transformation,
+// but also includes a reflection in a generalized circle.
+// (Reflections can't be defined with a Mobius transformation.)
+// NOTE: The order in which the two elements are applied is important.  We will apply the Mobius part of the isometry first.
 export class Isometry implements ITransform {
-  // constructor () {
-  //     m_mobius.Unity();
-  // }
-
-  constructor(m: Mobius, r: Circle) {
-    Mobius = m
-    Reflection = r
+  static constructUnity() {
+    const isometry = new Isometry()
+    isometry.Mobius = new Mobius()
+    isometry.Mobius.Unity()
+    return isometry
   }
 
-  // constructor (i: Isometry) {
-  //     Mobius = i.Mobius;
-  //     if ((i.Reflection != null)) {
-  //         Reflection = i.Reflection.Clone();
-  //     }
+  static constructWithMobius(m: Mobius, r: Circle) {
+    const isometry = new Isometry()
+    isometry.Mobius = m
+    isometry.Reflection = r
+    return isometry
+  }
 
-  // }
+  static constructFromIsometry(i: Isometry) {
+    const next = new Isometry()
+    next.Mobius = i.Mobius
+    if (i.Reflection != null) {
+      next.Reflection = i.Reflection.Clone()
+    }
+    return next
+  }
 
   Clone(): Isometry {
-    return new Isometry(this)
+    return Isometry.constructFromIsometry(this)
   }
 
   ///  <summary>
@@ -43,7 +48,7 @@ export class Isometry implements ITransform {
     m_mobius = value
   }
 
-  #m_mobius: Mobius
+  m_mobius: Mobius
 
   ///  <summary>
   ///  Defines the circle (or line) in which to reflect for this isometry.
@@ -94,7 +99,7 @@ export class Isometry implements ITransform {
     w3 = i1.Apply(w3)
     let m: Mobius = new Mobius()
     m.MapPoints(p1, p2, p3, w1, w2, w3)
-    let result: Isometry = new Isometry()
+    let result: Isometry = Isometry.constructUnity()
     result.Mobius = m
     //  Need to reflect at end?
     let r1: boolean = i1.Reflection != null
@@ -210,11 +215,11 @@ export class Isometry implements ITransform {
   Inverse(): Isometry {
     let inverse: Mobius = this.Mobius.Inverse()
     if (this.Reflection == null) {
-      return new Isometry(inverse, null)
+      return Isometry.constructWithMobius(inverse, null)
     } else {
       let reflection: Circle = this.Reflection.Clone()
       reflection.Transform(inverse)
-      return new Isometry(inverse, reflection)
+      return Isometry.constructWithMobius(inverse, reflection)
     }
   }
 
@@ -222,7 +227,7 @@ export class Isometry implements ITransform {
   ///  Returns an isometry which represents a reflection across the x axis.
   ///  </summary>
   static ReflectX(): Isometry {
-    let i: Isometry = new Isometry()
+    let i: Isometry = Isometry.constructUnity()
     let reflection: Circle = new Circle(
       new Vector3D(),
       new Vector3D(1, 0),

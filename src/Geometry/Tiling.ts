@@ -178,7 +178,11 @@ export class Tiling {
     //  ( 3, 10 ), ( 3, 9 )
     //  ( 6, 4 ), ( 6, 8 )
     //  ( 7, 3 ), ( 7, 9 )
-    let tile: Tile = new Tile(boundary, drawn, config.Geometry)
+    let tile: Tile = Tile.constructWithBoundary(
+      boundary,
+      drawn,
+      config.Geometry,
+    )
     Tile.ShrinkTile(/* ref */ tile, config.Shrink)
     return tile
   }

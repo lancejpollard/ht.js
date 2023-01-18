@@ -2,23 +2,30 @@ import { Isometry } from '@Math/Isometry'
 import { Mobius } from '@Math/Mobius'
 import { isInfinite } from '@Math/Utils'
 import { CircleNE } from './Circle'
-import { Geometry } from './Geometry2D'
+import { Geometry } from './Geometry'
 import { Polygon, Segment } from './Polygon'
 import { Vector3D } from './Vector3D'
 
 export class Tile {
-  // constructor () {
-  //     Isometry = new Isometry();
-  //     EdgeIncidences = new Array<Tile>();
-  //     VertexIndicences = new Array<Tile>();
-  // }
+  static construct() {
+    const tile = new Tile()
+    tile.Isometry = Isometry.constructUnity()
+    tile.EdgeIncidences = new Array<Tile>()
+    tile.VertexIndicences = new Array<Tile>()
+    return tile
+  }
 
-  constructor(boundary: Polygon, drawn: Polygon, geometry: Geometry) {
-    this.Boundary = boundary
-    this.Drawn = drawn
-    this.Geometry = geometry
+  static constructWithBoundary(
+    boundary: Polygon,
+    drawn: Polygon,
+    geometry: Geometry,
+  ) {
+    const tile = new Tile()
+    tile.Boundary = boundary
+    tile.Drawn = drawn
+    tile.Geometry = geometry
     //  Make the vertex circle.
-    this.VertexCircle = boundary.CircumCircle
+    tile.VertexCircle = boundary.CircumCircle
     //  ZZZ - we shouldn't do this here (I did it for the slicing study page).
     // VertexCircle.Radius = 1.0;
     //
@@ -32,6 +39,7 @@ export class Tile {
     //  (1 + 1.0/20) for {3,9}
     //  cuts at 1/3rd
     //  2/Math.sqrt(3) for {3,6}
+    return tile
   }
 
   Boundary: Polygon
@@ -68,7 +76,7 @@ export class Tile {
   VertexIndicences: Array<Tile>
 
   Clone(): Tile {
-    let newTile: Tile = new Tile()
+    let newTile: Tile = Tile.construct()
     newTile.Boundary = this.Boundary.Clone()
     newTile.Drawn = this.Drawn.Clone()
     newTile.VertexCircle = this.VertexCircle.Clone()

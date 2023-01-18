@@ -88,7 +88,9 @@ export class Slicer {
           (keepInside && insideCircle) ||
           (!keepInside && !insideCircle)
         ) {
-          newTiles.Add(new Tile(t.Boundary, p, t.Geometry))
+          newTiles.Add(
+            Tile.constructWithBoundary(t.Boundary, p, t.Geometry),
+          )
         }
       }
     }
