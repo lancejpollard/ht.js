@@ -82,9 +82,8 @@ export class Euclidean3D {
     return Euclidean3D.DistancePointPlane(plane, p1, p2)
   }
 
-  ///  <summary>
-  ///  Checks if a point is anywhere on a segment.
-  ///  </summary>
+  // Checks if a point is anywhere on a segment.
+
   static PointOnSegment(
     s1: Vector3D,
     s2: Vector3D,
@@ -97,12 +96,11 @@ export class Euclidean3D {
     return Tolerance.Equal(d1 + d2, d3)
   }
 
-  ///  <summary>
-  ///  Checks to see if two segments intersect.
-  ///  This does not actually calculate the intersection point.
-  ///  It uses information from the following paper:
-  ///  http://www.geometrictools.com/Documentation/DistanceLine3Line3.pdf
-  ///  </summary>
+  // Checks to see if two segments intersect.
+  // This does not actually calculate the intersection point.
+  // It uses information from the following paper:
+  // http://www.geometrictools.com/Documentation/DistanceLine3Line3.pdf
+
   static DoSegmentsIntersect(
     a1: Vector3D,
     a2: Vector3D,
@@ -148,10 +146,9 @@ export class Euclidean3D {
     return false
   }
 
-  ///  <summary>
-  ///  Calculate a plane normal after a transformation function is applied
-  ///  to the points.
-  ///  </summary>
+  // Calculate a plane normal after a transformation function is applied
+  // to the points.
+
   static NormalFrom3Points(
     p1: Vector3D,
     p2: Vector3D,

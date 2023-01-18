@@ -75,9 +75,9 @@ export class Vector3D {
     }
   }
 
-  ///  <summary>
-  ///  Implicit vector to complex conversion operator.
-  ///  </summary>>
+
+  // Implicit vector to complex conversion operator.
+  >
   static implicitOperator(v: Vector3D): Complex {
     return v.ToComplex()
   }
@@ -274,9 +274,9 @@ export class Vector3D {
     return true
   }
 
-  ///  <summary>
-  ///  Normalize and scale.
-  ///  </summary>
+
+  // Normalize and scale.
+
   Normalize(scale: number): boolean {
     if (!this.Normalize()) {
       return false
@@ -315,10 +315,10 @@ export class Vector3D {
     return this.X * v.X + (this.Y * v.Y + (this.Z * v.Z + this.W * v.W))
   }
 
-  ///  <summary>
-  ///  3D cross product.
-  ///  4th component does not enter into calculations.
-  ///  </summary>
+
+  // 3D cross product.
+  // 4th component does not enter into calculations.
+
   Cross(v: Vector3D): Vector3D {
     let xVal: number = this.Y * v.Z - this.Z * v.Y
     let yVal: number = this.Z * v.X - this.X * v.Z
@@ -326,9 +326,9 @@ export class Vector3D {
     return new Vector3D(xVal, yVal, zVal)
   }
 
-  ///  <summary>
-  ///  Rotate CCW in the XY plane by an angle in radians.
-  ///  </summary>
+
+  // Rotate CCW in the XY plane by an angle in radians.
+
   RotateXY(angle: number) {
     let component1: number = this.X
     let component2: number = this.Y
@@ -336,9 +336,9 @@ export class Vector3D {
     this.Y = Math.sin(angle) * component1 + Math.cos(angle) * component2
   }
 
-  ///  <summary>
-  ///  Rotate CCW in the XY plane about a center.  Angle is in radians.
-  ///  </summary>
+
+  // Rotate CCW in the XY plane about a center.  Angle is in radians.
+
   RotateXY(center: Vector3D, angle: number) {
     this = this - center
     this.RotateXY(angle)
@@ -373,9 +373,9 @@ export class Vector3D {
     )
   }
 
-  ///  <summary>
-  ///  Unsigned (not handed) angle between 0 and pi.
-  ///  </summary>
+
+  // Unsigned (not handed) angle between 0 and pi.
+
   AngleTo(p2: Vector3D): number {
     let magmult: number = this.Abs() * p2.Abs()
     if (Tolerance.Zero(magmult)) {
@@ -398,10 +398,10 @@ export class Vector3D {
     return Math.acos(val)
   }
 
-  ///  <summary>
-  ///  Finds a perpendicular vector (just one of many possible).
-  ///  Result will be normalized.
-  ///  </summary>
+
+  // Finds a perpendicular vector (just one of many possible).
+  // Result will be normalized.
+
   Perpendicular(): Vector3D {
     if (this.IsOrigin) {
       return new Vector3D()
@@ -420,10 +420,10 @@ export class Vector3D {
     return perp
   }
 
-  ///  <summary>
-  ///  4D -> 3D projection.
-  ///  The "safe" part is that we won't make any points invalid (only large).
-  ///  </summary>
+
+  // 4D -> 3D projection.
+  // The "safe" part is that we won't make any points invalid (only large).
+
   ProjectTo3DSafe(cameraDist: number): Vector3D {
     const minDenom: number = 0.0001
     //  The safe part.
@@ -445,9 +445,9 @@ export class Vector3D {
     return result
   }
 
-  ///  <summary>
-  ///  3D -> 2D projection.
-  ///  </summary>
+
+  // 3D -> 2D projection.
+
   CentralProject(cameraDist: number): Vector3D {
     let denominator: number = cameraDist - this.Z
     if (Tolerance.Zero(denominator)) {
@@ -476,10 +476,10 @@ export class Vector3D {
   }
 }
 
-///  <summary>
-///  For comparing vectors (for ordering, etc.)
-///  NOTE: I made the comparison tolerance safe.
-///  </summary>
+
+// For comparing vectors (for ordering, etc.)
+// NOTE: I made the comparison tolerance safe.
+
 export class Vector3DComparer extends IComparer {
   Compare(v1: Vector3D, v2: Vector3D): number {
     const less: number = -1

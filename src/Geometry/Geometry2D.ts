@@ -49,9 +49,8 @@ export class Geometry2D {
     return 1
   }
 
-  ///  <summary>
-  ///  In the induced geometry.
-  ///  </summary>
+  // In the induced geometry.
+
   static GetTriangleHypotenuse(p: number, q: number): number {
     let g: Geometry = Geometry2D.GetGeometry(p, q)
     if (g == Geometry.Euclidean) {
@@ -66,10 +65,9 @@ export class Geometry2D {
     return Geometry2D.GetTriangleSide(g, alpha, beta, gamma)
   }
 
-  ///  <summary>
-  ///  Get the side length opposite angle PI/P,
-  ///  In the induced geometry.
-  ///  </summary>
+  // Get the side length opposite angle PI/P,
+  // In the induced geometry.
+
   static GetTrianglePSide(p: number, q: number): number {
     let g: Geometry = Geometry2D.GetGeometry(p, q)
     let alpha: number = Math.PI / 2
@@ -83,10 +81,9 @@ export class Geometry2D {
     return Geometry2D.GetTriangleSide(g, gamma, beta, alpha)
   }
 
-  ///  <summary>
-  ///  Get the side length opposite angle PI/Q,
-  ///  In the induced geometry.
-  ///  </summary>
+  // Get the side length opposite angle PI/Q,
+  // In the induced geometry.
+
   static GetTriangleQSide(p: number, q: number): number {
     let g: Geometry = Geometry2D.GetGeometry(p, q)
     let alpha: number = Math.PI / 2
@@ -100,10 +97,9 @@ export class Geometry2D {
     return Geometry2D.GetTriangleSide(g, beta, gamma, alpha)
   }
 
-  ///  <summary>
-  ///  Get the length of the side of a triangle opposite alpha, given the three angles of the triangle.
-  ///  NOTE: This does not work in Euclidean geometry!
-  ///  </summary>
+  // Get the length of the side of a triangle opposite alpha, given the three angles of the triangle.
+  // NOTE: This does not work in Euclidean geometry!
+
   static GetTriangleSide(
     g: Geometry,
     alpha: number,

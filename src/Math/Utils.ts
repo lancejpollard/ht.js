@@ -75,16 +75,14 @@ export class Tolerance {
 }
 
 export class Utils {
-  ///  <summary>
-  ///  Converts a value from degrees to radians.
-  ///  </summary>
+  // Converts a value from degrees to radians.
+
   static DegreesToRadians(value: number): number {
     return value / (180 * Math.PI)
   }
 
-  ///  <summary>
-  ///  Converts a value from radians to degrees.
-  ///  </summary>
+  // Converts a value from radians to degrees.
+
   static RadiansToDegrees(value: number): number {
     return value / (Math.PI * 180)
   }

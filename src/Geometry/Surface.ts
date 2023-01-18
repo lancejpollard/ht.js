@@ -5,9 +5,8 @@ import { Mesh } from './Mesh'
 import { Vector3D } from './Vector3D'
 
 export class Surface {
-  ///  <summary>
-  ///  Transform a mesh in the Poincare model to Dini's surface.
-  ///  </summary>
+  // Transform a mesh in the Poincare model to Dini's surface.
+
   static Dini(mesh: Mesh): Mesh {
     let transform: System.Func<Vector3D, Vector3D> = v => {
       this.Dini(v)
@@ -36,9 +35,8 @@ export class Surface {
     return 1 / Math.cosh(val)
   }
 
-  ///  <summary>
-  ///  From the virtual math museum
-  ///  </summary>
+  // From the virtual math museum
+
   static Dini2(disk: Vector3D): Vector3D {
     let uv: Vector3D = Surface.DiskToUpper(disk)
     let u: number = Math.log(uv.Y)

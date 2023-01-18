@@ -1,5 +1,4 @@
-///  <summary>
-///  Information we need for a tiling.
+// Information we need for a tiling.
 
 import { Mobius } from '@Math/Mobius'
 import { Geometry } from './Geometry'
@@ -7,7 +6,6 @@ import { Geometry2D } from './Geometry2D'
 import { Polygon, Segment } from './Polygon'
 import { Vector3D } from './Vector3D'
 
-///  </summary>
 export class TilingConfig {
   constructor(p: number, q: number, maxTiles: number) {
     this.P = p
@@ -29,35 +27,30 @@ export class TilingConfig {
 
   Q: number
 
-  ///  <summary>
-  ///  The induced geometry.
-  ///  </summary>
+  // The induced geometry.
+
   get Geometry(): Geometry {
     return Geometry2D.GetGeometry(this.P, this.Q)
   }
 
-  ///  <summary>
-  ///  A Mobius transformation to apply while creating the tiling.
-  ///  </summary>
+  // A Mobius transformation to apply while creating the tiling.
+
   M: Mobius
 
   m: Mobius
 
-  ///  <summary>
-  ///  The max number of tiles to include in the tiling.
-  ///  </summary>
+  // The max number of tiles to include in the tiling.
+
   MaxTiles: number
 
-  ///  <summary>
-  ///  A shrinkage to apply to the drawn portion of a tile.
-  ///  Default is 1.0 (no shrinkage).
-  ///  </summary>
+  // A shrinkage to apply to the drawn portion of a tile.
+  // Default is 1.0 (no shrinkage).
+
   Shrink: number
 
-  ///  <summary>
-  ///  Returns a Mobius transform that can be used to create a dual {q,p} tiling.
-  ///  This Mobius transform will center the tiling on a vertex.
-  ///  </summary>
+  // Returns a Mobius transform that can be used to create a dual {q,p} tiling.
+  // This Mobius transform will center the tiling on a vertex.
+
   VertexCenteredMobius(): Mobius {
     return this.VertexCenteredMobius(this.P, this.Q)
   }
@@ -83,9 +76,8 @@ export class TilingConfig {
     return this.m
   }
 
-  ///  <summary>
-  ///  This Mobius transform will center the tiling on an edge.
-  ///  </summary>
+  // This Mobius transform will center the tiling on an edge.
+
   EdgeMobius(): Mobius {
     let g: Geometry = Geometry2D.GetGeometry(this.P, this.Q)
     let poly: Polygon = new Polygon()

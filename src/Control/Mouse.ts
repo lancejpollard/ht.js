@@ -1,6 +1,5 @@
-///  <summary>
-///  Data passed along with a click.
-///  </summary>
+// Data passed along with a click.
+
 export class ClickData {
   constructor(x: number, y: number) {
     X = x
@@ -16,13 +15,11 @@ export class ClickData {
   set Button(value: MouseButtons) {}
 }
 
-///  <summary>
-///  Data passed along with a drag.
-///  </summary>
+// Data passed along with a drag.
+
 export class DragData {
-  ///  <summary>
-  ///  The actual drag location.
-  ///  </summary>
+  // The actual drag location.
+
   get X(): number {}
 
   set X(value: number) {}
@@ -31,9 +28,8 @@ export class DragData {
 
   set Y(value: number) {}
 
-  ///  <summary>
-  ///  The drag amount, in rectangular coords.
-  ///  </summary>
+  // The drag amount, in rectangular coords.
+
   get XDiff(): number {}
 
   set XDiff(value: number) {}
@@ -50,10 +46,9 @@ export class DragData {
 
   set YPercent(value: number) {}
 
-  ///  <summary>
-  ///  The drag amount, in polar coords
-  ///  Rotation is in radians.
-  ///  </summary>
+  // The drag amount, in polar coords
+  // Rotation is in radians.
+
   get Rotation(): number {}
 
   set Rotation(value: number) {}
@@ -75,12 +70,11 @@ export class DragData {
   CtrlDown: boolean
 }
 
-///  <summary>
-///  Class for doing drag/click logic.
-///  It handles some of the nuances of puzzle based inputs.
-///  For example, we can't simply handle the Click event on an a draw control,
-///  because if you drag, that still fires when lifting the mouse button.
-///  </summary>
+// Class for doing drag/click logic.
+// It handles some of the nuances of puzzle based inputs.
+// For example, we can't simply handle the Click event on an a draw control,
+// because if you drag, that still fires when lifting the mouse button.
+
 export class MouseHandler {
   constructor() {
     m_skipClick = false
@@ -273,14 +267,12 @@ export class MouseHandler {
     m_spinning = value
   }
 
-  ///  <summary>
-  ///  The control we'll be handling mouse input for.
-  ///  </summary>
+  // The control we'll be handling mouse input for.
+
   m_drawSurface: Control
 
-  ///  <summary>
-  ///  Tracking variables
-  ///  </summary>
+  // Tracking variables
+
   #m_downX: number
 
   #m_downY: number

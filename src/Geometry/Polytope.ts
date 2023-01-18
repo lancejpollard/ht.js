@@ -282,10 +282,9 @@ export class SkewPolyhedron {
     return result.ToArray()
   }
 
-  ///  <summary>
-  ///  This might end up being useful if we need to optimize.
-  ///  http://mathoverflow.net/questions/67960/cycle-of-length-4-in-an-undirected-graph
-  ///  </summary>
+  // This might end up being useful if we need to optimize.
+  // http://mathoverflow.net/questions/67960/cycle-of-length-4-in-an-undirected-graph
+
   static #FindCyclesRecursive(
     cycles: Array<Array<number>>,
     cycleLength: number,

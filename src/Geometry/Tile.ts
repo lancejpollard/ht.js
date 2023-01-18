@@ -50,29 +50,25 @@ export class Tile {
 
   Geometry: Geometry
 
-  ///  <summary>
-  ///  The center of this tile.
-  ///  </summary>
+  // The center of this tile.
+
   get Center(): Vector3D {
     return this.Boundary.Center
   }
 
-  ///  <summary>
-  ///  This is the isometry that will take us back to the parent tile.
-  ///  NOTE: This is not internally updated during transformation,
-  ///           or copied during a clone.  It is meant to be set once at tiling
-  ///           generation time.
-  ///  </summary>
+  // This is the isometry that will take us back to the parent tile.
+  // NOTE: This is not internally updated during transformation,
+  // or copied during a clone.  It is meant to be set once at tiling
+  // generation time.
+
   Isometry: Isometry
 
-  ///  <summary>
-  ///  Used to track edge-adjacent tiles in a tiling.
-  ///  </summary>
+  // Used to track edge-adjacent tiles in a tiling.
+
   EdgeIncidences: Array<Tile>
 
-  ///  <summary>
-  ///  Used to track vertex-adjacent tiles in a tiling.
-  ///  </summary>
+  // Used to track vertex-adjacent tiles in a tiling.
+
   VertexIndicences: Array<Tile>
 
   Clone(): Tile {
@@ -90,9 +86,8 @@ export class Tile {
     this.VertexCircle.Reflect(s)
   }
 
-  ///  <summary>
-  ///  Apply a Mobius transform to us.
-  ///  </summary>
+  // Apply a Mobius transform to us.
+
   Transform(m: Mobius) {
     this.Boundary.Transform(m)
     this.Drawn.Transform(m)
@@ -105,9 +100,8 @@ export class Tile {
     this.VertexCircle.Transform(i)
   }
 
-  ///  <summary>
-  ///  Helper method to see if we have points projected to infinity.
-  ///  </summary>
+  // Helper method to see if we have points projected to infinity.
+
   get HasPointsProjectedToInfinity(): boolean {
     //  This can only happen in spherical case.
     if (this.Geometry != Geometry.Spherical) {
@@ -128,11 +122,10 @@ export class Tile {
     return false
   }
 
-  ///  <summary>
-  ///  ZZZ - needs to be part of performance setting?
-  ///  Returns true if the tile should be included after a Mobius transformation will be applied.
-  ///  If the tile is not be included, this method avoids applying the mobious transform to the entire tile.
-  ///  </summary>
+  // ZZZ - needs to be part of performance setting?
+  // Returns true if the tile should be included after a Mobius transformation will be applied.
+  // If the tile is not be included, this method avoids applying the mobious transform to the entire tile.
+
   IncludeAfterMobius(m: Mobius): boolean {
     switch (this.Geometry) {
       case Geometry.Spherical:
@@ -158,12 +151,11 @@ export class Tile {
     return false
   }
 
-  ///  <summary>
-  ///  A correct implementation of shrink tile.
-  ///  hmmmm, is "scaling" even well defined in non-E geometries? Am I really looking for an equidistant curve?
-  ///  Sadly, even if I figure out what is best, I fear changing out usage of the incorrect one below in MagicTile,
-  ///  because of the possibility of breaking existing puzzles.
-  ///  </summary>
+  // A correct implementation of shrink tile.
+  // hmmmm, is "scaling" even well defined in non-E geometries? Am I really looking for an equidistant curve?
+  // Sadly, even if I figure out what is best, I fear changing out usage of the incorrect one below in MagicTile,
+  // because of the possibility of breaking existing puzzles.
+
   static ShrinkTileCorrect(/* ref */ tile: Tile, shrinkFactor: number) {
     let scaleFunc: System.Func<Vector3D, number, Vector3D> = null
     switch (tile.Geometry) {
@@ -187,10 +179,9 @@ export class Tile {
     }
   }
 
-  ///  <summary>
-  ///  This will trim back the tile using an equidistant curve.
-  ///  It assumes the tile is at the origin.
-  ///  </summary>
+  // This will trim back the tile using an equidistant curve.
+  // It assumes the tile is at the origin.
+
   static ShrinkTile(/* ref */ tile: Tile, shrinkFactor: number) {
     //  This code is not correct in non-Euclidean cases!
     //  But it works reasonable well for small shrink factors.

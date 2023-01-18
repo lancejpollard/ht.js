@@ -1,9 +1,7 @@
-///  <summary>
-///  Class which manages 4D view rotations
+// Class which manages 4D view rotations
 
 import { Matrix4D } from '@Math/Matrix4D'
 
-///  </summary>
 export class RotationHandler4D {
   // constructor() {
   //   Current4dView = null
@@ -15,9 +13,8 @@ export class RotationHandler4D {
 
   ViewMat4d: Matrix4D = Matrix4D.Identity()
 
-  ///  <summary>
-  ///  The current viewpoint.
-  ///  </summary>
+  // The current viewpoint.
+
   get Current4dView(): Matrix4D {
     return this.ViewMat4d
   }
@@ -32,9 +29,8 @@ export class RotationHandler4D {
     //  Orthonormalize
   }
 
-  ///  <summary>
-  ///  Handles updating our rotation matrices based on mouse dragging.
-  ///  </summary>
+  // Handles updating our rotation matrices based on mouse dragging.
+
   MouseDragged(
     dx: number,
     dy: number,

@@ -64,9 +64,8 @@ export class HyperbolicModels {
     return m_upperInv
   }
 
-  ///  <summary>
-  ///  This was needed for performance.  We don't want this Mobius transform calculated repeatedly.
-  ///  </summary>
+  // This was needed for performance.  We don't want this Mobius transform calculated repeatedly.
+
   static Cache() {
     if (m_cached) {
       return
@@ -121,7 +120,7 @@ export class HyperbolicModels {
     return Vector3D.FromComplex(vc)
   }
 
-  ///  <param name="a">The Euclidean period of the tiling in the band model.</param>
+  // <param name="a">The Euclidean period of the tiling in the band model.</param>
   static BandToRing(v: Vector3D, P: number, k: number): Vector3D {
     let vc: Complex = v.ToComplex()
     let i: Complex = new Complex(0, 1)
@@ -129,7 +128,7 @@ export class HyperbolicModels {
     return Vector3D.FromComplex(vc)
   }
 
-  ///  <param name="a">The Euclidean period of the tiling in the band model.</param>
+  // <param name="a">The Euclidean period of the tiling in the band model.</param>
   static RingToBand(v: Vector3D, P: number, k: number): Vector3D {
     let vc: Complex = v.ToComplex()
     let i: Complex = new Complex(0, 1)

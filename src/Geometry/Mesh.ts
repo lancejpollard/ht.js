@@ -96,9 +96,8 @@ export class Mesh {
     return clone
   }
 
-  ///  <summary>
-  ///  Scale our mesh (useful for shapeways models)
-  ///  </summary>
+  // Scale our mesh (useful for shapeways models)
+
   Scale(scale: number) {
     for (let i: number = 0; i < this.MeshTriangles.Count; i++) {
       this.MeshTriangles[i] = new Mesh.MeshTriangle(
@@ -121,9 +120,8 @@ export class Mesh {
     }
   }
 
-  ///  <summary>
-  ///  Transform our mesh by some arbitrary function.
-  ///  </summary>
+  // Transform our mesh by some arbitrary function.
+
   Transform(transform: System.Func<Vector3D, Vector3D>) {
     for (let i: number = 0; i < this.MeshTriangles.Count; i++) {
       this.MeshTriangles[i] = new Mesh.MeshTriangle(
@@ -134,10 +132,9 @@ export class Mesh {
     }
   }
 
-  ///  <summary>
-  ///  Function to add one band
-  ///  d1 and d2 are two pre-calc'd edges (often disks) of points.
-  ///  </summary>
+  // Function to add one band
+  // d1 and d2 are two pre-calc'd edges (often disks) of points.
+
   AddBand(
     d1: Array<Vector3D>,
     d2: Array<Vector3D>,
@@ -164,9 +161,8 @@ export class Mesh {
     }
   }
 
-  ///  <summary>
-  ///  Make an edge mesh of a regular tiling.
-  ///  </summary>
+  // Make an edge mesh of a regular tiling.
+
   static MakeEdgeMesh(p: number, q: number): Mesh {
     let mesh: Mesh = new Mesh()
     let maxTiles: number = 400

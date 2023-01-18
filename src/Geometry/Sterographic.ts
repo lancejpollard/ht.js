@@ -54,9 +54,8 @@ export class Sterographic {
     return new Vector3D(p.X / (1 - w), p.Y / (1 - w), p.Z / (1 - w))
   }
 
-  ///  <summary>
-  ///  See http://en.wikipedia.org/wiki/Poincar%C3%A9_disk_model#Relation_to_the_hyperboloid_model
-  ///  </summary>
+  // See http://en.wikipedia.org/wiki/Poincar%C3%A9_disk_model#Relation_to_the_hyperboloid_model
+
   static PlaneToHyperboloid(planePoint: Vector3D): Vector3D {
     let temp: number =
       planePoint.X * planePoint.X + planePoint.Y * planePoint.Y

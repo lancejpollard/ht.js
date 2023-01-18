@@ -13,18 +13,16 @@ export class TextureHelper {
     return m_maxSubdivisions
   }
 
-  ///  <summary>
-  ///  Stores the triangle element indices for different levels of detail.
-  ///  There are 4 entries in the list, and the first entry will have the least detail.
-  ///  The arrays specify indices into the texture coords, and represent triangle elements.
-  ///  </summary>
+  // Stores the triangle element indices for different levels of detail.
+  // There are 4 entries in the list, and the first entry will have the least detail.
+  // The arrays specify indices into the texture coords, and represent triangle elements.
+
   get ElementIndices(): Array<Array<number>> {}
 
   set ElementIndices(value: Array<Array<number>>) {}
 
-  ///  <summary>
-  ///  Sets up our list of element indices
-  ///  </summary>
+  // Sets up our list of element indices
+
   SetupElementIndices(poly: Polygon) {
     // int numBaseTriangles = poly.Segments.Count == 3 ? 1 : poly.Segments.Count;    // For geodesic saddles.
     let numBaseTriangles: number = poly.Segments.Count
@@ -39,7 +37,7 @@ export class TextureHelper {
   static #m_maxSubdivisions: number = 8
 
   //  Must be a power of 2.
-  /// ////////////////////////////////////////////////////////////// PLAYING AROUND WITH GEODESIC SADDLES
+  // ///////////////////////////////////////////////////////////// PLAYING AROUND WITH GEODESIC SADDLES
   static #CalcPointsUsingTwoSegments(
     seg1: Segment,
     seg2: Segment,
@@ -141,10 +139,10 @@ export class TextureHelper {
     return result
   }
 
-  /// //////////////////////////////////////////////////////////////
-  ///  <summary>
-  ///  Helper to generate a set of texture coordinates.
-  ///  </summary>
+  // //////////////////////////////////////////////////////////////
+
+  // Helper to generate a set of texture coordinates.
+
   static TextureCoords(
     poly: Polygon,
     g: Geometry,
@@ -204,9 +202,8 @@ export class TextureHelper {
     return points.ToArray()
   }
 
-  ///  <summary>
-  ///  Subdivides a segment from p1->p2 with the two endpoints not on the origin, in the respective geometry.
-  ///  </summary>
+  // Subdivides a segment from p1->p2 with the two endpoints not on the origin, in the respective geometry.
+
   static SubdivideSegmentInGeometry(
     p1: Vector3D,
     p2: Vector3D,
@@ -237,9 +234,8 @@ export class TextureHelper {
     return result.ToArray()
   }
 
-  ///  <summary>
-  ///  Equally subdivides a segment with a startpoint at the origin, in the respective geometry.
-  ///  </summary>
+  // Equally subdivides a segment with a startpoint at the origin, in the respective geometry.
+
   static #SubdivideRadialInGeometry(
     radial: Segment,
     divisions: number,
@@ -282,17 +278,15 @@ export class TextureHelper {
     return result.ToArray()
   }
 
-  ///  <summary>
-  ///  Returns the sum of all the integers up to and including n.
-  ///  </summary>
+  // Returns the sum of all the integers up to and including n.
+
   static #TriangularNumber(n: number): number {
     return n * ((n + 1) / 2)
   }
 
-  ///  <summary>
-  ///  Grabs an array of indices into the coordinate array for TextureCoords.
-  ///  The array represents individual triangles (each set of 3 is one triangle).
-  ///  </summary>
+  // Grabs an array of indices into the coordinate array for TextureCoords.
+  // The array represents individual triangles (each set of 3 is one triangle).
+
   static TextureElements(
     numBaseTriangles: number,
     LOD: number,

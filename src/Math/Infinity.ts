@@ -1,10 +1,8 @@
-///  <summary>
-///  Class with some hackish methods for dealing with points projected to infinite.
+// Class with some hackish methods for dealing with points projected to infinite.
 
 import { Vector3D } from '@Geometry/Vector3D'
 import { isInfinite } from './Utils'
 
-///  </summary>
 export class UtilsInfinity {
   static InfinityVector: Vector3D = new Vector3D(
     Number.POSITIVE_INFINITY,

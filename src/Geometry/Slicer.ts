@@ -1,9 +1,8 @@
 class IntersectionPoint {
   Location: Vector3D
 
-  ///  <summary>
-  ///  Index in the sliced polygon. The location will be at the start of the segment with this index.
-  ///  </summary>
+  // Index in the sliced polygon. The location will be at the start of the segment with this index.
+
   Index: number
 }
 //
@@ -11,11 +10,10 @@ class IntersectionPoint {
 //  I didn't comment things very well, and it is difficult to tell what is going on!
 //
 export class Slicer {
-  ///  <summary>
-  ///  Slices a polygon by a circle with some thickness.
-  ///  Input circle may be a line.
-  ///  </summary>
-  ///  <remarks>The input polygon might get reversed</remarks>
+  // Slices a polygon by a circle with some thickness.
+  // Input circle may be a line.
+
+  // <remarks>The input polygon might get reversed</remarks>
   static SlicePolygon(
     p: Polygon,
     c: CircleNE,
@@ -57,10 +55,9 @@ export class Slicer {
     }
   }
 
-  ///  <summary>
-  ///  Slices up a polygon with a circle (line case not supported).
-  ///  </summary>
-  ///  <remarks>The input polygon might get reversed</remarks>
+  // Slices up a polygon with a circle (line case not supported).
+
+  // <remarks>The input polygon might get reversed</remarks>
   static SlicePolygon(
     p: Polygon,
     c: Circle,
@@ -69,9 +66,8 @@ export class Slicer {
     return Slicer.SlicePolygonInternal(p, c, /* out */ output)
   }
 
-  ///  <summary>
-  ///  Clip the drawn polygons in a set of tiles, using a circle.
-  ///  </summary>
+  // Clip the drawn polygons in a set of tiles, using a circle.
+
   static Clip(
     /* ref */ tiles: Array<Tile>,
     c: Circle,
@@ -239,11 +235,10 @@ export class Slicer {
     return true
   }
 
-  ///  <summary>
-  ///  Splits segmentToSplit in two based on iLocation.
-  ///  First new segment will be added to diced, and second new segment will be returned.
-  ///  If split doesn't happen, segmentToSplit will be returned.
-  ///  </summary>
+  // Splits segmentToSplit in two based on iLocation.
+  // First new segment will be added to diced, and second new segment will be returned.
+  // If split doesn't happen, segmentToSplit will be returned.
+
   static #SplitHelper(
     segmentToSplit: Segment,
     iLocation: Vector3D,
@@ -274,11 +269,10 @@ export class Slicer {
     }
   }
 
-  ///  <summary>
-  ///  Helper to walk a polygon, starting from a pair of intersection points.
-  ///  increment determines the direction we are walking.
-  ///  NOTE: when walking from i1 -> i2 along c, we should be moving through the interior of the polygon.
-  ///  </summary>
+  // Helper to walk a polygon, starting from a pair of intersection points.
+  // increment determines the direction we are walking.
+  // NOTE: when walking from i1 -> i2 along c, we should be moving through the interior of the polygon.
+
   static #WalkPolygon(
     parent: Polygon,
     walking: Polygon,
@@ -340,9 +334,8 @@ export class Slicer {
     return newPoly
   }
 
-  ///  <summary>
-  ///  Get a pair of intersection points.
-  ///  </summary>
+  // Get a pair of intersection points.
+
   static #GetPairPoints(
     iPoints: Array<IntersectionPoint>,
     pair: number,
@@ -360,9 +353,8 @@ export class Slicer {
     iPoint2 = iPoints[idx2]
   }
 
-  ///  <summary>
-  ///  Helper to return the smaller spliced arc.
-  ///  </summary>
+  // Helper to return the smaller spliced arc.
+
   static #SmallerSplicedArc(
     c: Circle,
     iPoints: Array<IntersectionPoint>,
@@ -400,9 +392,8 @@ export class Slicer {
     return newSeg
   }
 
-  ///  <summary>
-  ///  Helper to return a spliced arc.
-  ///  </summary>
+  // Helper to return a spliced arc.
+
   static #SplicedArc(
     parent: Polygon,
     c: Circle,

@@ -8,9 +8,8 @@ export class Mobius implements ITransform {
     this.D = d
   }
 
-  ///  <summary>
-  ///  This transform will map z1 to Zero, z2, to One, and z3 to Infinity.
-  ///  </summary>
+  // This transform will map z1 to Zero, z2, to One, and z3 to Infinity.
+
   constructor(z1: Complex, z2: Complex, z3: Complex) {
     this.MapPoints(z1, z2, z3)
   }
@@ -38,9 +37,8 @@ export class Mobius implements ITransform {
     return result
   }
 
-  ///  <summary>
-  ///  Normalize so that ad - bc = 1
-  ///  </summary>
+  // Normalize so that ad - bc = 1
+
   Normalize() {
     //  See Visual Complex Analysis, p150
     let k: Complex = Complex.Reciprocal(
@@ -64,10 +62,9 @@ export class Mobius implements ITransform {
     return this.Trace * this.Trace
   }
 
-  ///  <summary>
-  ///  This will calculate the Mobius transform that represents an isometry in the given geometry.
-  ///  The isometry will rotate CCW by angle A about the origin, then translate the origin to P (and -P to the origin).
-  ///  </summary>
+  // This will calculate the Mobius transform that represents an isometry in the given geometry.
+  // The isometry will rotate CCW by angle A about the origin, then translate the origin to P (and -P to the origin).
+
   Isometry(g: Geometry, angle: number, P: Complex) {
     //  As Don notes in the hypebolic case:
     //  Any isometry of the Poincare disk can be expressed as a complex function of z of the form:
@@ -105,9 +102,8 @@ export class Mobius implements ITransform {
     return m
   }
 
-  ///  <summary>
-  ///  The identity Mobius transformation.
-  ///  </summary>
+  // The identity Mobius transformation.
+
   Unity() {
     this.A = Complex.One
     this.B = Complex.Zero
@@ -115,10 +111,9 @@ export class Mobius implements ITransform {
     this.D = Complex.One
   }
 
-  ///  <summary>
-  ///  The pure translation (i.e. moves the origin straight in some direction) that takes p1 to p2.
-  ///  I borrowed this from Don's hyperbolic applet.
-  ///  </summary>
+  // The pure translation (i.e. moves the origin straight in some direction) that takes p1 to p2.
+  // I borrowed this from Don's hyperbolic applet.
+
   PureTranslation(g: Geometry, p1: Complex, p2: Complex) {
     let A: Complex = p2 - p1
     let B: Complex = p2 * p1
@@ -137,10 +132,9 @@ export class Mobius implements ITransform {
     this.Normalize()
   }
 
-  ///  <summary>
-  ///  Move from a point p1 -> p2 along a geodesic.
-  ///  Also somewhat from Don.
-  ///  </summary>
+  // Move from a point p1 -> p2 along a geodesic.
+  // Also somewhat from Don.
+
   Geodesic(g: Geometry, p1: Complex, p2: Complex) {
     let t: Mobius = new Mobius()
     t.Isometry(g, 0, p1 * -1)
@@ -171,10 +165,9 @@ export class Mobius implements ITransform {
     this = m3 * (m2 * m1)
   }
 
-  ///  <summary>
-  ///  Allow a hyperbolic transformation using an absolute offset.
-  ///  offset is specified in the respective geometry.
-  ///  </summary>
+  // Allow a hyperbolic transformation using an absolute offset.
+  // offset is specified in the respective geometry.
+
   Hyperbolic2(
     g: Geometry,
     fixedPlus: Complex,
@@ -216,9 +209,8 @@ export class Mobius implements ITransform {
     this = origin.Inverse() * (rotate * origin)
   }
 
-  ///  <summary>
-  ///  This will transform the unit disk to the upper half plane.
-  ///  </summary>
+  // This will transform the unit disk to the upper half plane.
+
   UpperHalfPlane() {
     this.MapPoints(
       Complex.ImaginaryOne * -1,
@@ -227,12 +219,11 @@ export class Mobius implements ITransform {
     )
   }
 
-  ///  <summary>
-  ///  This transform will map z1 to Zero, z2 to One, and z3 to Infinity.
-  ///  http://en.wikipedia.org/wiki/Mobius_transformation#Mapping_first_to_0.2C_1.2C_.E2.88.9E
-  ///  If one of the zi is , then the proper formula is obtained by first
-  ///  dividing all entries by zi and then taking the limit zi � 
-  ///  </summary>
+  // This transform will map z1 to Zero, z2 to One, and z3 to Infinity.
+  // http://en.wikipedia.org/wiki/Mobius_transformation#Mapping_first_to_0.2C_1.2C_.E2.88.9E
+  // If one of the zi is , then the proper formula is obtained by first
+  // dividing all entries by zi and then taking the limit zi � 
+
   MapPoints(z1: Complex, z2: Complex, z3: Complex) {
     if (isInfinite(z1)) {
       this.A = 0
@@ -259,9 +250,8 @@ export class Mobius implements ITransform {
     this.Normalize()
   }
 
-  ///  <summary>
-  ///  This transform will map the z points to the respective w points.
-  ///  </summary>
+  // This transform will map the z points to the respective w points.
+
   MapPoints(
     z1: Complex,
     z2: Complex,
@@ -277,19 +267,17 @@ export class Mobius implements ITransform {
     this = m2.Inverse() * m1
   }
 
-  ///  <summary>
-  ///  Applies a Mobius transformation to a vector.
-  ///  </summary>
-  ///  <remarks>Use the complex number version if you can.</remarks>
+  // Applies a Mobius transformation to a vector.
+
+  // <remarks>Use the complex number version if you can.</remarks>
   Apply(z: Vector3D): Vector3D {
     let cInput: Complex = z
     let cOutput: Complex = this.Apply(cInput)
     return Vector3D.FromComplex(cOutput)
   }
 
-  ///  <summary>
-  ///  Applies a Mobius transformation to a complex number.
-  ///  </summary>
+  // Applies a Mobius transformation to a complex number.
+
   Apply(z: Complex): Complex {
     return (this.A * z + this.B) / (this.C * z + this.D)
   }
@@ -307,18 +295,16 @@ export class Mobius implements ITransform {
     return result
   }
 
-  ///  <summary>
-  ///  Applies a Mobius transformation to the point at infinity.
-  ///  </summary>
+  // Applies a Mobius transformation to the point at infinity.
+
   ApplyToInfinite(): Vector3D {
     return Vector3D.FromComplex(this.A / this.C)
   }
 
-  ///  <summary>
-  ///  Applies a Mobius transformation to a quaternion with a zero k component (handled as a vector).
-  ///  The complex Mobius coefficients are treated as quaternions with zero j,k values.
-  ///  This is also infinity safe.
-  ///  </summary>
+  // Applies a Mobius transformation to a quaternion with a zero k component (handled as a vector).
+  // The complex Mobius coefficients are treated as quaternions with zero j,k values.
+  // This is also infinity safe.
+
   ApplyToQuaternion(q: Vector3D): Vector3D {
     if (isInfinite(q)) {
       return this.ApplyToInfinite()
@@ -355,9 +341,8 @@ export class Mobius implements ITransform {
     return this.MultQuat(a, bInv)
   }
 
-  ///  <summary>
-  ///  Returns a new Mobius transformation that is the inverse of us.
-  ///  </summary>
+  // Returns a new Mobius transformation that is the inverse of us.
+
   Inverse(): Mobius {
     //  See http://en.wikipedia.org/wiki/M�bius_transformation
     let result: Mobius = new Mobius(
@@ -380,10 +365,9 @@ export class Mobius implements ITransform {
     return new Mobius(scale, Complex.Zero, Complex.Zero, Complex.One)
   }
 
-  ///  <summary>
-  ///  This is only here for a numerical accuracy hack.
-  ///  Please don't make a habit of using!
-  ///  </summary>
+  // This is only here for a numerical accuracy hack.
+  // Please don't make a habit of using!
+
   Round(digits: number) {
     let d: number = digits
     this.A = new Complex(

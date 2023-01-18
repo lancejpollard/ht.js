@@ -18,16 +18,14 @@ export class GraphEdge {
 
   set V2(value: number) {}
 
-  ///  <summary>
-  ///  Given a vertex index, find the vertex at the other end of the edge.
-  ///  </summary>
+  // Given a vertex index, find the vertex at the other end of the edge.
+
   Opposite(idx: number): number {
     return idx == V1 ? V2 : V1
   }
 
-  ///  <summary>
-  ///  vZome VEF format.
-  ///  </summary>
+  // vZome VEF format.
+
   ReadEdge(line: string) {
     // string[] split = line.Split( '\t' );
     let split: Array<string> = line.Split(
@@ -38,9 +36,8 @@ export class GraphEdge {
     this.V2 = number.Parse(split[1])
   }
 
-  ///  <summary>
-  ///  vZome VEF format.
-  ///  </summary>
+  // vZome VEF format.
+
   WriteEdge(): string {
     return this.V1.ToString() + ('    ' + this.V2.ToString())
   }

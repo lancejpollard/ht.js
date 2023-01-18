@@ -28,9 +28,8 @@ export class Circle3D {
     return MemberwiseClone()
   }
 
-  ///  <summary>
-  ///  Caller is responsible to make sure our normal is in the z direction.
-  ///  </summary>
+  // Caller is responsible to make sure our normal is in the z direction.
+
   ToFlatCircle(): Circle {
     return [][((Center = Center), (Radius = Radius))]
   }
@@ -58,16 +57,14 @@ export class Circle3D {
     return points.First()
   }
 
-  ///  <summary>
-  ///  Returns 3 points that will define the circle (120 degrees apart).
-  ///  </summary>
+  // Returns 3 points that will define the circle (120 degrees apart).
+
   get RepresentativePoints(): Array<Vector3D> {
     return this.Subdivide(3)
   }
 
-  ///  <summary>
-  ///  Calculate n points around the circle
-  ///  </summary>
+  // Calculate n points around the circle
+
   Subdivide(n: number): Array<Vector3D> {
     let points: Array<Vector3D> = new Array<Vector3D>()
     let start: Vector3D = this.Normal.Perpendicular()
@@ -123,10 +120,9 @@ export class Circle3D {
             ))))
   }
 
-  ///  <summary>
-  ///  Barycentric coords to Cartesian
-  ///  http://stackoverflow.com/questions/11262391/from-barycentric-to-cartesian
-  ///  </summary>
+  // Barycentric coords to Cartesian
+  // http://stackoverflow.com/questions/11262391/from-barycentric-to-cartesian
+
   static #BaryToCartesian(
     t1: Vector3D,
     t2: Vector3D,

@@ -32,9 +32,8 @@ export class Sphere {
     this.Invert = false
   }
 
-  ///  <summary>
-  ///  Our Center.
-  ///  </summary>
+  // Our Center.
+
   get Center(): Vector3D {
     return m_center
   }
@@ -46,10 +45,9 @@ export class Sphere {
 
   m_center: Vector3D
 
-  ///  <summary>
-  ///  Our Radius. As a limiting case, we support infinite radii.
-  ///  The sphere is then a plane with a normal equal to the center, and an optional offset.
-  ///  </summary>
+  // Our Radius. As a limiting case, we support infinite radii.
+  // The sphere is then a plane with a normal equal to the center, and an optional offset.
+
   get Radius(): number {
     return m_radius
   }
@@ -66,25 +64,22 @@ export class Sphere {
 
   set Color(value: System.Drawing.Color) {}
 
-  ///  <summary>
-  ///  Required for planes which do not go through the origin.
-  ///  This can be any point on the plane.
-  ///  XXX - A vector is not required...We could use a double.
-  ///  </summary>
+  // Required for planes which do not go through the origin.
+  // This can be any point on the plane.
+  // XXX - A vector is not required...We could use a double.
+
   get Offset(): Vector3D {}
 
   set Offset(value: Vector3D) {}
 
-  ///  <summary>
-  ///  Used to track which part of the sphere is "inside".
-  ///  </summary>
+  // Used to track which part of the sphere is "inside".
+
   get Invert(): boolean {}
 
   set Invert(value: boolean) {}
 
-  ///  <summary>
-  ///  For planes, the normal.
-  ///  </summary>
+  // For planes, the normal.
+
   get Normal(): Vector3D {
     return m_normal
   }
@@ -188,9 +183,8 @@ export class Sphere {
     return this.IsPointInside(test) || this.IsPointOn(test)
   }
 
-  ///  <summary>
-  ///  Reflect a point in us.
-  ///  </summary>
+  // Reflect a point in us.
+
   ReflectPoint(p: Vector3D): Vector3D {
     if (this.IsPlane) {
       //  We used to call ProjectOntoPlane, but optimized it away.
@@ -219,9 +213,8 @@ export class Sphere {
     }
   }
 
-  ///  <summary>
-  ///  Reflect ourselves about another sphere.
-  ///  </summary>
+  // Reflect ourselves about another sphere.
+
   Reflect(sphere: Sphere) {
     //  An interior point used to calculate whether we get inverted.
     let interiorPoint: Vector3D
@@ -386,9 +379,8 @@ export class Sphere {
     return new Sphere()
   }
 
-  ///  <summary>
-  ///  Get 4 points on the sphere.
-  ///  </summary>
+  // Get 4 points on the sphere.
+
   Get4Points(): Array<Vector3D> {
     let s: Sphere = this
     let rad: number = s.Radius
@@ -415,9 +407,8 @@ export class Sphere {
     return spherePoints
   }
 
-  ///  <summary>
-  ///  Radially project a point onto our surface.
-  ///  </summary>
+  // Radially project a point onto our surface.
+
   ProjectToSurface(p: Vector3D): Vector3D {
     if (this.IsPlane) {
       return Euclidean3D.ProjectOntoPlane(this.Normal, this.Offset, p)
@@ -429,11 +420,10 @@ export class Sphere {
     return this.Center + direction
   }
 
-  ///  <summary>
-  ///  Finds the intersection (a circle) between us and another sphere.
-  ///  Returns null if sphere centers are coincident or no intersection exists.
-  ///  Does not currently work for planes.
-  ///  </summary>
+  // Finds the intersection (a circle) between us and another sphere.
+  // Returns null if sphere centers are coincident or no intersection exists.
+  // Does not currently work for planes.
+
   Intersection(s: Sphere): Circle3D {
     if (this.IsPlane || s.IsPlane) {
       throw new Error('Not implemented')
@@ -465,10 +455,9 @@ export class Sphere {
     return result
   }
 
-  ///  <summary>
-  ///  Returns null if no intersection, or a Tuple.
-  ///  Currently does not work in tangent case.
-  ///  </summary>
+  // Returns null if no intersection, or a Tuple.
+  // Currently does not work in tangent case.
+
   Intersection(c: Circle3D): System.Tuple<Vector3D, Vector3D> {
     let intersectionCircle: Circle3D = this.Intersection(new Sphere())
     if (intersectionCircle == null) {

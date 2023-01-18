@@ -1,9 +1,9 @@
-///  <summary>
-///  Class for numbers in the golden field (of the form: A + golden*B)
+
+// Class for numbers in the golden field (of the form: A + golden*B)
 
 import { Fraction } from './Fraction'
 
-///  </summary>    export struct Golden {
+    export struct Golden {
 class Golden {
   constructor(a: Fraction, b: Fraction) {
     A = a
@@ -99,10 +99,10 @@ export class GoldenVector4D {
 
   U: Golden
 
-  ///  <summary>
-  ///  This is here because parameterless constructor leads to 0/0 Fractions.
-  ///  I should find a better way to deal with this (maybe these all just need to be classes).
-  ///  </summary>
+
+  // This is here because parameterless constructor leads to 0/0 Fractions.
+  // I should find a better way to deal with this (maybe these all just need to be classes).
+
   static Origin(): GoldenVector4D {
     let g: Golden = new Golden(new Fraction(0), new Fraction(0))
     return new GoldenVector4D(g, g, g, g)

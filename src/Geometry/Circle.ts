@@ -1,5 +1,4 @@
-///  <summary>
-///  Class for generalized circles (lines are a limiting case).
+// Class for generalized circles (lines are a limiting case).
 
 import { isInfinite, Tolerance } from '@Math/Utils'
 import { Euclidean2D } from './Euclidean2D'
@@ -7,7 +6,6 @@ import { Segment, SegmentType } from './Polygon'
 import { ITransformable } from './Transformable'
 import { Vector3D } from './Vector3D'
 
-///  </summary>
 export class Circle implements ITransformable {
   constructor() {
     this.Reset()
@@ -20,16 +18,14 @@ export class Circle implements ITransformable {
     this.Radius = 1
   }
 
-  ///  <summary>
-  ///  Constructs a circle from 3 points.
-  ///  </summary>
+  // Constructs a circle from 3 points.
+
   constructor(p1: Vector3D, p2: Vector3D, p3: Vector3D) {
     this.From3Points(p1, p2, p3)
   }
 
-  ///  <summary>
-  ///  Constructs a circle with infinite radius going through 2 points.
-  ///  </summary>
+  // Constructs a circle with infinite radius going through 2 points.
+
   constructor(p1: Vector3D, p2: Vector3D) {
     this.From2Points(p1, p2)
   }
@@ -38,16 +34,14 @@ export class Circle implements ITransformable {
 
   Radius: number
 
-  ///  <summary>
-  ///  Line variables.
-  ///  </summary>
+  // Line variables.
+
   P1: Vector3D
 
   P2: Vector3D
 
-  ///  <summary>
-  ///  Whether we are a line.
-  ///  </summary>
+  // Whether we are a line.
+
   get IsLine(): boolean {
     return number.IsInfinity(this.Radius)
   }
@@ -56,10 +50,9 @@ export class Circle implements ITransformable {
     return MemberwiseClone()
   }
 
-  ///  <summary>
-  ///  Construct a circle from 3 points
-  ///  </summary>
-  ///  <returns>false if the construction failed (if we are a line).</returns>
+  // Construct a circle from 3 points
+
+  // <returns>false if the construction failed (if we are a line).</returns>
   From3Points(p1: Vector3D, p2: Vector3D, p3: Vector3D): boolean {
     this.Reset()
     //  Check for any infinite points, in which case we are a line.
@@ -112,9 +105,8 @@ export class Circle implements ITransformable {
     return true
   }
 
-  ///  <summary>
-  ///  Creates a circle with infinite radius going through 2 points.
-  ///  </summary>
+  // Creates a circle with infinite radius going through 2 points.
+
   From2Points(p1: Vector3D, p2: Vector3D) {
     this.P1 = p1
     this.P2 = p2
@@ -124,10 +116,9 @@ export class Circle implements ITransformable {
     this.Center.Empty()
   }
 
-  ///  <summary>
-  ///  Normalize so P1 is closest point to origin,
-  ///  and direction vector is of unit length.
-  ///  </summary>
+  // Normalize so P1 is closest point to origin,
+  // and direction vector is of unit length.
+
   NormalizeLine() {
     if (!this.IsLine) {
       return
@@ -168,9 +159,8 @@ export class Circle implements ITransformable {
     return Tolerance.Equal((test - this.Center).Abs(), this.Radius)
   }
 
-  ///  <summary>
-  ///  Reflect ourselves about another circle.
-  ///  </summary>
+  // Reflect ourselves about another circle.
+
   Reflect(c: Circle) {
     this.ReflectInternal(c)
   }
@@ -201,9 +191,8 @@ export class Circle implements ITransformable {
     }
   }
 
-  ///  <summary>
-  ///  Reflect ourselves about a segment.
-  ///  </summary>
+  // Reflect ourselves about a segment.
+
   Reflect(s: Segment) {
     if (SegmentType.Arc == s.Type) {
       this.ReflectInternal(s.Circle)
@@ -213,11 +202,10 @@ export class Circle implements ITransformable {
     }
   }
 
-  ///  <summary>
-  ///  Reflect a point in us.
-  ///  ZZZ - This method is confusing in that it is opposite the above (we aren't reflecting ourselves here).
-  ///  </summary>
-  ///  <param name="p"></param>
+  // Reflect a point in us.
+  // ZZZ - This method is confusing in that it is opposite the above (we aren't reflecting ourselves here).
+
+  // <param name="p"></param>
   ReflectPoint(p: Vector3D): Vector3D {
     if (this.IsLine) {
       return Euclidean2D.ReflectPointInLine(p, this.P1, this.P2)
@@ -247,9 +235,8 @@ export class Circle implements ITransformable {
     this.TransformInternal(i)
   }
 
-  ///  <summary>
-  ///  Apply a transform to us.
-  ///  </summary>
+  // Apply a transform to us.
+
   TransformInternal(transform: T) {
     //  Get 3 points on the circle.
     let p3: Vector3D
@@ -354,11 +341,9 @@ export class Circle implements ITransformable {
   }
 }
 
-///  <summary>
-///  A class to represent projected circles from non-Euclidean geometries.
-///  This also stores the location of the true circle center,
-///  which does not in general coincide with the Euclidean circle center.
-///  </summary>
+// A class to represent projected circles from non-Euclidean geometries.
+// This also stores the location of the true circle center,
+// which does not in general coincide with the Euclidean circle center.
 
 export class CircleNE extends Circle implements ITransformable {
   // constructor() {}
@@ -402,11 +387,10 @@ export class CircleNE extends Circle implements ITransformable {
     return isInfinite(this.CenterNE) || !IsPointInside(this.CenterNE)
   }
 
-  ///  <summary>
-  ///  Checks to see if a point is inside us, in a non-Euclidean sense.
-  ///  This works if we are inverted, and even if we are a line!
-  ///  (if we are a line, half of the plane is still "inside").
-  ///  </summary>
+  // Checks to see if a point is inside us, in a non-Euclidean sense.
+  // This works if we are inverted, and even if we are a line!
+  // (if we are a line, half of the plane is still "inside").
+
   IsPointInsideNE(testPoint: Vector3D): boolean {
     if (this.IsLine) {
       //  We are inside if the test point is on the same side
@@ -434,13 +418,12 @@ export class CircleNE extends Circle implements ITransformable {
     return c.IsPointInsideNE(testPoint)
   }
 
-  ///  <summary>
-  ///  This is an optimized version for puzzle building when not in spherical geometry,
-  ///  in which case we know our circles will not be inverted.
-  ///  Profiling showed the general code in IsPointInsideNE to be very slow.
-  ///  For speed, this method assumes we are most likely to not be in the circle.
-  ///  http://stackoverflow.com/a/7227057/5700835
-  ///  </summary>
+  // This is an optimized version for puzzle building when not in spherical geometry,
+  // in which case we know our circles will not be inverted.
+  // Profiling showed the general code in IsPointInsideNE to be very slow.
+  // For speed, this method assumes we are most likely to not be in the circle.
+  // http://stackoverflow.com/a/7227057/5700835
+
   IsPointInsideFast(testPoint: Vector3D): boolean {
     let r: number = this.Radius
     let dx: number = Math.abs(testPoint.X - this.Center.X)

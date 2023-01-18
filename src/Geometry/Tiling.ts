@@ -14,26 +14,22 @@ export class Tiling {
     this.TilePositions = new Record<Vector3D, Tile>()
   }
 
-  ///  <summary>
-  ///  The tiling configuration.
-  ///  </summary>
+  // The tiling configuration.
+
   TilingConfig: TilingConfig
 
-  ///  <summary>
-  ///  Our tiles.
-  ///  </summary>
+  // Our tiles.
+
   m_tiles: Array<Tile>
 
-  ///  <summary>
-  ///  A Record from tile centers to tiles.
-  ///  </summary>
+  // A Record from tile centers to tiles.
+
   TilePositions: Record<Vector3D, Tile>
 
-  ///  <summary>
-  ///  A static helper to generate two dual tilings.
-  ///  </summary>
-  ///  <remarks>{p,q} will have a vertex at the center.</remarks>
-  ///  <remarks>{q,p} will have its center at the center.</remarks>
+  // A static helper to generate two dual tilings.
+
+  // <remarks>{p,q} will have a vertex at the center.</remarks>
+  // <remarks>{q,p} will have its center at the center.</remarks>
   static MakeDualTilings(
     /* out */ tiling1: Tiling,
     /* out */ tiling2: Tiling,
@@ -49,9 +45,8 @@ export class Tiling {
     tiling2.GenerateInternal(config2, PolytopeProjection.VertexCentered)
   }
 
-  ///  <summary>
-  ///  Generate ourselves from a tiling config.
-  ///  </summary>
+  // Generate ourselves from a tiling config.
+
   Generate(config: TilingConfig) {
     this.GenerateInternal(config)
   }
@@ -85,9 +80,8 @@ export class Tiling {
     this.FillOutIncidences()
   }
 
-  ///  <summary>
-  ///  This will fill out all the tiles with the isometry that will take them back to a home tile.
-  ///  </summary>
+  // This will fill out all the tiles with the isometry that will take them back to a home tile.
+
   static FillOutIsometries(
     home: Tile,
     tiles: Array<Tile>,
@@ -98,10 +92,9 @@ export class Tiling {
     }
   }
 
-  ///  <summary>
-  ///  Fill out all the incidence information.
-  ///  If performance became an issue, we could do some of this at tile generation time.
-  ///  </summary>
+  // Fill out all the incidence information.
+  // If performance became an issue, we could do some of this at tile generation time.
+
   FillOutIncidences() {
     let Edges: Record<Vector3D, Array<Tile>> = new Record<
       Vector3D,
@@ -187,16 +180,14 @@ export class Tiling {
     return tile
   }
 
-  ///  <summary>
-  ///  Clips the tiling to the interior of a circle.
-  ///  </summary>
+  // Clips the tiling to the interior of a circle.
+
   Clip(c: Circle, interior: boolean = true) {
     Slicer.Clip(/* ref */ this.m_tiles, c, interior)
   }
 
-  ///  <summary>
-  ///  Will clone the tile, transform it and add it to our tiling.
-  ///  </summary>
+  // Will clone the tile, transform it and add it to our tiling.
+
   TransformAndAdd(tile: Tile): boolean {
     //  Will we want to include it?
     if (!tile.IncludeAfterMobius(this.TilingConfig.M)) {
@@ -210,10 +201,9 @@ export class Tiling {
     return true
   }
 
-  ///  <summary>
-  ///  This will return whether we'll be a new tile after reflecting through a segment.
-  ///  This allows us to do the check without having to do all the work of reflecting the entire tile.
-  ///  </summary>
+  // This will return whether we'll be a new tile after reflecting through a segment.
+  // This allows us to do the check without having to do all the work of reflecting the entire tile.
+
   NewTileAfterReflect(
     t: Tile,
     s: Segment,
@@ -270,30 +260,26 @@ export class Tiling {
     this.ReflectRecursive(reflected, completed)
   }
 
-  ///  <summary>
-  ///  The number of tiles.
-  ///  </summary>
+  // The number of tiles.
+
   get Count(): number {
     return this.m_tiles.Count
   }
 
-  ///  <summary>
-  ///  Access to all the tiles.
-  ///  </summary>
+  // Access to all the tiles.
+
   get Tiles(): IEnumerable<Tile> {
     return this.m_tiles
   }
 
-  ///  <summary>
-  ///  Retrieve all the polygons in this tiling that we want to draw.
-  ///  </summary>
+  // Retrieve all the polygons in this tiling that we want to draw.
+
   get Polygons(): IEnumerable<Polygon> {
     return this.m_tiles.Select(() => {}, t.Drawn)
   }
 
-  ///  <summary>
-  ///  Retreive all the (non-Euclidean) vertex circles in this tiling.
-  ///  </summary>
+  // Retreive all the (non-Euclidean) vertex circles in this tiling.
+
   get Circles(): IEnumerable<CircleNE> {
     return this.m_tiles.Select(() => {}, t.VertexCircle)
   }

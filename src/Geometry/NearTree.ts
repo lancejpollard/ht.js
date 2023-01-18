@@ -35,9 +35,8 @@ export class NearTree {
     m_maxRight = double.MinValue
   }
 
-  ///  <summary>
-  ///  The distance metric to use.
-  ///  </summary>
+  // The distance metric to use.
+
   get Metric(): Metric {}
 
   set Metric(value: Metric) {}
@@ -58,9 +57,8 @@ export class NearTree {
 
   #m_pRightBranch: NearTree
 
-  ///  <summary>
-  ///  Inserts an object into the neartree.
-  ///  </summary>
+  // Inserts an object into the neartree.
+
   InsertObject(nearTreeObject: NearTreeObject) {
     let tempRight: number = 0
     let tempLeft: number = 0
@@ -106,10 +104,9 @@ export class NearTree {
     }
   }
 
-  ///  <summary>
-  ///  Finds the nearest neighbor to a location, and
-  ///  withing a specified search radius (returns false if none found).
-  ///  </summary>
+  // Finds the nearest neighbor to a location, and
+  // withing a specified search radius (returns false if none found).
+
   FindNearestNeighbor(
     /* out */ closest: NearTreeObject,
     location: Vector3D,
@@ -123,9 +120,8 @@ export class NearTree {
     )
   }
 
-  ///  <summary>
-  ///  Finds all the objects withing a certain radius of some location (returns false if none found).
-  ///  </summary>
+  // Finds all the objects withing a certain radius of some location (returns false if none found).
+
   FindCloseObjects(
     /* out */ closeObjects: Array<NearTreeObject>,
     location: Vector3D,
