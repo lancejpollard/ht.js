@@ -231,6 +231,6 @@ export class ColorUtil {
       }
     }
 
-    throw new System.Exception('Bad impl')
+    throw new Error('Bad impl')
   }
 }

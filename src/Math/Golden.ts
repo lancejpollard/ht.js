@@ -1,5 +1,8 @@
 ///  <summary>
 ///  Class for numbers in the golden field (of the form: A + golden*B)
+
+import { Fraction } from './Fraction'
+
 ///  </summary>    export struct Golden {
 class Golden {
   constructor(a: Fraction, b: Fraction) {
@@ -67,7 +70,7 @@ class Golden {
     // The operator should be an XOR ^ instead of an OR, but not available in CodeDOM
   }
 
-  static #Denom(g: Golden): Fraction {
+  static Denom(g: Golden): Fraction {
     return g.A * g.A + (g.A * g.B - g.B * g.B)
   }
 
@@ -82,27 +85,19 @@ class Golden {
 
 export class GoldenVector4D {
   constructor(x: Golden, y: Golden, z: Golden, u: Golden) {
-    X = x
-    Y = y
-    Z = z
-    U = u
+    this.X = x
+    this.Y = y
+    this.Z = z
+    this.U = u
   }
 
-  get X(): Golden {}
+  X: Golden
 
-  set X(value: Golden) {}
+  Y: Golden
 
-  get Y(): Golden {}
+  Z: Golden
 
-  set Y(value: Golden) {}
-
-  get Z(): Golden {}
-
-  set Z(value: Golden) {}
-
-  get U(): Golden {}
-
-  set U(value: Golden) {}
+  U: Golden
 
   ///  <summary>
   ///  This is here because parameterless constructor leads to 0/0 Fractions.
@@ -171,7 +166,7 @@ export class GoldenVector4D {
     this.Z = GoldenVector4D.ReadComponent(components[3])
   }
 
-  static #ReadComponent(component: string): Golden {
+  static ReadComponent(component: string): Golden {
     component = component.Trim('(', ')')
     let split: Array<string> = component.Split(',')
     let b: Fraction = new Fraction(number.Parse(split[0]))
@@ -194,7 +189,7 @@ export class GoldenVector4D {
     )
   }
 
-  static #WriteComponent(val: Golden): string {
+  static WriteComponent(val: Golden): string {
     let result: string =
       '(' +
       (val.B.A +

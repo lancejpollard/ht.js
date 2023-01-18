@@ -407,7 +407,7 @@ export class TextureHelper {
         addIncident(tris[0], tris[1])
         addIncident(tris[1], tris[0])
       } else {
-        throw new System.Exception()
+        throw new Error()
       }
     }
 

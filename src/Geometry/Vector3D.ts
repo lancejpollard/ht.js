@@ -1,3 +1,5 @@
+import { Tolerance } from '@Math/Utils'
+
 export class Vector3D {
   constructor(x: number, y: number, z: number, w: number) {
     this.X = x
@@ -166,10 +168,10 @@ export class Vector3D {
   }
 
   Divide(s: number) {
-    s
-    s
-    s
-    s
+    this.X /= s
+    this.Y /= s
+    this.Z /= s
+    this.W /= s
   }
 
   static Operator(v1: Vector3D, v2: Vector3D): Vector3D {
@@ -412,7 +414,7 @@ export class Vector3D {
     }
 
     if (!perp.Normalize()) {
-      throw new System.Exception('Failed to find perpendicular.')
+      throw new Error('Failed to find perpendicular.')
     }
 
     return perp

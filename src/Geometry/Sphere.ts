@@ -167,7 +167,7 @@ export class Sphere {
     }
 
     // if( Invert )
-    //     throw new System.Exception();
+    //     throw new Error();
     return Invert ? !inside : inside
   }
 
@@ -317,7 +317,7 @@ export class Sphere {
     if (this.IsPointOn(sphere.Center)) {
       //  Concentric spheres?
       if (this.Center == sphere.Center) {
-        throw new System.Exception()
+        throw new Error()
       }
 
       let center: Vector3D = this.Center - sphere.Center
