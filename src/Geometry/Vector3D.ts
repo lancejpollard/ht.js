@@ -2,48 +2,55 @@ import { Tolerance } from '@Math/Utils'
 import { Complex } from './Complex'
 
 export class Vector3D {
+  constructor(x: number, y: number, z: number, w: number) {
+    this.X = x
+    this.Y = y
+    this.Z = z
+    this.W = w
+  }
+
   static construct4d(x: number, y: number, z: number, w: number) {
-    const self = new Vector3D()
-    self.X = x
-    self.Y = y
-    self.Z = z
-    self.W = w
+    const self = new Vector3D(x, y, z, w)
     return self
   }
 
   static constructFrom4dArray (vals: number[]) {
-    const self = new Vector3D()
-    self.X = vals[0];
-    self.Y = vals[1];
-    self.Z = vals[2];
-    self.W = vals[3];
+    const self = new Vector3D(
+      vals[0],
+      vals[1],
+      vals[2],
+      vals[3],
+    )
     return self
   }
 
   static construct3d (x: number, y: number, z: number) {
-    const self = new Vector3D()
-    self.X = x;
-    self.Y = y;
-    self.Z = z;
-    self.W = 0;
+    const self = new Vector3D(
+      x,
+      y,
+      z,
+      0,
+    )
     return self
   }
 
   static construct2d (x: number, y: number) {
-    const self = new Vector3D()
-    self.X = x;
-    self.Y = y;
-    self.W = 0;
-    self.Z = 0;
+    const self = new Vector3D(
+      x,
+      y,
+      0,
+      0,
+    )
     return self
   }
 
   static construct () {
-    const self = new Vector3D()
-    self.X = 0;
-    self.Y = 0;
-    self.W = 0;
-    self.Z = 0;
+    const self = new Vector3D(
+      0,
+      0,
+      0,
+      0,
+    )
     return self
   }
 
