@@ -1,27 +1,4 @@
-export class FunPolygons {
-  static Heart(): Polygon {
-    let newPoly: Polygon = new Polygon()
-    let size: number = 0.12
-    let angle: number = 3 * (Math.PI / 2) * -1
-    let p1: Vector3D = new Vector3D(0, 1.5 * size * -1)
-    let p2: Vector3D = new Vector3D(size * -1, 0)
-    let p3: Vector3D = new Vector3D((size / 2) * -1, size)
-    let p4: Vector3D = new Vector3D(0, size / 2)
-    let p5: Vector3D = new Vector3D(size / 2, size)
-    let p6: Vector3D = new Vector3D(size, 0)
-    p1.RotateXY(angle)
-    p2.RotateXY(angle)
-    p3.RotateXY(angle)
-    p4.RotateXY(angle)
-    p5.RotateXY(angle)
-    p6.RotateXY(angle)
-    newPoly.Segments.Add(Segment.Line(p1, p2))
-    newPoly.Segments.Add(Segment.Arc(p2, p3, p4))
-    newPoly.Segments.Add(Segment.Arc(p4, p5, p6))
-    newPoly.Segments.Add(Segment.Line(p6, p1))
-    return newPoly
-  }
-}
+import { Vector3D } from './Vector3D'
 
 export class HighToleranceVectorEqualityComparer extends IEqualityComparer<Vector3D> {
   Equals(v1: Vector3D, v2: Vector3D): boolean {
@@ -39,17 +16,13 @@ export class HighToleranceVectorEqualityComparer extends IEqualityComparer<Vecto
 
 export class Polygon extends ITransformable {
   constructor() {
-    Segments = new Array<Segment>()
-    Center = new Vector3D()
+    this.Segments = new Array<Segment>()
+    this.Center = new Vector3D()
   }
 
-  get Center(): Vector3D {}
+  Center: Vector3D
 
-  set Center(value: Vector3D) {}
-
-  get Segments(): Array<Segment> {}
-
-  set Segments(value: Array<Segment>) {}
+  Segments: Array<Segment>
 
   ///  <summary>
   ///  Create a new polygon from a set of points.

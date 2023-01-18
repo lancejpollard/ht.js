@@ -18,6 +18,11 @@ years.
 - [cduck/hyperbolic](https://github.com/cduck/hyperbolic)
 - [CSharp to TypeScript](http://www.carlosag.net/tools/codetranslator/)
 
+## Papers
+
+- [Visualizing hyperbolic honeycombs](https://becomingborealis.com/wp-content/uploads/2018/05/Visualizing-hyperbolic-honeycombs.pdf)
+- [Abstracting Rubik’s Cube](http://roice3.org/papers/abstracting_rubiks_cube.pdf)
+
 ## Notes
 
 - [Poincaré half-plane model](https://en.wikipedia.org/wiki/Poincar%C3%A9_half-plane_model)

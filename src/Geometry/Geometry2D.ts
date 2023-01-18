@@ -1,14 +1,7 @@
 import { DonHatch } from '@Math/DonHatch'
 import { isInfinite, Tolerance } from '@Math/Utils'
+import { Geometry } from './Geometry'
 import { Spherical2D } from './Spherical2D'
-
-export enum Geometry {
-  Spherical,
-
-  Euclidean,
-
-  Hyperbolic,
-}
 
 export class Geometry2D {
   static PiOverNSafe(n: number): number {

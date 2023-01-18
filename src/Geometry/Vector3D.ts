@@ -1,9 +1,9 @@
 export class Vector3D {
   constructor(x: number, y: number, z: number, w: number) {
-    X = x
-    Y = y
-    Z = z
-    W = w
+    this.X = x
+    this.Y = y
+    this.Z = z
+    this.W = w
   }
 
   // constructor (vals: number[]) {

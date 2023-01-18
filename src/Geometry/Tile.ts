@@ -1,3 +1,8 @@
+import { Mobius } from '@Math/Mobius'
+import { isInfinite } from '@Math/Utils'
+import { Geometry } from './Geometry2D'
+import { Polygon, Segment } from './Polygon'
+
 export class Tile {
   // constructor () {
   //     Isometry = new Isometry();
@@ -6,11 +11,11 @@ export class Tile {
   // }
 
   constructor(boundary: Polygon, drawn: Polygon, geometry: Geometry) {
-    Boundary = boundary
-    Drawn = drawn
-    Geometry = geometry
+    this.Boundary = boundary
+    this.Drawn = drawn
+    this.Geometry = geometry
     //  Make the vertex circle.
-    VertexCircle = boundary.CircumCircle
+    this.VertexCircle = boundary.CircumCircle
     //  ZZZ - we shouldn't do this here (I did it for the slicing study page).
     // VertexCircle.Radius = 1.0;
     //
@@ -26,21 +31,13 @@ export class Tile {
     //  2/Math.sqrt(3) for {3,6}
   }
 
-  get Boundary(): Polygon {}
+  Boundary: Polygon
 
-  set Boundary(value: Polygon) {}
+  Drawn: Polygon
 
-  get Drawn(): Polygon {}
+  VertexCircle: CircleNE
 
-  set Drawn(value: Polygon) {}
-
-  get VertexCircle(): CircleNE {}
-
-  set VertexCircle(value: CircleNE) {}
-
-  get Geometry(): Geometry {}
-
-  set Geometry(value: Geometry) {}
+  Geometry: Geometry
 
   ///  <summary>
   ///  The center of this tile.
@@ -55,23 +52,17 @@ export class Tile {
   ///           or copied during a clone.  It is meant to be set once at tiling
   ///           generation time.
   ///  </summary>
-  get Isometry(): Isometry {}
-
-  set Isometry(value: Isometry) {}
+  Isometry: Isometry
 
   ///  <summary>
   ///  Used to track edge-adjacent tiles in a tiling.
   ///  </summary>
-  get EdgeIncidences(): Array<Tile> {}
-
-  set EdgeIncidences(value: Array<Tile>) {}
+  EdgeIncidences: Array<Tile>
 
   ///  <summary>
   ///  Used to track vertex-adjacent tiles in a tiling.
   ///  </summary>
-  get VertexIndicences(): Array<Tile> {}
-
-  set VertexIndicences(value: Array<Tile>) {}
+  VertexIndicences: Array<Tile>
 
   Clone(): Tile {
     let newTile: Tile = new Tile()
@@ -108,7 +99,7 @@ export class Tile {
   ///  </summary>
   get HasPointsProjectedToInfinity(): boolean {
     //  This can only happen in spherical case.
-    if (this.Geometry != this.Geometry.Spherical) {
+    if (this.Geometry != Geometry.Spherical) {
       return false
     }
 
@@ -117,7 +108,7 @@ export class Tile {
     }
 
     //  We also need to check the edges.
-    for (let s: Segment in this.Boundary.Segments) {
+    for (let s of this.Boundary.Segments) {
       if (isInfinite(s.P1) || isInfinite(s.P2)) {
         return true
       }
@@ -133,14 +124,12 @@ export class Tile {
   ///  </summary>
   IncludeAfterMobius(m: Mobius): boolean {
     switch (this.Geometry) {
-      case this.Geometry.Spherical:
+      case Geometry.Spherical:
         return true
-        break
-      case this.Geometry.Euclidean:
+      case Geometry.Euclidean:
         return true
-        //  We'll let the number of tiles specified in the tiling control this..
-        break
-      case this.Geometry.Hyperbolic:
+      //  We'll let the number of tiles specified in the tiling control this..
+      case Geometry.Hyperbolic:
         // Polygon poly = Boundary.Clone();
         // poly.Transform( m );
         // bool use = (poly.Length > 0.01);
@@ -150,6 +139,7 @@ export class Tile {
         let c: CircleNE = this.VertexCircle
         let use: boolean = c.CenterNE.Abs() < 0.9999
         return use
+      default:
         break
     }
 
@@ -163,32 +153,25 @@ export class Tile {
   ///  Sadly, even if I figure out what is best, I fear changing out usage of the incorrect one below in MagicTile,
   ///  because of the possibility of breaking existing puzzles.
   ///  </summary>
-  static #ShrinkTileCorrect(
-    /* ref */ tile: Tile,
-    shrinkFactor: number,
-  ) {
+  static ShrinkTileCorrect(/* ref */ tile: Tile, shrinkFactor: number) {
     let scaleFunc: System.Func<Vector3D, number, Vector3D> = null
     switch (tile.Geometry) {
-      case this.Geometry.Euclidean:
-        scaleFunc = v
-        s
-        let s: v
+      case Geometry.Euclidean:
+        scaleFunc = (v, s) => v * s
         break
+      case Geometry.Spherical:
+        scaleFunc = (v, s) => {
+          // Move to spherical norm, scale, then move back to euclidean.
+          const scale = Spherical2D.s2eNorm(
+            Spherical2D.e2sNorm(v.Abs()) * s,
+          )
+          v.Normalize()
+          return v * scale
+        }
         break
-      case this.Geometry.Spherical:
-        scaleFunc = v
-        s
-        //  Move to spherical norm, scale, then move back to euclidean.
-        let scale: number = Spherical2D.s2eNorm(
-          Spherical2D.e2sNorm(v.Abs()) * s,
-        )
-        v.Normalize()
-        return v * scale
-
-        break
-        break
-      case this.Geometry.Hyperbolic:
+      case Geometry.Hyperbolic:
         throw new Error('Not implemented')
+      default:
         break
     }
   }
@@ -197,7 +180,7 @@ export class Tile {
   ///  This will trim back the tile using an equidistant curve.
   ///  It assumes the tile is at the origin.
   ///  </summary>
-  static #ShrinkTile(/* ref */ tile: Tile, shrinkFactor: number) {
+  static ShrinkTile(/* ref */ tile: Tile, shrinkFactor: number) {
     //  This code is not correct in non-Euclidean cases!
     //  But it works reasonable well for small shrink factors.
     //  For example, you can easily use this function to grow a hyperbolic tile beyond the disk.
