@@ -2,7 +2,6 @@
 ///  Class to help converting from Image/Canvas coords <-> absolute coords.
 
 import { Vector3D } from '@Geometry/Vector3D'
-import { VectorND } from '@Geometry/VectorND'
 
 ///  </summary>
 export class ImageSpace {
@@ -69,16 +68,5 @@ export class ImageSpace {
       0,
       0,
     )
-  }
-
-  ///  <summary>
-  ///  VectorNDs are assumed to be 4D.
-  ///  </summary>
-  Pixel(point: VectorND): VectorND {
-    let result: Vector3D = this.Pixel(
-      new Vector3D(point.X[0], point.X[1], point.X[2], 0),
-    )
-    // return new VectorND([result.X, result.Y, result.Z, 0])
-    return new VectorND(result)
   }
 }
