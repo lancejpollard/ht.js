@@ -594,7 +594,7 @@ export class PolygonEqualityComparer extends IEqualityComparer<Polygon> {
     //  Is this ok? (I'm assuming ^ operator commutes, and order of applying doesn't matter)
     let hCode: number = 0
     for (let v: Vector3D in poly.Vertices) {
-      hCode = hCode | v.GetHashCode()
+      hCode = hCode ^ v.GetHashCode()
     }
 
     // The operator should be an XOR ^ instead of an OR, but not available in CodeDOM

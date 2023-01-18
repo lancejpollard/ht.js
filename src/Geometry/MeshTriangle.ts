@@ -2,10 +2,9 @@ import { Vector3D } from './Vector3D'
 
 export class MeshTriangle {
   constructor(_a: Vector3D, _b: Vector3D, _c: Vector3D) {
-    a = _a
-    b = _b
-    c = _c
-    color = new Vector3D(1, 1, 1)
+    this.a = _a
+    this.b = _b
+    this.c = _c
   }
 
   a: Vector3D
@@ -13,10 +12,6 @@ export class MeshTriangle {
   b: Vector3D
 
   c: Vector3D
-
-  //  The reason we use a vector here is so the components
-  //  can be interpreted in different color schemes (HLS, RGB, etc.)
-  color: Vector3D
 
   get Normal(): Vector3D {
     //  Doing this in drawn out steps was because I was having floating point issues for small triangles.

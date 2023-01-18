@@ -1,3 +1,8 @@
+import { Geometry } from '@Geometry/Geometry'
+import { Polygon, Segment } from '@Geometry/Polygon'
+import { Sterographic } from '@Geometry/Sterographic'
+import { Vector3D } from '@Geometry/Vector3D'
+
 export class TextureHelper {
   constructor() {
     TextureHelper.SetLevels(3)
