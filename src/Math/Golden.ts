@@ -1,6 +1,7 @@
 
 // Class for numbers in the golden field (of the form: A + golden*B)
 
+import { Vector3D } from '@Geometry/Vector3D'
 import { Fraction } from './Fraction'
 
     export struct Golden {
@@ -235,7 +236,7 @@ export class GoldenVector4D {
   }
 
   ConvertToReal(): Vector3D {
-    return new Vector3D(
+    return Vector3D.construct4d(
       this.X.GetAsDouble(),
       this.Y.GetAsDouble(),
       this.Z.GetAsDouble(),

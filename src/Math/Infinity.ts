@@ -4,7 +4,7 @@ import { Vector3D } from '@Geometry/Vector3D'
 import { isInfinite } from './Utils'
 
 export class UtilsInfinity {
-  static InfinityVector: Vector3D = new Vector3D(
+  static InfinityVector: Vector3D = Vector3D.construct3d(
     Number.POSITIVE_INFINITY,
     Number.POSITIVE_INFINITY,
     Number.POSITIVE_INFINITY,
@@ -15,7 +15,7 @@ export class UtilsInfinity {
     Number.POSITIVE_INFINITY,
   )
 
-  static LargeFiniteVector: Vector3D = new Vector3D(
+  static LargeFiniteVector: Vector3D = Vector3D.construct3d(
     FiniteScale,
     FiniteScale,
     FiniteScale,

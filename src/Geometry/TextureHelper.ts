@@ -83,9 +83,9 @@ export class TextureHelper {
       throw new Error('Not implemented')
     }
 
-    let h3: Vector3D = new Vector3D()
-    let h1: Vector3D = new Vector3D()
-    let h2: Vector3D = new Vector3D()
+    let h3: Vector3D = Vector3D.construct()
+    let h1: Vector3D = Vector3D.construct()
+    let h2: Vector3D = Vector3D.construct()
     if (g == Geometry.Hyperbolic) {
       h1 = Sterographic.PlaneToHyperboloid(p1)
       h2 = Sterographic.PlaneToHyperboloid(p2)
@@ -122,13 +122,13 @@ export class TextureHelper {
     return result.ToArray()
   }
 
-  static #FindClosestPoint(
+  static FindClosestPoint(
     v: Vector3D,
     list: Array<Vector3D>,
   ): Vector3D {
-    let result: Vector3D = new Vector3D()
+    let result: Vector3D = Vector3D.construct()
     let dist: number = double.MaxValue
-    for (let t: Vector3D in list) {
+    for (let t of list) {
       let abs: number = (v - t).Abs()
       if (abs < dist) {
         dist = abs
@@ -220,7 +220,7 @@ export class TextureHelper {
     p1ToOrigin.Isometry(g, 0, p1 * -1)
     let inverse: Mobius = p1ToOrigin.Inverse()
     let newP2: Vector3D = p1ToOrigin.Apply(p2)
-    let radial: Segment = Segment.Line(new Vector3D(), newP2)
+    let radial: Segment = Segment.Line(Vector3D.construct(), newP2)
     let temp: Array<Vector3D> = TextureHelper.SubdivideRadialInGeometry(
       radial,
       divisions,

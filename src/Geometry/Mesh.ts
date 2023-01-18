@@ -71,7 +71,7 @@ export class Mesh {
     for (let kvp in vertMap) {
       let v: Vector3D = kvp.Key
       _verts.Add(v)
-      let normal: Vector3D = new Vector3D()
+      let normal: Vector3D = Vector3D.construct()
       let tris: Array<MeshTriangle> = triMap[v]
       for (let tri: MeshTriangle in tris) {
         normal = normal + tri.Normal
@@ -205,15 +205,18 @@ export class Mesh {
     let templateTris: Array<MeshTriangle> = new Array<MeshTriangle>()
     for (let seg: Segment in template.Segments) {
       let num: number = 1 + <number>(seg.Length * m_divisions)
-      let a: Vector3D = new Vector3D()
+      let a: Vector3D = Vector3D.construct()
       let b: Vector3D = seg.P1
       let c: Vector3D = seg.Midpoint
       let centroid: Vector3D = (a + (b + c)) / 3
       let poly: Polygon = new Polygon()
-      let segA: Segment = Segment.Line(new Vector3D(), seg.P1)
+      let segA: Segment = Segment.Line(Vector3D.construct(), seg.P1)
       let segB: Segment = seg.Clone()
       segB.P2 = seg.Midpoint
-      let segC: Segment = Segment.Line(seg.Midpoint, new Vector3D())
+      let segC: Segment = Segment.Line(
+        seg.Midpoint,
+        Vector3D.construct(),
+      )
       poly.Segments.Add(segA)
       poly.Segments.Add(segB)
       poly.Segments.Add(segC)

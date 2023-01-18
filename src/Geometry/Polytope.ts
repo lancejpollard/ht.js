@@ -13,7 +13,7 @@ export class SkewPolyhedron {
       for (let j: number = 0; j < num; j++) {
         let polyPoints: Array<Vector3D> = new Array<Vector3D>()
         polyPoints.Add(
-          new Vector3D(
+          Vector3D.construct4d(
             Math.cos(angle2),
             Math.sin(angle2),
             Math.cos(angle1),
@@ -21,7 +21,7 @@ export class SkewPolyhedron {
           ),
         )
         polyPoints.Add(
-          new Vector3D(
+          Vector3D.construct4d(
             Math.cos(angle2),
             Math.sin(angle2),
             Math.cos(angle1 + angleInc),
@@ -29,7 +29,7 @@ export class SkewPolyhedron {
           ),
         )
         polyPoints.Add(
-          new Vector3D(
+          Vector3D.construct4d(
             Math.cos(angle2 + angleInc),
             Math.sin(angle2 + angleInc),
             Math.cos(angle1 + angleInc),
@@ -37,7 +37,7 @@ export class SkewPolyhedron {
           ),
         )
         polyPoints.Add(
-          new Vector3D(
+          Vector3D.construct4d(
             Math.cos(angle2 + angleInc),
             Math.sin(angle2 + angleInc),
             Math.cos(angle1),
@@ -79,36 +79,36 @@ export class SkewPolyhedron {
     let d: number = 3 / Math.sqrt(3)
     //  http://eusebeia.dyndns.org/4d/bitrunc5cell
     let coords: Array<Vector3D> = [
-      new Vector3D(0, 4 * b, 4 * c, 0),
-      new Vector3D(0, 4 * b, 4 * c, 0) * -1,
-      new Vector3D(0, 4 * b, 2 * c * -1, 2),
-      new Vector3D(0, 4 * b, 2 * c * -1, -2),
-      new Vector3D(0, 4 * b, 2 * c * -1, 2) * -1,
-      new Vector3D(0, 4 * b, 2 * c * -1, -2) * -1,
-      new Vector3D(a, b, 4 * c, 0),
-      new Vector3D(a, b, 4 * c, 0) * -1,
-      new Vector3D(a, b, 2 * c * -1, 2),
-      new Vector3D(a, b, 2 * c * -1, -2),
-      new Vector3D(a, b, 2 * c * -1, 2) * -1,
-      new Vector3D(a, b, 2 * c * -1, -2) * -1,
-      new Vector3D(a, 5 * b, 2 * c, 0),
-      new Vector3D(a, 5 * b, 2 * c, 0) * -1,
-      new Vector3D(a, 5 * b, c * -1, 1),
-      new Vector3D(a, 5 * b, c * -1, -1),
-      new Vector3D(a, 5 * b, c * -1, 1) * -1,
-      new Vector3D(a, 5 * b, c * -1, -1) * -1,
-      new Vector3D(a, 3 * b * -1, 0, 2),
-      new Vector3D(a, 3 * b * -1, 0, -2),
-      new Vector3D(a, 3 * b * -1, 0, 2) * -1,
-      new Vector3D(a, 3 * b * -1, 0, -2) * -1,
-      new Vector3D(a, 3 * b * -1, d, 1),
-      new Vector3D(a, 3 * b * -1, d * -1, 1),
-      new Vector3D(a, 3 * b * -1, d, -1),
-      new Vector3D(a, 3 * b * -1, d * -1, -1),
-      new Vector3D(a, 3 * b * -1, d, 1) * -1,
-      new Vector3D(a, 3 * b * -1, d * -1, 1) * -1,
-      new Vector3D(a, 3 * b * -1, d, -1) * -1,
-      new Vector3D(a, 3 * b * -1, d * -1, -1) * -1,
+      Vector3D.construct4d(0, 4 * b, 4 * c, 0),
+      Vector3D.construct4d(0, 4 * b, 4 * c, 0) * -1,
+      Vector3D.construct4d(0, 4 * b, 2 * c * -1, 2),
+      Vector3D.construct4d(0, 4 * b, 2 * c * -1, -2),
+      Vector3D.construct4d(0, 4 * b, 2 * c * -1, 2) * -1,
+      Vector3D.construct4d(0, 4 * b, 2 * c * -1, -2) * -1,
+      Vector3D.construct4d(a, b, 4 * c, 0),
+      Vector3D.construct4d(a, b, 4 * c, 0) * -1,
+      Vector3D.construct4d(a, b, 2 * c * -1, 2),
+      Vector3D.construct4d(a, b, 2 * c * -1, -2),
+      Vector3D.construct4d(a, b, 2 * c * -1, 2) * -1,
+      Vector3D.construct4d(a, b, 2 * c * -1, -2) * -1,
+      Vector3D.construct4d(a, 5 * b, 2 * c, 0),
+      Vector3D.construct4d(a, 5 * b, 2 * c, 0) * -1,
+      Vector3D.construct4d(a, 5 * b, c * -1, 1),
+      Vector3D.construct4d(a, 5 * b, c * -1, -1),
+      Vector3D.construct4d(a, 5 * b, c * -1, 1) * -1,
+      Vector3D.construct4d(a, 5 * b, c * -1, -1) * -1,
+      Vector3D.construct4d(a, 3 * b * -1, 0, 2),
+      Vector3D.construct4d(a, 3 * b * -1, 0, -2),
+      Vector3D.construct4d(a, 3 * b * -1, 0, 2) * -1,
+      Vector3D.construct4d(a, 3 * b * -1, 0, -2) * -1,
+      Vector3D.construct4d(a, 3 * b * -1, d, 1),
+      Vector3D.construct4d(a, 3 * b * -1, d * -1, 1),
+      Vector3D.construct4d(a, 3 * b * -1, d, -1),
+      Vector3D.construct4d(a, 3 * b * -1, d * -1, -1),
+      Vector3D.construct4d(a, 3 * b * -1, d, 1) * -1,
+      Vector3D.construct4d(a, 3 * b * -1, d * -1, 1) * -1,
+      Vector3D.construct4d(a, 3 * b * -1, d, -1) * -1,
+      Vector3D.construct4d(a, 3 * b * -1, d * -1, -1) * -1,
     ]
     let result: Array<Polygon> = LookForPolys(coords, 2, 6)
     //  Nice starting orientation.
@@ -131,53 +131,73 @@ export class SkewPolyhedron {
   static BuildRuncinated5Cell(): Array<Polygon> {
     //  http://eusebeia.dyndns.org/4d/runci5cell
     let coords: Array<Vector3D> = [
-      new Vector3D(0, 0, 0, 2),
-      new Vector3D(0, 0, 0, -2),
-      new Vector3D(0, 0, 3 / Math.sqrt(3), 1),
-      new Vector3D(0, 0, (3 / Math.sqrt(3)) * -1, 1),
-      new Vector3D(0, 0, (3 / Math.sqrt(3)) * -1, -1),
-      new Vector3D(0, 0, 3 / Math.sqrt(3), -1),
-      new Vector3D(0, 4 / Math.sqrt(6), (2 / Math.sqrt(3)) * -1, 0),
-      new Vector3D(0, 4 / Math.sqrt(6), (2 / Math.sqrt(3)) * -1, 0) *
+      Vector3D.construct4d(0, 0, 0, 2),
+      Vector3D.construct4d(0, 0, 0, -2),
+      Vector3D.construct4d(0, 0, 3 / Math.sqrt(3), 1),
+      Vector3D.construct4d(0, 0, (3 / Math.sqrt(3)) * -1, 1),
+      Vector3D.construct4d(0, 0, (3 / Math.sqrt(3)) * -1, -1),
+      Vector3D.construct4d(0, 0, 3 / Math.sqrt(3), -1),
+      Vector3D.construct4d(
+        0,
+        4 / Math.sqrt(6),
+        (2 / Math.sqrt(3)) * -1,
+        0,
+      ),
+      Vector3D.construct4d(
+        0,
+        4 / Math.sqrt(6),
+        (2 / Math.sqrt(3)) * -1,
+        0,
+      ) * -1,
+      Vector3D.construct4d(0, 4 / Math.sqrt(6), 1 / Math.sqrt(3), 1),
+      Vector3D.construct4d(0, 4 / Math.sqrt(6), 1 / Math.sqrt(3), -1),
+      Vector3D.construct4d(0, 4 / Math.sqrt(6), 1 / Math.sqrt(3), 1) *
         -1,
-      new Vector3D(0, 4 / Math.sqrt(6), 1 / Math.sqrt(3), 1),
-      new Vector3D(0, 4 / Math.sqrt(6), 1 / Math.sqrt(3), -1),
-      new Vector3D(0, 4 / Math.sqrt(6), 1 / Math.sqrt(3), 1) * -1,
-      new Vector3D(0, 4 / Math.sqrt(6), 1 / Math.sqrt(3), -1) * -1,
-      new Vector3D(5 / Math.sqrt(10), (3 / Math.sqrt(6)) * -1, 0, 0),
-      new Vector3D(5 / Math.sqrt(10), (3 / Math.sqrt(6)) * -1, 0, 0) *
+      Vector3D.construct4d(0, 4 / Math.sqrt(6), 1 / Math.sqrt(3), -1) *
         -1,
-      new Vector3D(
+      Vector3D.construct4d(
+        5 / Math.sqrt(10),
+        (3 / Math.sqrt(6)) * -1,
+        0,
+        0,
+      ),
+      Vector3D.construct4d(
+        5 / Math.sqrt(10),
+        (3 / Math.sqrt(6)) * -1,
+        0,
+        0,
+      ) * -1,
+      Vector3D.construct4d(
         5 / Math.sqrt(10),
         1 / Math.sqrt(6),
         (2 / Math.sqrt(3)) * -1,
         0,
       ),
-      new Vector3D(
+      Vector3D.construct4d(
         5 / Math.sqrt(10),
         1 / Math.sqrt(6),
         (2 / Math.sqrt(3)) * -1,
         0,
       ) * -1,
-      new Vector3D(
+      Vector3D.construct4d(
         5 / Math.sqrt(10),
         1 / Math.sqrt(6),
         1 / Math.sqrt(3),
         1,
       ),
-      new Vector3D(
+      Vector3D.construct4d(
         5 / Math.sqrt(10),
         1 / Math.sqrt(6),
         1 / Math.sqrt(3),
         -1,
       ),
-      new Vector3D(
+      Vector3D.construct4d(
         5 / Math.sqrt(10),
         1 / Math.sqrt(6),
         1 / Math.sqrt(3),
         1,
       ) * -1,
-      new Vector3D(
+      Vector3D.construct4d(
         5 / Math.sqrt(10),
         1 / Math.sqrt(6),
         1 / Math.sqrt(3),
@@ -201,7 +221,7 @@ export class SkewPolyhedron {
     return result
   }
 
-  static #LookForPolys(
+  static LookForPolys(
     coords: Array<Vector3D>,
     edgeLength: number,
     p: number,

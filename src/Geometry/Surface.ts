@@ -56,7 +56,7 @@ export class Surface {
     let s: number = Math.exp(g)
     let r: number = (2 * sinpsi) / (s + 1 / s)
     let t: number = r * ((s - 1 / s) * 0.5)
-    return new Vector3D(u - t, r * Math.cos(v), r * Math.sin(v))
+    return Vector3D.construct3d(u - t, r * Math.cos(v), r * Math.sin(v))
   }
 
   static Dini(uv: Vector3D, a: number, b: number): Vector3D {
@@ -77,10 +77,10 @@ export class Surface {
       return UtilsInfinity.InfinityVector
     }
 
-    let result: Vector3D = new Vector3D(
+    let result: Vector3D = Vector3D.construct3d(
       pSinEta * (Surface.Sech(chi) * Math.cos(y / p)),
       pSinEta * (Surface.Sech(chi) * Math.sin(y / p)),
-      x - pSinEta * Math.Tanh(chi),
+      x - pSinEta * Math.tanh(chi),
     )
     return result
   }

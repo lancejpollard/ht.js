@@ -14,7 +14,7 @@ export class Sphere {
   }
 
   static Plane(normal: Vector3D): Sphere {
-    return Sphere.Plane(new Vector3D(), normal)
+    return Sphere.Plane(Vector3D.construct(), normal)
   }
 
   static Plane(offset: Vector3D, normal: Vector3D): Sphere {
@@ -26,9 +26,9 @@ export class Sphere {
   }
 
   Reset() {
-    this.Center = new Vector3D()
+    this.Center = Vector3D.construct()
     this.Radius = 1
-    this.Offset = new Vector3D()
+    this.Offset = Vector3D.construct()
     this.Invert = false
   }
 
@@ -108,7 +108,7 @@ export class Sphere {
       return n + this.Offset
     }
 
-    return this.Center + new Vector3D(this.Radius / 2, 0)
+    return this.Center + Vector3D.construct2d(this.Radius / 2, 0)
   }
 
   //  XXX - Do we only want to compare the surface, or also the orientation?
@@ -223,7 +223,8 @@ export class Sphere {
       interiorPoint = this.Offset - this.Normal
     } else {
       //  We don't want it to be the center, because that will reflect to infinity.
-      interiorPoint = this.Center + new Vector3D(this.Radius / 2, 0)
+      interiorPoint =
+        this.Center + Vector3D.construct2d(this.Radius / 2, 0)
     }
 
     if (this.Invert) {
@@ -397,10 +398,10 @@ export class Sphere {
       ]
     } else {
       spherePoints = [
-        s.Center + new Vector3D(rad, 0, 0),
-        s.Center + new Vector3D(rad * -1, 0, 0),
-        s.Center + new Vector3D(0, rad, 0),
-        s.Center + new Vector3D(0, 0, rad),
+        s.Center + Vector3D.construct3d(rad, 0, 0),
+        s.Center + Vector3D.construct3d(rad * -1, 0, 0),
+        s.Center + Vector3D.construct3d(0, rad, 0),
+        s.Center + Vector3D.construct3d(0, 0, rad),
       ]
     }
 
@@ -498,7 +499,7 @@ export class Sphere {
     if (s.IsPlane) {
       let offsetAlongNormal: Vector3D = Euclidean3D.ProjectOntoLine(
         s.Normal,
-        new Vector3D(),
+        Vector3D.construct(),
         t,
       )
       s.Offset = s.Offset + offsetAlongNormal

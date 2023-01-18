@@ -100,7 +100,7 @@ export class Circle3D {
     let a2: number = a * a
     let b2: number = b * b
     let c2: number = c * c
-    let circumCenterBary: Vector3D = new Vector3D(
+    let circumCenterBary: Vector3D = Vector3D.construct3d(
       a2 * (b2 + (c2 - a2)),
       b2 * (c2 + (a2 - b2)),
       c2 * (a2 + (b2 - c2)),

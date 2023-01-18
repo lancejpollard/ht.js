@@ -12,9 +12,9 @@ export class Circle implements ITransformable {
   }
 
   Reset() {
-    this.P2 = new Vector3D()
-    this.P1 = new Vector3D()
-    this.Center = new Vector3D()
+    this.P2 = Vector3D.construct()
+    this.P1 = Vector3D.construct()
+    this.Center = Vector3D.construct()
     this.Radius = 1
   }
 
@@ -127,14 +127,14 @@ export class Circle implements ITransformable {
     let d: Vector3D = this.P2 - this.P1
     d.Normalize()
     this.P1 = Euclidean2D.ProjectOntoLine(
-      new Vector3D(),
+      Vector3D.construct(),
       this.P1,
       this.P2,
     )
     //  ZZZ - Could probably do something more robust to choose proper direction.
     if (
       Tolerance.GreaterThanOrEqual(
-        Euclidean2D.AngleToClock(d, new Vector3D(1, 0)),
+        Euclidean2D.AngleToClock(d, Vector3D.construct2d(1, 0)),
         Math.PI,
       )
     ) {
@@ -247,9 +247,9 @@ export class Circle implements ITransformable {
       p2 = (this.P1 + this.P2) / 2
       p3 = this.P2
     } else {
-      p1 = this.Center + new Vector3D(this.Radius, 0, 0)
-      p2 = this.Center + new Vector3D(this.Radius * -1, 0, 0)
-      p3 = this.Center + new Vector3D(0, this.Radius, 0)
+      p1 = this.Center + Vector3D.construct3d(this.Radius, 0, 0)
+      p2 = this.Center + Vector3D.construct3d(this.Radius * -1, 0, 0)
+      p3 = this.Center + Vector3D.construct3d(0, this.Radius, 0)
     }
 
     p1 = transform.Apply(p1)

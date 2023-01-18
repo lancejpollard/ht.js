@@ -155,12 +155,12 @@ export class Isometry implements ITransform {
       p3 = (p1 + p2) / 2
     } else {
       p1 =
-        inversionCircle.Center + new Vector3D(inversionCircle.Radius, 0)
+        inversionCircle.Center + Vector3D.construct2d(inversionCircle.Radius, 0)
       p2 =
         inversionCircle.Center +
-        new Vector3D(inversionCircle.Radius * -1, 0)
+        Vector3D.construct2d(inversionCircle.Radius * -1, 0)
       p3 =
-        inversionCircle.Center + new Vector3D(0, inversionCircle.Radius)
+        inversionCircle.Center + Vector3D.construct2d(0, inversionCircle.Radius)
     }
 
     this.CacheCircleInversion(p1, p2, p3)
@@ -229,8 +229,8 @@ export class Isometry implements ITransform {
   static ReflectX(): Isometry {
     let i: Isometry = Isometry.constructUnity()
     let reflection: Circle = new Circle(
-      new Vector3D(),
-      new Vector3D(1, 0),
+      Vector3D.construct(),
+      Vector3D.construct2d(1, 0),
     )
     i.Reflection = reflection
     return i

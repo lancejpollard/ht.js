@@ -37,18 +37,18 @@ export class EuclideanModels {
     n: number,
   ): Vector3D {
     let vc: Complex = v.ToComplex()
-    v = new Vector3D(Math.log(vc.Magnitude), vc.Phase)
-    let e1: Vector3D = new Vector3D(0, 1)
+    v = Vector3D.construct2d(Math.log(vc.Magnitude), vc.Phase)
+    let e1: Vector3D = Vector3D.construct2d(0, 1)
     let e2: Vector3D
     switch (p) {
       case 3:
-        e2 = new Vector3D()
+        e2 = Vector3D.construct()
         break
       case 4:
-        e2 = new Vector3D()
+        e2 = Vector3D.construct()
         break
       case 6:
-        e2 = new Vector3D()
+        e2 = Vector3D.construct()
         break
       default:
         throw new Error('Argument Error')
@@ -57,8 +57,8 @@ export class EuclideanModels {
 
     let scale: number = Math.sqrt(m * m + n * n)
     let a: number = Euclidean2D.AngleToClock(
-      new Vector3D(0, 1),
-      new Vector3D(m, n),
+      Vector3D.construct2d(0, 1),
+      Vector3D.construct2d(m, n),
     )
     v.RotateXY(a)
     //  Rotate

@@ -321,8 +321,8 @@ export class Mobius implements ITransform {
     )
   }
 
-  #MultQuat(a: Vector3D, b: Vector3D): Vector3D {
-    return new Vector3D(
+  MultQuat(a: Vector3D, b: Vector3D): Vector3D {
+    return Vector3D.construct4d(
       a.X * b.X - (a.Y * b.Y - (a.Z * b.Z - a.W * b.W)),
       a.X * b.Y + (a.Y * b.X + (a.Z * b.W - a.W * b.Z)),
       a.X * b.Z - a.Y * b.W + (a.Z * b.X + a.W * b.Y),
@@ -330,9 +330,9 @@ export class Mobius implements ITransform {
     )
   }
 
-  #DivideQuat(a: Vector3D, b: Vector3D): Vector3D {
+  DivideQuat(a: Vector3D, b: Vector3D): Vector3D {
     let magSquared: number = b.MagSquared()
-    let bInv: Vector3D = new Vector3D(
+    let bInv: Vector3D = Vector3D.construct4d(
       b.X / magSquared,
       (b.Y / magSquared) * -1,
       (b.Z / magSquared) * -1,

@@ -61,7 +61,7 @@ export class TilingConfig {
       angle = angle * 2
     }
 
-    let offset: Vector3D = new Vector3D(
+    let offset: Vector3D = Vector3D.construct3d(
       1 * Geometry2D.GetNormalizedCircumRadius(p, q) * -1,
       0,
       0,

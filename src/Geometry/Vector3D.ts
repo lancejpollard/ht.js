@@ -1,48 +1,59 @@
 import { Tolerance } from '@Math/Utils'
+import { Complex } from './Complex'
 
 export class Vector3D {
-  constructor(x: number, y: number, z: number, w: number) {
-    this.X = x
-    this.Y = y
-    this.Z = z
-    this.W = w
+  static construct4d(x: number, y: number, z: number, w: number) {
+    const self = new Vector3D()
+    self.X = x
+    self.Y = y
+    self.Z = z
+    self.W = w
+    return self
   }
 
-  // constructor (vals: number[]) {
-  //     X = vals[0];
-  //     Y = vals[1];
-  //     Z = vals[2];
-  //     W = vals[3];
-  // }
+  static constructFrom4dArray (vals: number[]) {
+    const self = new Vector3D()
+    self.X = vals[0];
+    self.Y = vals[1];
+    self.Z = vals[2];
+    self.W = vals[3];
+    return self
+  }
 
-  // constructor (x: number, y: number, z: number) {
-  //     X = x;
-  //     Y = y;
-  //     Z = z;
-  //     W = 0;
-  // }
+  static construct3d (x: number, y: number, z: number) {
+    const self = new Vector3D()
+    self.X = x;
+    self.Y = y;
+    self.Z = z;
+    self.W = 0;
+    return self
+  }
 
-  // constructor (x: number, y: number) {
-  //     X = x;
-  //     Y = y;
-  //     W = 0;
-  //     Z = 0;
-  // }
-  get X(): number {}
+  static construct2d (x: number, y: number) {
+    const self = new Vector3D()
+    self.X = x;
+    self.Y = y;
+    self.W = 0;
+    self.Z = 0;
+    return self
+  }
 
-  set X(value: number) {}
+  static construct () {
+    const self = new Vector3D()
+    self.X = 0;
+    self.Y = 0;
+    self.W = 0;
+    self.Z = 0;
+    return self
+  }
 
-  get Y(): number {}
+  X: number
 
-  set Y(value: number) {}
+  Y: number
 
-  get Z(): number {}
+  Z: number
 
-  set Z(value: number) {}
-
-  get W(): number {}
-
-  set W(value: number) {}
+  W: number
 
   /* override */ ToString(): string {
     return string.Format(
@@ -74,7 +85,6 @@ export class Vector3D {
       this.W = number.Parse(split[3], CultureInfo.InvariantCulture)
     }
   }
-
 
   // Implicit vector to complex conversion operator.
   >
@@ -156,7 +166,7 @@ export class Vector3D {
   }
 
   static Operator(v: Vector3D, s: number): Vector3D {
-    return new Vector3D(v.X * s, v.Y * s, v.Z * s, v.W * s)
+    return Vector3D.construct4d(v.X * s, v.Y * s, v.Z * s, v.W * s)
   }
 
   static Operator(s: number, v: Vector3D): Vector3D {
@@ -164,7 +174,7 @@ export class Vector3D {
   }
 
   static Operator(v: Vector3D, s: number): Vector3D {
-    return new Vector3D(v.X / s, v.Y / s, v.Z / s, v.W / s)
+    return Vector3D.construct4d(v.X / s, v.Y / s, v.Z / s, v.W / s)
   }
 
   Divide(s: number) {
@@ -175,7 +185,7 @@ export class Vector3D {
   }
 
   static Operator(v1: Vector3D, v2: Vector3D): Vector3D {
-    return new Vector3D(
+    return Vector3D.construct4d(
       v1.X + v2.X,
       v1.Y + v2.Y,
       v1.Z + v2.Z,
@@ -184,7 +194,7 @@ export class Vector3D {
   }
 
   static Operator(v: Vector3D): Vector3D {
-    return new Vector3D(v.X * -1, v.Y * -1, v.Z * -1, v.W * -1)
+    return Vector3D.construct4d(v.X * -1, v.Y * -1, v.Z * -1, v.W * -1)
   }
 
   static Operator(v1: Vector3D, v2: Vector3D): Vector3D {
@@ -192,9 +202,10 @@ export class Vector3D {
   }
 
   Round(digits: number) {
-    for (let i: number = 0; i < 3; i++) {
-      this[i] = Math.round(this[i], digits)
-    }
+    this.X = Math.round(this.X, digits)
+    this.Y = Math.round(this.Y, digits)
+    this.Z = Math.round(this.Z, digits)
+    this.W = Math.round(this.W, digits)
   }
 
   get Item(i: number): number {
@@ -254,7 +265,7 @@ export class Vector3D {
   }
 
   static DneVector(): Vector3D {
-    return new Vector3D(NaN, NaN, NaN, NaN)
+    return Vector3D.construct4d(NaN, NaN, NaN, NaN)
   }
 
   Empty() {
@@ -298,7 +309,7 @@ export class Vector3D {
   }
 
   get IsOrigin(): boolean {
-    return this == new Vector3D()
+    return this == Vector3D.construct()
   }
 
   get IsZAxis(): boolean {
@@ -323,7 +334,7 @@ export class Vector3D {
     let xVal: number = this.Y * v.Z - this.Z * v.Y
     let yVal: number = this.Z * v.X - this.X * v.Z
     let zVal: number = this.X * v.Y - this.Y * v.X
-    return new Vector3D(xVal, yVal, zVal)
+    return Vector3D.construct3d(xVal, yVal, zVal)
   }
 
 
@@ -366,7 +377,7 @@ export class Vector3D {
     let y: number = this.Y
     let z: number = this.Z
     //  do the multiplication
-    this = new Vector3D(
+    this = Vector3D.construct3d(
       mRot[(0, 0)] * x + (mRot[(1, 0)] * y + mRot[(2, 0)] * z),
       mRot[(0, 1)] * x + (mRot[(1, 1)] * y + mRot[(2, 1)] * z),
       mRot[(0, 2)] * x + (mRot[(1, 2)] * y + mRot[(2, 2)] * z),
@@ -404,13 +415,13 @@ export class Vector3D {
 
   Perpendicular(): Vector3D {
     if (this.IsOrigin) {
-      return new Vector3D()
+      return Vector3D.construct()
     }
 
-    let perp: Vector3D = this.Cross(new Vector3D(0, 0, 1))
+    let perp: Vector3D = this.Cross(Vector3D.construct3d(0, 0, 1))
     //  If we are a vector on the z-axis, the above will result in the zero vector.
     if (perp.IsOrigin) {
-      perp = this.Cross(new Vector3D(1, 0, 0))
+      perp = this.Cross(Vector3D.construct3d(1, 0, 0))
     }
 
     if (!perp.Normalize()) {
@@ -436,7 +447,7 @@ export class Vector3D {
       denominator = minDenom
     }
 
-    let result: Vector3D = new Vector3D(
+    let result: Vector3D = Vector3D.construct4d(
       this.X * (cameraDist / denominator),
       this.Y * (cameraDist / denominator),
       this.Z * (cameraDist / denominator),
@@ -459,7 +470,7 @@ export class Vector3D {
       denominator = 0
     }
 
-    let result: Vector3D = new Vector3D(
+    let result: Vector3D = Vector3D.construct3d(
       this.X * (cameraDist / denominator),
       this.Y * (cameraDist / denominator),
       0,
@@ -472,7 +483,7 @@ export class Vector3D {
   }
 
   static FromComplex(value: Complex): Vector3D {
-    return new Vector3D(value.Real, value.Imaginary)
+    return Vector3D.construct2d(value.Real, value.Imaginary)
   }
 }
 

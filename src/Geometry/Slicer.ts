@@ -28,7 +28,7 @@ export class Slicer {
     let m: Mobius = new Mobius()
     const pointOnCircle: Vector3D = c.IsLine
       ? c.P1
-      : c.Center + new Vector3D(c.Radius, 0)
+      : c.Center + Vector3D.construct2d(c.Radius, 0)
     m.Hyperbolic2(g, c1.CenterNE, pointOnCircle, thickness / 2)
     c1.Transform(m)
     m.Hyperbolic2(g, c2.CenterNE, pointOnCircle, (thickness / 2) * -1)
