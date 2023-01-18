@@ -1,7 +1,10 @@
+import { Isometry } from '@Math/Isometry'
 import { Mobius } from '@Math/Mobius'
 import { isInfinite } from '@Math/Utils'
+import { CircleNE } from './Circle'
 import { Geometry } from './Geometry2D'
 import { Polygon, Segment } from './Polygon'
+import { Vector3D } from './Vector3D'
 
 export class Tile {
   // constructor () {

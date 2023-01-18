@@ -603,26 +603,16 @@ export class PolygonEqualityComparer extends IEqualityComparer<Polygon> {
 }
 
 export class Segment implements ITransformable {
-  get Type(): SegmentType {}
+  Type: SegmentType
 
-  set Type(value: SegmentType) {}
+  P1: Vector3D
 
-  get P1(): Vector3D {}
-
-  set P1(value: Vector3D) {}
-
-  get P2(): Vector3D {}
-
-  set P2(value: Vector3D) {}
+  P2: Vector3D
 
   //  These only apply to arc segments.
-  get Center(): Vector3D {}
+  Center: Vector3D
 
-  set Center(value: Vector3D) {}
-
-  get Clockwise(): boolean {}
-
-  set Clockwise(value: boolean) {}
+  Clockwise: boolean
 
   Clone(): Segment {
     let newSeg: Segment = new Segment()

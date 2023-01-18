@@ -10,7 +10,7 @@ import { Polygon } from '@Geometry/Polygon'
 import { Mobius } from './Mobius'
 
 ///  </summary>    export class Isometry extends ITransform {
-class Isometry implements ITransform {
+export class Isometry implements ITransform {
   // constructor () {
   //     m_mobius.Unity();
   // }
