@@ -4,9 +4,10 @@ import { UtilsInfinity } from '@Math/Infinity'
 import { Isometry } from '@Math/Isometry'
 import { Mobius } from '@Math/Mobius'
 import { isInfinite, Tolerance, Utils } from '@Math/Utils'
-import { Euclidean2D } from './Euclidean2D'
+import assert from 'assert'
+import { Euclidean2D, Euclidean2DOutputType } from './Euclidean2D'
 import { IEqualityComparer } from './IEqualityComparer'
-import { Segment, SegmentType } from './Polygon'
+import { Polygon, Segment, SegmentType } from './Polygon'
 import { ITransform, ITransformable } from './Transformable'
 import { Vector3D } from './Vector3D'
 
@@ -105,12 +106,16 @@ export class Circle implements ITransformable {
     b1.RotateXY(Math.PI / 2)
     b2.RotateXY(Math.PI / 2)
 
-    let newCenter: Vector3D | undefined =
-      Euclidean2D.IntersectionLineLine(m1, m1.Add(b1), m2, m2.Add(b2))
+    let output = Euclidean2D.IntersectionLineLine(
+      m1,
+      m1.Add(b1),
+      m2,
+      m2.Add(b2),
+    )
 
-    this.Center = newCenter || Vector3D.construct()
+    this.Center = output.p1 || Vector3D.construct()
 
-    if (!newCenter) {
+    if (0 == output.status) {
       //  The points are collinear, so we are a line.
       this.From2Points(p1, p2)
       return false
@@ -302,68 +307,61 @@ export class Circle implements ITransformable {
   //  Get the intersection points with a segment.
   //  Returns null if the segment is an arc coincident with the circle (infinite number of intersection points).
   GetIntersectionPoints(segment: Segment): Array<Vector3D> {
-    let p2: Vector3D
-    let p1: Vector3D
-    let result: number
+    let output: Euclidean2DOutputType
     //  Are we a line?
     if (this.IsLine) {
       if (SegmentType.Arc == segment.Type) {
         let tempCircle: Circle = segment.Circle
-        result = Euclidean2D.IntersectionLineCircle(
+        output = Euclidean2D.IntersectionLineCircle(
           this.P1,
           this.P2,
           tempCircle,
-          /* out */ p1,
-          /* out */ p2,
         )
       } else {
-        result = Euclidean2D.IntersectionLineLine(
+        output = Euclidean2D.IntersectionLineLine(
           this.P1,
           this.P2,
           segment.P1,
           segment.P2,
-          /* out */ p1,
         )
-        p2 = Vector3D.DneVector()
+        output.p2 = Vector3D.DneVector()
       }
     } else if (SegmentType.Arc == segment.Type) {
       let tempCircle: Circle = segment.Circle
-      result = Euclidean2D.IntersectionCircleCircle(
-        tempCircle,
-        this,
-        /* out */ p1,
-        /* out */ p2,
-      )
+      output = Euclidean2D.IntersectionCircleCircle(tempCircle, this)
     } else {
-      result = Euclidean2D.IntersectionLineCircle(
+      output = Euclidean2D.IntersectionLineCircle(
         segment.P1,
         segment.P2,
         this,
-        /* out */ p1,
-        /* out */ p2,
       )
     }
 
-    if (-1 == result) {
-      return null
+    if (-1 == output.status) {
+      return []
     }
 
-    let ret: Array<Vector3D> = new Array<Vector3D>()
-    if (result >= 1 && segment.IsPointOn(p1)) {
-      ret.Add(p1)
+    const { p1, p2 } = output
+
+    assert(p1)
+    assert(p2)
+
+    let ret: Array<Vector3D> = []
+    if (output.status >= 1 && segment.IsPointOn(p1)) {
+      ret.push(p1)
     }
 
-    if (result >= 2 && segment.IsPointOn(p2)) {
-      ret.Add(p2)
+    if (output.status >= 2 && segment.IsPointOn(p2)) {
+      ret.push(p2)
     }
 
-    return ret.ToArray()
+    return ret
   }
 
   Intersects(poly: Polygon): boolean {
-    for (let seg: Segment in poly.Segments) {
+    for (let seg of poly.Segments) {
       let iPoints: Array<Vector3D> = this.GetIntersectionPoints(seg)
-      if (iPoints != null && iPoints.Length > 0) {
+      if (iPoints != null && iPoints.length > 0) {
         return true
       }
     }
@@ -372,7 +370,7 @@ export class Circle implements ITransformable {
   }
 
   HasVertexInside(poly: Polygon): boolean {
-    for (let seg: Segment in poly.Segments) {
+    for (let seg of poly.Segments) {
       if (this.IsPointInside(seg.P1)) {
         return true
       }
@@ -387,51 +385,65 @@ export class Circle implements ITransformable {
 // which does not in general coincide with the Euclidean circle center.
 
 export class CircleNE extends Circle implements ITransformable {
+  constructor(
+    p1: Vector3D,
+    p2: Vector3D,
+    center: Vector3D,
+    r: number,
+    centerNE: Vector3D,
+  ) {
+    super(p1, p2, center, r)
+    this.CenterNE = centerNE
+  }
+
   static constructFromCircle(c: Circle, centerNE: Vector3D) {
-    const self = new CircleNE()
-    self.Center = c.Center
-    self.Radius = c.Radius
-    self.P1 = c.P1
-    self.P2 = c.P2
-    self.CenterNE = centerNE
+    const self = new CircleNE(c.P1, c.P2, c.Center, c.Radius, centerNE)
     return self
   }
 
   CenterNE: Vector3D
 
   Clone(): CircleNE {
-    const next = new CircleNE()
-    next.Center = this.Center
-    next.Radius = this.Radius
-    next.P1 = this.P1
-    next.P2 = this.P2
-    next.CenterNE = this.CenterNE
+    const next = new CircleNE(
+      this.P1,
+      this.P2,
+      this.Center,
+      this.Radius,
+      this.CenterNE,
+    )
     return next
   }
 
   ReflectCircle(c: Circle) {
     super.ReflectCircle(c)
+
     this.CenterNE = c.ReflectPoint(this.CenterNE)
   }
 
   ReflectSegment(s: Segment) {
     super.ReflectSegment(s)
+
     this.CenterNE = s.ReflectPoint(this.CenterNE)
   }
 
   TransformMobius(m: Mobius) {
-    super.Transform(m)
-    this.CenterNE = m.Apply(this.CenterNE)
+    super.TransformMobius(m)
+
+    this.CenterNE = m.ApplyVector3D(this.CenterNE)
   }
 
   TransformIsometry(i: Isometry) {
-    super.Transform(i)
-    this.CenterNE = i.Apply(this.CenterNE)
+    super.TransformIsometry(i)
+
+    this.CenterNE = i.ApplyVector3D(this.CenterNE)
   }
 
   get Inverted(): boolean {
     //  If our NE center is infinite, or is on the outside.
-    return isInfinite(this.CenterNE) || !IsPointInside(this.CenterNE)
+    return (
+      UtilsInfinity.IsInfiniteVector3D(this.CenterNE) ||
+      !UtilsInfinity.IsInfiniteVector3D(this.CenterNE)
+    )
   }
 
   // Checks to see if a point is inside us, in a non-Euclidean sense.
@@ -451,7 +463,7 @@ export class CircleNE extends Circle implements ITransformable {
     } else {
       //  Whether we are inside in the Euclidean sense.
       let pointInside: boolean = false
-      if (!isInfinite(testPoint)) {
+      if (!UtilsInfinity.IsInfiniteVector3D(testPoint)) {
         pointInside = this.IsPointInside(testPoint)
       }
 

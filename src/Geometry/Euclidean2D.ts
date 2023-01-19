@@ -71,7 +71,7 @@ export class Euclidean2D {
     p2: Vector3D,
     p3: Vector3D,
     p4: Vector3D,
-  ): Vector3D | undefined {
+  ): Euclidean2DOutputType {
     let n1: Vector3D = p2.Subtract(p1)
     let n2: Vector3D = p4.Subtract(p3)
 
@@ -79,7 +79,7 @@ export class Euclidean2D {
     //  XXX - Handle the case where lines are one and the same separately?
     //          (infinite interesection points)
     if (Tolerance.Zero(n1.Cross(n2).Abs())) {
-      return
+      return { p1: Vector3D.construct(), status: 0 }
     }
 
     let d3: number = Euclidean2D.DistancePointLine(p3, p1, p2)
@@ -94,10 +94,13 @@ export class Euclidean2D {
     const factor = sameSide ? d3 / (d3 - d4) : d3 / (d3 + d4)
     const intersection = p3.Add(n2.MultiplyWithNumber(factor))
 
-    return intersection
+    return { p1: intersection, status: 1 }
   }
 
-  static IntersectionCircleCircle(c1: Circle, c2: Circle): number {
+  static IntersectionCircleCircle(
+    c1: Circle,
+    c2: Circle,
+  ): Euclidean2DOutputType {
     let p1 = Vector3D.construct()
     let p2 = Vector3D.construct()
 
@@ -114,16 +117,16 @@ export class Euclidean2D {
 
     if (Tolerance.Zero(d)) {
       if (Tolerance.Equal(r1, r2)) {
-        return -1
+        return { p1, p2, status: -1 }
       } else {
-        return 0
+        return { p1, p2, status: 0 }
       }
     }
 
     //  We should be able to normalize at this point.
     if (!v.Normalize()) {
       console.assert(false)
-      return 0
+      return { p1, p2, status: 0 }
     }
 
     //  No intersection points.
@@ -133,7 +136,7 @@ export class Euclidean2D {
       Tolerance.GreaterThan(d, r1 + r2) ||
       Tolerance.LessThan(d, Math.abs(r1 - r2))
     ) {
-      return 0
+      return { p1, p2, status: 0 }
     }
 
     //  One intersection point.
@@ -142,7 +145,7 @@ export class Euclidean2D {
       Tolerance.Equal(d, Math.abs(r1 - r2))
     ) {
       p1 = c1.Center.Add(v.MultiplyWithNumber(r1))
-      return 1
+      return { p1, p2, status: 0 }
     }
 
     //  There must be two intersection points.
@@ -162,18 +165,16 @@ export class Euclidean2D {
     p1 = p1.Add(c1.Center)
     p2 = p2.Add(c1.Center)
 
-    return 2
+    return { p1, p2, status: 2 }
   }
 
   static IntersectionLineCircle(
     lineP1: Vector3D,
     lineP2: Vector3D,
     circle: Circle,
-    /* out */ p1: Vector3D,
-    /* out */ p2: Vector3D,
-  ): number {
-    p1 = Vector3D.construct()
-    p2 = Vector3D.construct()
+  ): Euclidean2DOutputType {
+    let p1 = Vector3D.construct()
+    let p2 = Vector3D.construct()
 
     //  Distance from the circle center to the closest point on the line.
     let d: number = Euclidean2D.DistancePointLine(
@@ -185,14 +186,14 @@ export class Euclidean2D {
     //  No intersection points.
     let r: number = circle.Radius
     if (d > r) {
-      return 0
+      return { p1, p2, status: 0 }
     }
 
     //  One intersection point.
     p1 = Euclidean2D.ProjectOntoLine(circle.Center, lineP1, lineP2)
 
     if (Tolerance.Equal(d, r)) {
-      return 1
+      return { p1, p2, status: 1 }
     }
 
     //  Two intersection points.
@@ -227,7 +228,7 @@ export class Euclidean2D {
       p2 = p2.Add(circle.Center)
     }
 
-    return 2
+    return { p1, p2, status: 2 }
   }
 
   // <summary>
@@ -260,4 +261,10 @@ export class Euclidean2D {
     return !(pos1 || pos2)
     // The operator should be an XOR ^ instead of an OR, but not available in CodeDOM
   }
+}
+
+export type Euclidean2DOutputType = {
+  p1?: Vector3D
+  p2?: Vector3D
+  status: number
 }
