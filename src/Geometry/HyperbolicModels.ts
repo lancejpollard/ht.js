@@ -2,7 +2,7 @@ import { DonHatch } from '@Math/DonHatch'
 import { Mobius } from '@Math/Mobius'
 import { Complex } from './Complex'
 import { Geometry } from './Geometry'
-import { SphericalModels } from './SphericalModels'
+import { SphericalModels } from '../../Extra/SphericalModels'
 import { Vector3D } from './Vector3D'
 
 export enum HyperbolicModel {

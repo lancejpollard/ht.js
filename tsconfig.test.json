@@ -5,5 +5,5 @@
     "outDir": "dist.test"
   },
   "include": ["src/*.ts", "test.ts", "package.d.ts"],
-  "exclude": ["node_modules", "dist", "dist.test"]
+  "exclude": ["node_modules", "dist", "dist.test", "Todo", "Extra"]
 }

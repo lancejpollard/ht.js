@@ -1,7 +1,7 @@
 import { UtilsInfinity } from '@Math/Infinity'
 import { Mobius } from '@Math/Mobius'
 import { isInfinite } from '@Math/Utils'
-import { Mesh } from './Mesh'
+import { Mesh } from '../../Extra/Mesh'
 import { Vector3D } from './Vector3D'
 
 export class Surface {

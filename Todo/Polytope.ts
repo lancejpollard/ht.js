@@ -1,6 +1,6 @@
 import { GraphEdge } from '@Math/Graph'
-import { Polygon } from './Polygon'
-import { Vector3D } from './Vector3D'
+import { Polygon } from '../src/Geometry/Polygon'
+import { Vector3D } from '../src/Geometry/Vector3D'
 
 export class SkewPolyhedron {
   static BuildDuoprism(num: number): Array<Polygon> {

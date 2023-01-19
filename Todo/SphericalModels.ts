@@ -1,6 +1,6 @@
 import { UtilsInfinity } from '@Math/Infinity'
 import { Sterographic } from './Sterographic'
-import { Vector3D } from './Vector3D'
+import { Vector3D } from '../src/Geometry/Vector3D'
 
 export enum SphericalModel {
   Sterographic,

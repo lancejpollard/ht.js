@@ -1,7 +1,7 @@
-import { MeshTriangle } from './MeshTriangle'
-import { Polygon } from './Polygon'
-import { Tile } from './Tile'
-import { Vector3D } from './Vector3D'
+import { MeshTriangle } from '../src/Geometry/MeshTriangle'
+import { Polygon } from '../src/Geometry/Polygon'
+import { Tile } from '../src/Geometry/Tile'
+import { Vector3D } from '../src/Geometry/Vector3D'
 
 export class Mesh {
   constructor() {

@@ -4,7 +4,7 @@ import { Euclidean2D } from './Euclidean2D'
 import { Geometry } from './Geometry'
 import { Geometry2D } from './Geometry2D'
 import { HyperbolicModels } from './HyperbolicModels'
-import { SphericalModels } from './SphericalModels'
+import { SphericalModels } from '../../Extra/SphericalModels'
 import { Vector3D } from './Vector3D'
 
 export enum EuclideanModel {
