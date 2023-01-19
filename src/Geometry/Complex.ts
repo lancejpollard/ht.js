@@ -1,11 +1,6 @@
 // complex number, ported from CSharp
 // https://github.com/microsoft/referencesource/blob/dae14279dd0672adead5de00ac8f117dcf74c184/System.Numerics/System/Numerics/Complex.cs
 // https://learn.microsoft.com/en-us/dotnet/api/system.numerics.complex?view=net-7.0
-//  ==++==
-//
-//    Copyright (c) Microsoft Corporation.  All rights reserved.
-//
-//  ==--==
 
 import { isInfinite } from '@Math/Utils'
 import { IEquatable } from './IEquitable'
@@ -163,7 +158,7 @@ export class Complex implements IEquatable<Complex>, IFormattable {
       return Complex.Zero
     }
 
-    return Complex.One / value
+    return Complex.One.Divide(value)
   }
 
   //  --------------SECTION: Comparison Operator(binary) Overloading -------------- //
@@ -199,39 +194,7 @@ export class Complex implements IEquatable<Complex>, IFormattable {
 
   //  --------------SECTION: Formattig/Parsing options  -------------- //
   ToString(): String {
-    return String.Format(
-      CultureInfo.CurrentCulture,
-      '({0}, {1})',
-      this.m_real,
-      this.m_imaginary,
-    )
-  }
-
-  ToString(format: String): String {
-    return String.Format(
-      CultureInfo.CurrentCulture,
-      '({0}, {1})',
-      this.m_real.ToString(format, CultureInfo.CurrentCulture),
-      this.m_imaginary.ToString(format, CultureInfo.CurrentCulture),
-    )
-  }
-
-  ToString(provider: IFormatProvider): String {
-    return String.Format(
-      provider,
-      '({0}, {1})',
-      this.m_real,
-      this.m_imaginary,
-    )
-  }
-
-  ToString(format: String, provider: IFormatProvider): String {
-    return String.Format(
-      provider,
-      '({0}, {1})',
-      this.m_real.ToString(format, provider),
-      this.m_imaginary.ToString(format, provider),
-    )
+    return String.Format('({0}, {1})', this.m_real, this.m_imaginary)
   }
 
   /* override */ GetHashCode(): number {
@@ -263,12 +226,12 @@ export class Complex implements IEquatable<Complex>, IFormattable {
   }
 
   static Asin(value: Complex): Complex {
-    return (
-      ImaginaryOne *
-      -1 *
+    return this.Negate(this.ImaginaryOne).Multiply(
       Complex.Log(
-        ImaginaryOne * value + Complex.Sqrt(One - value * value),
-      )
+        this.ImaginaryOne.Multiply(value).Add(
+          Complex.Sqrt(this.One.Subtract(value.Multiply(value))),
+        ),
+      ),
     )
   }
 
@@ -310,10 +273,12 @@ export class Complex implements IEquatable<Complex>, IFormattable {
 
   static Atan(value: Complex): Complex {
     let Two: Complex = new Complex(2, 0)
-    return (
-      (ImaginaryOne / Two) *
-      (Complex.Log(One - ImaginaryOne * value) -
-        Complex.Log(One + ImaginaryOne * value))
+    return this.ImaginaryOne.Divide(Two).Multiply(
+      Complex.Log(
+        this.One.Subtract(this.ImaginaryOne.Multiply(value)),
+      ).Subtract(
+        Complex.Log(this.One.Add(this.ImaginaryOne.Multiply(value))),
+      ),
     )
   }
 
