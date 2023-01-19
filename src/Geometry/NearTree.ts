@@ -6,6 +6,11 @@ import { Metric } from './Metric'
 import { Spherical2D } from './Spherical2D'
 import { Vector3D } from './Vector3D'
 
+type FindNearestNeighborRecursivePassthroughType = {
+  closest?: NearTreeObject
+  searchRadius: number
+}
+
 export class NearTree {
   // this.Reset(Metric.Euclidean)
 
@@ -76,7 +81,7 @@ export class NearTree {
       )
       tempLeft = this.Dist(
         nearTreeObject.Location,
-        this.m_pLeft.Location,
+        this.m_pLeft?.Location,
       )
     }
 
@@ -114,61 +119,59 @@ export class NearTree {
   // Finds the nearest neighbor to a location, and
   // withing a specified search radius (returns false if none found).
 
-  FindNearestNeighbor(
-    /* out */ closest: NearTreeObject,
-    location: Vector3D,
-    searchRadius: number,
-  ): boolean {
-    closest = null
-    return this.FindNearestNeighborRecursive(
-      /* ref */ closest,
-      location,
-      /* ref */ searchRadius,
-    )
+  FindNearestNeighbor(location: Vector3D): boolean {
+    return this.FindNearestNeighborRecursive(location)
   }
 
   // Finds all the objects withing a certain radius of some location (returns false if none found).
 
   FindCloseObjects(
-    /* out */ closeObjects: Array<NearTreeObject>,
+    closeObjects: Array<NearTreeObject>,
     location: Vector3D,
     searchRadius: number,
   ): boolean {
-    let result: Array<NearTreeObject> = new Array<NearTreeObject>()
     let found: boolean =
       0 !=
       this.FindCloseObjectsRecursive(
-        /* ref */ result,
+        closeObjects,
         location,
         searchRadius,
       )
-    closeObjects = result.ToArray()
     return found
   }
 
   FindNearestNeighborRecursive(
-    /* ref */ closest: NearTreeObject,
     location: Vector3D,
-    /* ref */ searchRadius: number,
+    passthrough: FindNearestNeighborRecursivePassthroughType = {
+      closest: undefined,
+      searchRadius: 0,
+    },
   ): boolean {
     let tempRadius: number = 0
     let bRet: boolean = false
+
     //  First test each of the left and right positions to see
     //  if one holds a point nearer than the nearest so far.
     if (this.m_pLeft != null) {
       tempRadius = this.Dist(location, this.m_pLeft.Location)
-      if (tempRadius <= searchRadius) {
-        searchRadius = tempRadius
-        closest = this.m_pLeft
+      if (
+        !passthrough.searchRadius ||
+        tempRadius <= passthrough.searchRadius
+      ) {
+        passthrough.searchRadius = tempRadius
+        passthrough.closest = this.m_pLeft
         bRet = true
       }
     }
 
     if (this.m_pRight != null) {
       tempRadius = this.Dist(location, this.m_pRight.Location)
-      if (tempRadius <= searchRadius) {
-        searchRadius = tempRadius
-        closest = this.m_pRight
+      if (
+        !passthrough.searchRadius ||
+        tempRadius <= passthrough.searchRadius
+      ) {
+        passthrough.searchRadius = tempRadius
+        passthrough.closest = this.m_pRight
         bRet = true
       }
     }
@@ -178,39 +181,33 @@ export class NearTree {
     //  rule is used to test whether it's even necessary to descend.
     if (this.m_pLeftBranch != null) {
       if (
-        searchRadius + this.m_maxLeft >=
-        this.Dist(location, this.m_pLeft.Location)
+        passthrough.searchRadius + this.m_maxLeft >=
+        this.Dist(location, this.m_pLeft?.Location)
       ) {
-        bRet =
-          bRet |
-          this.m_pLeftBranch.FindNearestNeighborRecursive(
-            /* ref */ closest,
-            location,
-            /* ref */ searchRadius,
-          )
+        bRet ||= this.m_pLeftBranch.FindNearestNeighborRecursive(
+          location,
+          passthrough,
+        )
       }
     }
 
     if (this.m_pRightBranch != null) {
       if (
-        searchRadius + this.m_maxRight >=
-        this.Dist(location, this.m_pRight.Location)
+        passthrough.searchRadius + this.m_maxRight >=
+        this.Dist(location, this.m_pRight?.Location)
       ) {
-        bRet =
-          bRet |
-          this.m_pRightBranch.FindNearestNeighborRecursive(
-            /* ref */ closest,
-            location,
-            /* ref */ searchRadius,
-          )
+        bRet ||= this.m_pRightBranch.FindNearestNeighborRecursive(
+          location,
+          passthrough,
+        )
       }
     }
 
     return bRet
   }
 
-  #FindCloseObjectsRecursive(
-    /* ref */ closeObjects: Array<NearTreeObject>,
+  FindCloseObjectsRecursive(
+    closeObjects: Array<NearTreeObject>,
     location: Vector3D,
     searchRadius: number,
   ): number {
@@ -221,7 +218,7 @@ export class NearTree {
       this.m_pLeft != null &&
       this.Dist(location, this.m_pLeft.Location) <= searchRadius
     ) {
-      closeObjects.Add(this.m_pLeft)
+      closeObjects.push(this.m_pLeft)
       lReturn++
     }
 
@@ -229,7 +226,7 @@ export class NearTree {
       this.m_pRight != null &&
       this.Dist(location, this.m_pRight.Location) <= searchRadius
     ) {
-      closeObjects.Add(this.m_pRight)
+      closeObjects.push(this.m_pRight)
       lReturn++
     }
 
@@ -241,29 +238,25 @@ export class NearTree {
     if (
       this.m_pLeftBranch != null &&
       searchRadius + this.m_maxLeft >=
-        this.Dist(location, this.m_pLeft.Location)
+        this.Dist(location, this.m_pLeft?.Location)
     ) {
-      lReturn =
-        lReturn +
-        this.m_pLeftBranch.FindCloseObjectsRecursive(
-          /* ref */ closeObjects,
-          location,
-          searchRadius,
-        )
+      lReturn += this.m_pLeftBranch.FindCloseObjectsRecursive(
+        closeObjects,
+        location,
+        searchRadius,
+      )
     }
 
     if (
       this.m_pRightBranch != null &&
       searchRadius + this.m_maxRight >=
-        this.Dist(location, this.m_pRight.Location)
+        this.Dist(location, this.m_pRight?.Location)
     ) {
-      lReturn =
-        lReturn +
-        this.m_pRightBranch.FindCloseObjectsRecursive(
-          /* ref */ closeObjects,
-          location,
-          searchRadius,
-        )
+      lReturn += this.m_pRightBranch.FindCloseObjectsRecursive(
+        closeObjects,
+        location,
+        searchRadius,
+      )
     }
 
     return lReturn
