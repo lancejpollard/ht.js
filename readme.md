@@ -71,9 +71,24 @@ const tessellation = new Tessellation(3, 7, {
   },
 })
 
+tiling.center(tile)
+tiling.lock()
+tiling.unlock()
+// inch toward another block
+tiling.move()
+tiling.rotate()
+tiling.querySelectorAll('face')
+tiling.base
+tiline.base.neighbors
+tiline.base.points
+tiline.base.edges
+tiline.base.face
+tiline.base.face.style.fill = 0x00ff00
+tiline.base.face.addEventListener
+
 tessellation.addEventListener('keyup', e => {
   if (e.key === 'up') {
-    tessellation.orient(tessellation.center.tiles[0])
+    tessellation.center(tessellation.center.tiles[0])
   }
 })
 

@@ -1,3 +1,4 @@
+import { Vector3D } from '@Geometry/Vector3D'
 import { Isometry } from '@Math/Isometry'
 import { Mobius } from '@Math/Mobius'
 
