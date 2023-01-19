@@ -7,6 +7,11 @@ import { Polygon, Segment } from './Polygon'
 import { Tile } from './Tile'
 import { Vector3D } from './Vector3D'
 
+type SplicedArcPassthroughInputType = {
+  nextSegIndex: number
+  pair: number
+}
+
 class IntersectionPoint {
   Location: Vector3D
 
@@ -50,14 +55,14 @@ export class Slicer {
       pointOnCircle.ToComplex(),
       thickness / 2,
     )
-    c1.Transform(m)
+    c1.TransformMobius(m)
     m.Hyperbolic2(
       g,
       c2.CenterNE.ToComplex(),
       pointOnCircle.ToComplex(),
       (thickness / 2) * -1,
     )
-    c2.Transform(m)
+    c2.TransformMobius(m)
 
     //  ZZZ - alter Clip method to work on Polygons and use that.
     //  Slice it up.
@@ -216,19 +221,12 @@ export class Slicer {
       //  We may need our intersection points to all be reorded by 1.
       //  This is so that when walking from i1 -> i2 along c, we will be moving through the interior of the polygon.
       //  ZZZ - This may need to change when hack in SplicedArc is improved.
-      let dummy: number = 0
-      let testArc: Segment = Slicer.SmallerSplicedArc(
-        c,
-        iPoints,
-        /* ref */ dummy,
-        true,
-        /* ref */ dummy,
-      )
+      let testArc: Segment = Slicer.SmallerSplicedArc(c, iPoints, true)
 
       let midpoint: Vector3D = testArc.Midpoint
       if (!p.IsPointInsideParanoid(midpoint)) {
         let t: IntersectionPoint = iPoints[0]
-        iPoints.RemoveAt(0)
+        iPoints.unshift()
         iPoints.push(t)
       }
     }
@@ -267,14 +265,14 @@ export class Slicer {
     diced: Polygon,
     iPoints: Array<IntersectionPoint>,
   ): Segment {
-    let split: Array<Segment>
-    if (segmentToSplit.Split(iLocation, /* out */ split)) {
-      console.assert(split.Count == 2)
-      diced.Segments.Add(split[0])
+    let split: Array<Segment> = []
+    if (segmentToSplit.Split(iLocation, split)) {
+      console.assert(split.length == 2)
+      diced.Segments.push(split[0])
       let iPoint: IntersectionPoint = new IntersectionPoint()
       iPoint.Location = iLocation
-      iPoint.Index = diced.Segments.Count
-      iPoints.Add(iPoint)
+      iPoint.Index = diced.Segments.length
+      iPoints.push(iPoint)
       return split[1]
     } else {
       //  We were presumably at an endpoint.
@@ -283,8 +281,8 @@ export class Slicer {
       if (iLocation.Compare(segmentToSplit.P1)) {
         let iPoint: IntersectionPoint = new IntersectionPoint()
         iPoint.Location = iLocation
-        iPoint.Index = diced.Segments.Count
-        iPoints.Add(iPoint)
+        iPoint.Index = diced.Segments.length
+        iPoints.push(iPoint)
       }
 
       return segmentToSplit
@@ -304,49 +302,47 @@ export class Slicer {
     increment: boolean,
   ): Polygon {
     let newPoly: Polygon = new Polygon()
-    let iPoint2: IntersectionPoint
-    let iPoint1: IntersectionPoint
-    Slicer.GetPairPoints(
-      iPoints,
-      pair,
-      increment,
-      /* out */ iPoint1,
-      /* out */ iPoint2,
-    )
+    let [iPoint1] = Slicer.GetPairPoints(iPoints, pair, increment)
     let startLocation: Vector3D = iPoint1.Location
     let iSeg: number = 0
+    const passthrough = {
+      nextSegIndex: iSeg,
+      pair,
+    }
     let current: Segment = Slicer.SplicedArc(
       parent,
       c,
       iPoints,
-      /* ref */ pair,
       increment,
-      /* ref */ iSeg,
+      passthrough,
     )
-    newPoly.Segments.Add(current.Clone())
+    newPoly.Segments.push(current.Clone())
+
     while (true) {
       //  NOTE: Since we don't allow tangent intersections, there will never
       //          be multiple spliced arcs added in succession.
       //  Add in the next one.
-      current = walking.Segments[iSeg]
-      newPoly.Segments.Add(current.Clone())
-      iSeg = Slicer.GetNextSegmentIndex(walking, iSeg)
+      current = walking.Segments[passthrough.nextSegIndex]
+      newPoly.Segments.push(current.Clone())
+      passthrough.nextSegIndex = Slicer.GetNextSegmentIndex(
+        walking,
+        passthrough.nextSegIndex,
+      )
       if (current.P2.Compare(startLocation)) {
         break
       }
 
       //  Do we need to splice in at this point?
       let segEnd: Vector3D = current.P2
-      if (iPoints.Select(p => p.Location).Contains(segEnd)) {
+      if (iPoints.map(p => p.Location).includes(segEnd)) {
         current = Slicer.SplicedArc(
           parent,
           c,
           iPoints,
-          /* ref */ pair,
           increment,
-          /* ref */ iSeg,
+          passthrough,
         )
-        newPoly.Segments.Add(current.Clone())
+        newPoly.Segments.push(current.Clone())
         if (current.P2.Compare(startLocation)) {
           break
         }
@@ -358,21 +354,21 @@ export class Slicer {
 
   // Get a pair of intersection points.
 
-  static #GetPairPoints(
+  static GetPairPoints(
     iPoints: Array<IntersectionPoint>,
     pair: number,
     increment: boolean,
-    /* out */ iPoint1: IntersectionPoint,
-    /* out */ iPoint2: IntersectionPoint,
   ) {
     let idx1: number = pair * 2
     let idx2: number = pair * 2 + 1
     if (!increment) {
-      Utils.Swap<number>(/* ref */ idx1, /* ref */ idx2)
+      ;[idx2, idx1] = [idx1, idx2]
     }
 
-    iPoint1 = iPoints[idx1]
-    iPoint2 = iPoints[idx2]
+    let iPoint1: IntersectionPoint = iPoints[idx1]
+    let iPoint2: IntersectionPoint = iPoints[idx2]
+
+    return [iPoint1, iPoint2]
   }
 
   // Helper to return the smaller spliced arc.
@@ -380,23 +376,21 @@ export class Slicer {
   static SmallerSplicedArc(
     c: Circle,
     iPoints: Array<IntersectionPoint>,
-    /* ref */ pair: number,
     increment: boolean,
-    /* ref */ nextSegIndex: number,
+    passthrough: SplicedArcPassthroughInputType = {
+      nextSegIndex: 0,
+      pair: 0,
+    },
   ): Segment {
-    let iPoint2: IntersectionPoint
-    let iPoint1: IntersectionPoint
-    Slicer.GetPairPoints(
+    let [iPoint1, iPoint2] = Slicer.GetPairPoints(
       iPoints,
-      pair,
+      passthrough.pair,
       increment,
-      /* out */ iPoint1,
-      /* out */ iPoint2,
     )
     let p1: Vector3D = iPoint1.Location
     let p2: Vector3D = iPoint2.Location
-    nextSegIndex = iPoint2.Index
-    let newSeg: Segment = Segment.Arc(
+    passthrough.nextSegIndex = iPoint2.Index
+    let newSeg: Segment = Segment.ArcWithClockwise(
       p1,
       p2,
       c.Center,
@@ -406,9 +400,9 @@ export class Slicer {
       newSeg.Clockwise = false
     }
 
-    pair++
-    if (pair == iPoints.Count / 2) {
-      pair = 0
+    passthrough.pair++
+    if (passthrough.pair == iPoints.length / 2) {
+      passthrough.pair = 0
     }
 
     return newSeg
@@ -416,35 +410,40 @@ export class Slicer {
 
   // Helper to return a spliced arc.
 
-  static #SplicedArc(
+  static SplicedArc(
     parent: Polygon,
     c: Circle,
     iPoints: Array<IntersectionPoint>,
-    /* ref */ pair: number,
     increment: boolean,
-    /* ref */ nextSegIndex: number,
+    passthrough: SplicedArcPassthroughInputType = {
+      nextSegIndex: 0,
+      pair: 0,
+    },
   ): Segment {
     let spliced: Segment = Slicer.SmallerSplicedArc(
       c,
       iPoints,
-      /* ref */ pair,
       increment,
-      /* ref */ nextSegIndex,
+      passthrough,
     )
-    //  This is heuristic, but works quite well.
-    75
-    return spliced
-    //  Direction should actually be such that arc is inside the parent polygon,
-    //  which may not be the case for the segment above.
-    //  Now check to make sure the arc is indeed inside the parent polygon.
-    let testAngle: number = spliced.Angle / 1000
+
+    if (Math.abs(spliced.Angle) < Math.PI * 0.75) {
+      return spliced
+    }
+
+    // Direction should actually be such that arc is inside the parent polygon,
+    // which may not be the case for the segment above.
+
+    // Now check to make sure the arc is indeed inside the parent polygon.
+    let testAngle = spliced.Angle / 1000
     if (spliced.Clockwise) {
-      testAngle = testAngle * -1
+      testAngle *= -1
     }
 
     let t1: Vector3D = spliced.P1
-    t1.RotateXY(spliced.Center, testAngle)
-    //  ZZZ - I don't like relying on our weak IsPointInside method.
+    t1.RotateXYAtCenter(spliced.Center, testAngle)
+
+    // ZZZ - I don't like relying on our weak IsPointInside method.
     if (!parent.IsPointInsideParanoid(t1)) {
       spliced.Clockwise = !spliced.Clockwise
     }
@@ -452,7 +451,7 @@ export class Slicer {
     return spliced
   }
 
-  static #GetNextSegmentIndex(walking: Polygon, idx: number): number {
+  static GetNextSegmentIndex(walking: Polygon, idx: number): number {
     let ret: number = idx + 1
     if (ret == walking.NumSides) {
       ret = 0

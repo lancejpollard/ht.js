@@ -992,8 +992,7 @@ export class Segment implements ITransformable {
   ///  The new segments will be ordered in the same way as us (from p1 -> point and point -> p2 ).
   ///  </summary>
   ///  <returns>True if the segment was split, false otherwise (if passed in point is not on segment or an endpoint).</returns>
-  Split(point: Vector3D, /* out */ split: Array<Segment>): boolean {
-    split = new Array<Segment>()
+  Split(point: Vector3D, split: Array<Segment>): boolean {
     if (!this.IsPointOn(point)) {
       console.assert(false)
       return false
