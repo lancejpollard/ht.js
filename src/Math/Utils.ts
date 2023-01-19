@@ -1,6 +1,7 @@
+import { IEqualityComparer } from '@Geometry/IEqualityComparer'
 import { UtilsInfinity } from './Infinity'
 
-export class DoubleEqualityComparer extends IEqualityComparer {
+export class DoubleEqualityComparer implements IEqualityComparer {
   constructor(tol: number) {
     this.m_tolerance = tol
   }
