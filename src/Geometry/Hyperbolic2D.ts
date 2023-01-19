@@ -8,7 +8,7 @@ export class Hyperbolic2D {
     let mag: number = v.Abs()
     mag = DonHatch.h2eNorm(DonHatch.e2hNorm(mag) + hDist)
     v.Normalize()
-    v = v * mag
+    v = v.MultiplyWithNumber(mag)
     return v
   }
 }

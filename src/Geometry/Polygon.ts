@@ -286,8 +286,8 @@ export class Polygon implements ITransformable {
       let s: Segment = this.Segments[i]
       //  First point.
       //  ZZZ - getting lazy
-      // console.assert( ! (isInfinite( s.m_p1 ) && isInfinite( s.m_p2 )) );
-      const p1: Vector3D = isInfinite(s.P1)
+      // console.assert( ! (UtilsInfinity.IsInfiniteVector3D( s.m_p1 ) && UtilsInfinity.IsInfiniteVector3D( s.m_p2 )) );
+      const p1: Vector3D = UtilsInfinity.IsInfiniteVector3D(s.P1)
         ? s.P2 * Infinity.FiniteScale
         : s.P1
       points.Add(p1)
@@ -308,7 +308,7 @@ export class Polygon implements ITransformable {
       }
 
       //  Last point.
-      const p2: Vector3D = isInfinite(s.P2)
+      const p2: Vector3D = UtilsInfinity.IsInfiniteVector3D(s.P2)
         ? s.P1 * Infinity.FiniteScale
         : s.P2
       points.Add(p2)
@@ -485,7 +485,7 @@ export class Polygon implements ITransformable {
       return false
     }
 
-    if (isInfinite(this.Center)) {
+    if (UtilsInfinity.IsInfiniteVector3D(this.Center)) {
       return true
     }
 
@@ -809,33 +809,32 @@ export class Segment implements ITransformable {
   }
 
   IsPointOn(test: Vector3D): boolean {
-    return SegmentType.Arc == Type
-      ? PointOnArcSegment(test, this)
-      : PointOnLineSegment(test, this)
+    return SegmentType.Arc == this.Type
+      ? Segment.PointOnArcSegment(test, this)
+      : Segment.PointOnLineSegment(test, this)
   }
 
   static PointOnArcSegment(p: Vector3D, seg: Segment): boolean {
     let maxAngle: number = seg.Angle
-    let v1: Vector3D = seg.P1 - seg.Center
-    let v2: Vector3D = p - seg.Center
+    let v1: Vector3D = seg.P1.Subtract(seg.Center)
+    let v2: Vector3D = p.Subtract(seg.Center)
     if (!Tolerance.Equal(v1.Abs(), v2.Abs())) {
       return false
     }
 
-    let angle: number = Euclidean2D.AngleToClock(v1, v2)
-
     const angle = seg.Clockwise
       ? Euclidean2D.AngleToClock(v1, v2)
       : Euclidean2D.AngleToCounterClock(v1, v2)
+
     return Tolerance.LessThanOrEqual(angle, maxAngle)
   }
 
   static PointOnLineSegment(p: Vector3D, seg: Segment): boolean {
     //  This will be so if the point and the segment ends represent
     //  the vertices of a degenerate triangle.
-    let d1: number = (seg.P2 - seg.P1).Abs()
-    let d2: number = (p - seg.P1).Abs()
-    let d3: number = (seg.P2 - p).Abs()
+    let d1: number = seg.P2.Subtract(seg.P1).Abs()
+    let d2: number = p.Subtract(seg.P1).Abs()
+    let d3: number = seg.P2.Subtract(p).Abs()
     return Tolerance.Equal(d1, d2 + d3)
   }
 
@@ -846,29 +845,31 @@ export class Segment implements ITransformable {
     //  Arc centers can't be transformed directly.
     //  NOTE: We must calc this before altering the endpoints.
     let mid: Vector3D = this.Midpoint
-    if (isInfinite(mid)) {
-      mid = isInfinite(s.P1)
+    if (UtilsInfinity.IsInfiniteVector3D(mid)) {
+      mid = UtilsInfinity.IsInfiniteVector3D(s.P1)
         ? s.P2.MultiplyWithNumber(UtilsInfinity.FiniteScale)
         : s.P1.MultiplyWithNumber(UtilsInfinity.FiniteScale)
     }
 
     this.P1 = s.ReflectPoint(this.P1)
     this.P2 = s.ReflectPoint(this.P2)
+
     mid = s.ReflectPoint(mid)
     //  Can we make a circle out of the reflected points?
     let temp: Circle = new Circle()
+
     if (
-      !isInfinite(this.P1) &&
-      !isInfinite(this.P2) &&
-      !isInfinite(mid) &&
+      !UtilsInfinity.IsInfiniteVector3D(this.P1) &&
+      !UtilsInfinity.IsInfiniteVector3D(this.P2) &&
+      !UtilsInfinity.IsInfiniteVector3D(mid) &&
       temp.From3Points(this.P1, mid, this.P2)
     ) {
       this.Type = SegmentType.Arc
       this.Center = temp.Center
       //  Work out the orientation of the arc.
-      let t1: Vector3D = this.P1 - this.Center
-      let t2: Vector3D = mid - this.Center
-      let t3: Vector3D = this.P2 - this.Center
+      let t1: Vector3D = this.P1.Subtract(this.Center)
+      let t2: Vector3D = mid.Subtract(this.Center)
+      let t3: Vector3D = this.P2.Subtract(this.Center)
       let a1: number = Euclidean2D.AngleToCounterClock(t2, t1)
       let a2: number = Euclidean2D.AngleToCounterClock(t3, t1)
       this.Clockwise = a2 > a1
@@ -878,7 +879,7 @@ export class Segment implements ITransformable {
       this.Type = SegmentType.Line
       //  XXX - need to do something about this.
       //  Turn into 2 segments?
-      // if( isInfinite( mid ) )
+      // if( UtilsInfinity.IsInfiniteVector3D( mid ) )
       //  Actually the check should just be whether mid is between p1 and p2.
     }
   }
@@ -909,9 +910,9 @@ export class Segment implements ITransformable {
       ? this.P2.MultiplyWithNumber(UtilsInfinity.FiniteScale)
       : this.P1.MultiplyWithNumber(UtilsInfinity.FiniteScale)
 
-    this.P1 = transform.Apply(this.P1)
-    this.P2 = transform.Apply(this.P2)
-    mid = transform.Apply(mid)
+    this.P1 = transform.ApplyVector3D(this.P1)
+    this.P2 = transform.ApplyVector3D(this.P2)
+    mid = transform.ApplyVector3D(mid)
 
     //  Can we make a circle out of the transformed points?
     let temp: Circle = new Circle()
@@ -937,7 +938,7 @@ export class Segment implements ITransformable {
       this.Type = SegmentType.Line
       //  XXX - need to do something about this.
       //  Turn into 2 segments?
-      // if( isInfinite( mid ) )
+      // if( UtilsInfinity.IsInfiniteVector3D( mid ) )
       //  Actually the check should just be whether mid is between p1 and p2.
     }
   }

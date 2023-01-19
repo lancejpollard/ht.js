@@ -29,13 +29,13 @@ export class SphericalModels {
     if (sphere.Z >= 0) {
       sphere.Z = 0
       sphere.Normalize()
-      sphere = sphere * UtilsInfinity.FiniteScale
+      sphere = sphere.MultiplyWithNumber(UtilsInfinity.FiniteScale)
       return sphere
     }
 
     let z: number = sphere.Z
     sphere.Z = 0
-    return sphere * (this.m_gScale / z) * -1
+    return sphere.MultiplyWithNumber(this.m_gScale / z).Negate()
   }
 
   static GnomonicToStereo(g: Vector3D): Vector3D {
@@ -164,8 +164,10 @@ export class SphericalModels {
       Math.PI / (2 * (1 - v.Y)),
       v.X * Math.PI,
     )
+
     let onBall: Vector3D =
       SphericalCoords.SphericalToCartesian(spherical)
+
     return Sterographic.SphereToPlane(onBall)
   }
 
@@ -176,8 +178,10 @@ export class SphericalModels {
       lat,
       Math.PI * (v.X / Math.cos(lat - Math.PI / 2)),
     )
+
     let onBall: Vector3D =
       SphericalCoords.SphericalToCartesian(spherical)
+
     return Sterographic.SphereToPlane(onBall)
   }
 
@@ -193,6 +197,7 @@ export class SphericalModels {
     let spherical: Vector3D = new Vector3D(1, inclination, v.X)
     let onBall: Vector3D =
       SphericalCoords.SphericalToCartesian(spherical)
+
     return Sterographic.SphereToPlane(onBall)
   }
 
@@ -211,5 +216,5 @@ export class SphericalModels {
     return Sterographic.SphereToPlane(v)
   }
 
-  static #m_gScale: number = 0.5
+  static m_gScale: number = 0.5
 }

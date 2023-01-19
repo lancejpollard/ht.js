@@ -1,4 +1,5 @@
 import { Mobius } from '@Math/Mobius'
+import { Utils } from '@Math/Utils'
 import { Circle, CircleNE } from './Circle'
 import { Geometry } from './Geometry'
 import { Polygon, Segment } from './Polygon'
@@ -11,6 +12,11 @@ class IntersectionPoint {
   // Index in the sliced polygon. The location will be at the start of the segment with this index.
 
   Index: number
+
+  constructor() {
+    this.Location = Vector3D.construct()
+    this.Index = 0
+  }
 }
 
 //
@@ -35,11 +41,21 @@ export class Slicer {
     let m: Mobius = Mobius.construct()
     const pointOnCircle: Vector3D = c.IsLine
       ? c.P1
-      : c.Center + Vector3D.construct2d(c.Radius, 0)
+      : c.Center.Add(Vector3D.construct2d(c.Radius, 0))
 
-    m.Hyperbolic2(g, c1.CenterNE, pointOnCircle, thickness / 2)
+    m.Hyperbolic2(
+      g,
+      c1.CenterNE.ToComplex(),
+      pointOnCircle.ToComplex(),
+      thickness / 2,
+    )
     c1.Transform(m)
-    m.Hyperbolic2(g, c2.CenterNE, pointOnCircle, (thickness / 2) * -1)
+    m.Hyperbolic2(
+      g,
+      c2.CenterNE.ToComplex(),
+      pointOnCircle.ToComplex(),
+      (thickness / 2) * -1,
+    )
     c2.Transform(m)
 
     //  ZZZ - alter Clip method to work on Polygons and use that.
@@ -79,11 +95,7 @@ export class Slicer {
 
   // Clip the drawn polygons in a set of tiles, using a circle.
 
-  static Clip(
-    /* ref */ tiles: Array<Tile>,
-    c: Circle,
-    keepInside: boolean,
-  ) {
+  static Clip(tiles: Array<Tile>, c: Circle, keepInside: boolean) {
     let newTiles: Array<Tile> = new Array<Tile>()
     for (let t of tiles) {
       let sliced: Array<Polygon> = []
@@ -96,9 +108,7 @@ export class Slicer {
           (keepInside && insideCircle) ||
           (!keepInside && !insideCircle)
         ) {
-          newTiles.push(
-            Tile.constructWithBoundary(t.Boundary, p, t.Geometry),
-          )
+          newTiles.push(new Tile(t.Boundary, p, t.Geometry))
         }
       }
     }
@@ -144,20 +154,18 @@ export class Slicer {
         case 0:
           diced.Segments.push(s)
           break
-          break
         case 1:
           //  ZZZ - check here to see if it is a tangent iPoint?  Not sure if we need to do this.
           diced.Segments.push(
             Slicer.SplitHelper(s, intersections[0], diced, iPoints),
           )
           break
-          break
         case 2:
           //  We need to ensure the intersection points are ordered correctly on the segment.
           let i2: Vector3D = intersections[1]
           let i1: Vector3D = intersections[0]
           if (!s.Ordered(i1, i2)) {
-            Utils.SwapPoints(/* ref */ i1, /* ref */ i2)
+            ;[i2, i1] = [i1, i2]
           }
 
           let secondToSplit: Segment = Slicer.SplitHelper(
@@ -166,12 +174,14 @@ export class Slicer {
             diced,
             iPoints,
           )
+
           let segmentToAdd: Segment = Slicer.SplitHelper(
             secondToSplit,
             i2,
             diced,
             iPoints,
           )
+
           diced.Segments.push(segmentToAdd)
           break
         default:
@@ -213,6 +223,7 @@ export class Slicer {
         true,
         /* ref */ dummy,
       )
+
       let midpoint: Vector3D = testArc.Midpoint
       if (!p.IsPointInsideParanoid(midpoint)) {
         let t: IntersectionPoint = iPoints[0]
@@ -249,7 +260,7 @@ export class Slicer {
   // First new segment will be added to diced, and second new segment will be returned.
   // If split doesn't happen, segmentToSplit will be returned.
 
-  static #SplitHelper(
+  static SplitHelper(
     segmentToSplit: Segment,
     iLocation: Vector3D,
     diced: Polygon,
@@ -365,7 +376,7 @@ export class Slicer {
 
   // Helper to return the smaller spliced arc.
 
-  static #SmallerSplicedArc(
+  static SmallerSplicedArc(
     c: Circle,
     iPoints: Array<IntersectionPoint>,
     /* ref */ pair: number,

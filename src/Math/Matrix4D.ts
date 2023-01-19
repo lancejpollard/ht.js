@@ -1,6 +1,12 @@
+import { Vector3D } from '@Geometry/Vector3D'
+
 export class Matrix4D {
   constructor() {
-    this.Initialize()
+    const data = new Array(4) as Array<Array<number>>
+    for (let i: number = 0; i < 4; i++) {
+      data[i] = new Array(4) as Array<number>
+    }
+    this.Data = data
   }
 
   // constructor (data: number[,]) {
@@ -14,26 +20,19 @@ export class Matrix4D {
 
   // }
 
-  constructor(rows: Array<Vector3D>) {
-    this.Initialize()
+  static constructWithRows(rows: Array<Vector3D>) {
+    const self = new Matrix4D()
+
     for (let i: number = 0; i < 4; i++) {
-      Data[i] = [rows[i].X, rows[i].Y, rows[i].Z, rows[i].W]
+      self.Data[i] = [rows[i].X, rows[i].Y, rows[i].Z, rows[i].W]
     }
   }
 
-  #Initialize() {
-    Data = new Array(4)
-    for (let i: number = 0; i < 4; i++) {
-      Data[i] = new Array(4)
-    }
-  }
-
-  get Data(): Array<Array<number>> {}
-
-  set Data(value: Array<Array<number>>) {}
+  Data: Array<Array<number>>
 
   Clone(): Matrix4D {
     let result: Matrix4D = new Matrix4D()
+
     for (let i: number = 0; i < 4; i++) {
       for (let j: number = 0; j < 4; j++) {
         result.Data[i][j] = this.Data[i][j]
@@ -45,30 +44,12 @@ export class Matrix4D {
 
   static Identity(): Matrix4D {
     let result: Matrix4D = new Matrix4D()
+
     for (let i: number = 0; i < 4; i++) {
-      result[(i, i)] = 1
+      result.Data[i][i] = 1
     }
 
     return result
-  }
-
-  ///  <summary>
-  ///  Mixing multidim and jagged array notation here, but whatevs.
-  ///  </summary>
-  get Item(i: number, j: number): number {
-    return this.Data[i][j]
-  }
-
-  set Item(value: number, i: number, j: number) {
-    this.Data[i][j] = value
-  }
-
-  get Item(i: number): Vector3D {
-    return new Vector3D(this.Data[i])
-  }
-
-  set Item(value: Vector3D, i: number) {
-    this.Data[i] = [value.X, value.Y, value.Z, value.W]
   }
 
   static Operator(m1: Matrix4D, m2: Matrix4D): Matrix4D {
@@ -123,69 +104,101 @@ export class Matrix4D {
   get Determinant(): number {
     let det: number =
       this.Data[0][3] *
-        (this.Data[1][2] * (this.Data[2][1] * this.Data[3][0])) -
-      (this.Data[0][2] *
-        (this.Data[1][3] * (this.Data[2][1] * this.Data[3][0])) -
-        this.Data[0][3] *
-          (this.Data[1][1] * (this.Data[2][2] * this.Data[3][0]))) +
-      (this.Data[0][1] *
-        (this.Data[1][3] * (this.Data[2][2] * this.Data[3][0])) +
-        (this.Data[0][2] *
-          (this.Data[1][1] * (this.Data[2][3] * this.Data[3][0])) -
-          (this.Data[0][1] *
-            (this.Data[1][2] * (this.Data[2][3] * this.Data[3][0])) -
-            this.Data[0][3] *
-              (this.Data[1][2] * (this.Data[2][0] * this.Data[3][1]))) +
-          (this.Data[0][2] *
-            (this.Data[1][3] * (this.Data[2][0] * this.Data[3][1])) +
-            (this.Data[0][3] *
-              (this.Data[1][0] * (this.Data[2][2] * this.Data[3][1])) -
-              (this.Data[0][0] *
-                (this.Data[1][3] *
-                  (this.Data[2][2] * this.Data[3][1])) -
-                this.Data[0][2] *
-                  (this.Data[1][0] *
-                    (this.Data[2][3] * this.Data[3][1]))) +
-              (this.Data[0][0] *
-                (this.Data[1][2] *
-                  (this.Data[2][3] * this.Data[3][1])) +
-                (this.Data[0][3] *
-                  (this.Data[1][1] *
-                    (this.Data[2][0] * this.Data[3][2])) -
-                  (this.Data[0][1] *
-                    (this.Data[1][3] *
-                      (this.Data[2][0] * this.Data[3][2])) -
-                    this.Data[0][3] *
-                      (this.Data[1][0] *
-                        (this.Data[2][1] * this.Data[3][2]))) +
-                  (this.Data[0][0] *
-                    (this.Data[1][3] *
-                      (this.Data[2][1] * this.Data[3][2])) +
-                    (this.Data[0][1] *
-                      (this.Data[1][0] *
-                        (this.Data[2][3] * this.Data[3][2])) -
-                      (this.Data[0][0] *
-                        (this.Data[1][1] *
-                          (this.Data[2][3] * this.Data[3][2])) -
-                        this.Data[0][2] *
-                          (this.Data[1][1] *
-                            (this.Data[2][0] * this.Data[3][3]))) +
-                      (this.Data[0][1] *
-                        (this.Data[1][2] *
-                          (this.Data[2][0] * this.Data[3][3])) +
-                        (this.Data[0][2] *
-                          (this.Data[1][0] *
-                            (this.Data[2][1] * this.Data[3][3])) -
-                          (this.Data[0][0] *
-                            (this.Data[1][2] *
-                              (this.Data[2][1] * this.Data[3][3])) -
-                            this.Data[0][1] *
-                              (this.Data[1][0] *
-                                (this.Data[2][2] * this.Data[3][3]))) +
-                          this.Data[0][0] *
-                            (this.Data[1][1] *
-                              (this.Data[2][2] *
-                                this.Data[3][3]))))))))))))
+        this.Data[1][2] *
+        this.Data[2][1] *
+        this.Data[3][0] -
+      this.Data[0][2] *
+        this.Data[1][3] *
+        this.Data[2][1] *
+        this.Data[3][0] -
+      this.Data[0][3] *
+        this.Data[1][1] *
+        this.Data[2][2] *
+        this.Data[3][0] +
+      this.Data[0][1] *
+        this.Data[1][3] *
+        this.Data[2][2] *
+        this.Data[3][0] +
+      this.Data[0][2] *
+        this.Data[1][1] *
+        this.Data[2][3] *
+        this.Data[3][0] -
+      this.Data[0][1] *
+        this.Data[1][2] *
+        this.Data[2][3] *
+        this.Data[3][0] -
+      this.Data[0][3] *
+        this.Data[1][2] *
+        this.Data[2][0] *
+        this.Data[3][1] +
+      this.Data[0][2] *
+        this.Data[1][3] *
+        this.Data[2][0] *
+        this.Data[3][1] +
+      this.Data[0][3] *
+        this.Data[1][0] *
+        this.Data[2][2] *
+        this.Data[3][1] -
+      this.Data[0][0] *
+        this.Data[1][3] *
+        this.Data[2][2] *
+        this.Data[3][1] -
+      this.Data[0][2] *
+        this.Data[1][0] *
+        this.Data[2][3] *
+        this.Data[3][1] +
+      this.Data[0][0] *
+        this.Data[1][2] *
+        this.Data[2][3] *
+        this.Data[3][1] +
+      this.Data[0][3] *
+        this.Data[1][1] *
+        this.Data[2][0] *
+        this.Data[3][2] -
+      this.Data[0][1] *
+        this.Data[1][3] *
+        this.Data[2][0] *
+        this.Data[3][2] -
+      this.Data[0][3] *
+        this.Data[1][0] *
+        this.Data[2][1] *
+        this.Data[3][2] +
+      this.Data[0][0] *
+        this.Data[1][3] *
+        this.Data[2][1] *
+        this.Data[3][2] +
+      this.Data[0][1] *
+        this.Data[1][0] *
+        this.Data[2][3] *
+        this.Data[3][2] -
+      this.Data[0][0] *
+        this.Data[1][1] *
+        this.Data[2][3] *
+        this.Data[3][2] -
+      this.Data[0][2] *
+        this.Data[1][1] *
+        this.Data[2][0] *
+        this.Data[3][3] +
+      this.Data[0][1] *
+        this.Data[1][2] *
+        this.Data[2][0] *
+        this.Data[3][3] +
+      this.Data[0][2] *
+        this.Data[1][0] *
+        this.Data[2][1] *
+        this.Data[3][3] -
+      this.Data[0][0] *
+        this.Data[1][2] *
+        this.Data[2][1] *
+        this.Data[3][3] -
+      this.Data[0][1] *
+        this.Data[1][0] *
+        this.Data[2][2] *
+        this.Data[3][3] +
+      this.Data[0][0] *
+        this.Data[1][1] *
+        this.Data[2][2] *
+        this.Data[3][3]
     return det
   }
 
@@ -237,18 +250,19 @@ export class Matrix4D {
   ///  Rotate a vector with this matrix.
   ///  </summary>
   RotateVector(input: Vector3D): Vector3D {
-    let result: Vector3D = new Vector3D()
-    let copy: Vector3D = new Vector3D([
+    let result: Vector3D = Vector3D.construct()
+    let copy: Vector3D = Vector3D.construct4d(
       input.X,
       input.Y,
       input.Z,
       input.W,
-    ])
+    )
     for (let i: number = 0; i < 4; i++) {
       result[i] =
         copy[0] * this[(i, 0)] +
-        (copy[1] * this[(i, 1)] +
-          (copy[2] * this[(i, 2)] + copy[3] * this[(i, 3)]))
+        copy[1] * this[(i, 1)] +
+        copy[2] * this[(i, 2)] +
+        copy[3] * this[(i, 3)]
     }
 
     return result
