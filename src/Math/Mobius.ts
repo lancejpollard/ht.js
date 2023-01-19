@@ -1,6 +1,9 @@
 import { Complex } from '@Geometry/Complex'
 import { Geometry } from '@Geometry/Geometry'
 import { ITransform } from '@Geometry/Transformable'
+import { Vector3D } from '@Geometry/Vector3D'
+import { UtilsInfinity } from './Infinity'
+import { isInfinite, Utils } from './Utils'
 
 const PLACEHOLDER_COMPLEX = new Complex(0, 0)
 
@@ -214,6 +217,8 @@ export class Mobius implements ITransform {
         hRadius = hRadius + offset
         scale = DonHatch.h2eNorm(hRadius) / eRadius
         break
+      default:
+        break
     }
 
     this.Hyperbolic(g, fixedPlus, scale)
@@ -227,7 +232,7 @@ export class Mobius implements ITransform {
     let rotate: Mobius = Mobius.construct()
     rotate.Isometry(g, angle, new Complex())
     //  Conjugate.
-    this = origin.Inverse() * (rotate * origin)
+    this = origin.Inverse().Multiply(rotate.Multiply(origin))
   }
 
   // This will transform the unit disk to the upper half plane.
@@ -310,7 +315,7 @@ export class Mobius implements ITransform {
 
     let result: Vector3D = this.Apply(z)
     if (isInfinite(result)) {
-      return Infinity.InfinityVector
+      return UtilsInfinity.InfinityVector
     }
 
     return result
@@ -397,20 +402,20 @@ export class Mobius implements ITransform {
   Round(digits: number) {
     let d: number = digits
     this.A = new Complex(
-      Math.round(this.A.Real, d),
-      Math.round(this.A.Imaginary, d),
+      Utils.Round(this.A.Real, d),
+      Utils.Round(this.A.Imaginary, d),
     )
     this.B = new Complex(
-      Math.round(this.B.Real, d),
-      Math.round(this.B.Imaginary, d),
+      Utils.Round(this.B.Real, d),
+      Utils.Round(this.B.Imaginary, d),
     )
     this.C = new Complex(
-      Math.round(this.C.Real, d),
-      Math.round(this.C.Imaginary, d),
+      Utils.Round(this.C.Real, d),
+      Utils.Round(this.C.Imaginary, d),
     )
     this.D = new Complex(
-      Math.round(this.D.Real, d),
-      Math.round(this.D.Imaginary, d),
+      Utils.Round(this.D.Real, d),
+      Utils.Round(this.D.Imaginary, d),
     )
   }
 }
