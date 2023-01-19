@@ -58,7 +58,7 @@ The ideal is to have tiles, faces, points, and edges, and work with each
 tile like that.
 
 ```ts
-const grid = new Grid(3, 7, {
+const tessellation = new Tessellation(3, 7, {
   point: {
     visibility: 'hidden',
   },
@@ -71,28 +71,38 @@ const grid = new Grid(3, 7, {
   },
 })
 
-grid.addEventListener('keyup', e => {
+tessellation.addEventListener('keyup', e => {
   if (e.key === 'up') {
-    grid.orient(grid.center.tiles[0])
+    tessellation.orient(tessellation.center.tiles[0])
   }
 })
 
-grid.addEventListener('tile:click', event => {
-  grid.focus(event.currentTarget)
+tessellation.addEventListener('tile:click', event => {
+  tessellation.focus(event.currentTarget)
 })
 
-grid.addEventListener('tile:dblclick', event => {
-  grid.orient(event.currentTarget)
+tessellation.addEventListener('tile:dblclick', event => {
+  tessellation.orient(event.currentTarget)
 })
 
-grid.rotate(90)
+tessellation.rotate(90)
 
-grid.center.edges.forEach(point => {
+tessellation.addEventListener('tile:remove')
+tessellation.addEventListener('tile:create')
+tessellation.addEventListener('tile:mouseover')
+tessellation.addEventListener('tile:mouseupoutside')
+tessellation.addEventListener('tile:click')
+tessellation.addEventListener('tile:touchstart')
+tessellation.addEventListener('tile:touchend')
+tessellation.addEventListener('resize')
+tessellation.addEventListener('hover')
+
+tessellation.center.edges.forEach(point => {
   point.style.fill = 'red'
 })
 
 function render() {
-  grid.render()
+  tessellation.render()
   requestAnimationFrame(render)
 }
 ```
