@@ -49,7 +49,7 @@ export class Mobius implements ITransform {
     return `A: ${this.A} B: ${this.B} C: ${this.C} D: ${this.D}`
   }
 
-  static Operator(m1: Mobius, m2: Mobius): Mobius {
+  static Multiply(m1: Mobius, m2: Mobius): Mobius {
     let result: Mobius = Mobius.construct4d(
       m1.A.Multiply(m2.A).Add(m1.B.Multiply(m2.C)),
       m1.A.Multiply(m2.B).Add(m1.B.Multiply(m2.D)),

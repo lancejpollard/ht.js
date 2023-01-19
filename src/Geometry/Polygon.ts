@@ -1,4 +1,13 @@
-import { CircleNE } from './Circle'
+import { UtilsInfinity } from '@Math/Infinity'
+import { Isometry } from '@Math/Isometry'
+import { Matrix4D } from '@Math/Matrix4D'
+import { Mobius } from '@Math/Mobius'
+import { Utils } from '@Math/Utils'
+import { Circle, CircleNE } from './Circle'
+import { Euclidean2D } from './Euclidean2D'
+import { Geometry } from './Geometry'
+import { Geometry2D } from './Geometry2D'
+import { ITransform, ITransformable } from './Transformable'
 import { Vector3D } from './Vector3D'
 
 export class HighToleranceVectorEqualityComparer extends IEqualityComparer<Vector3D> {
@@ -15,7 +24,7 @@ export class HighToleranceVectorEqualityComparer extends IEqualityComparer<Vecto
   #m_tolerance: number = 0.0001
 }
 
-export class Polygon extends ITransformable {
+export class Polygon implements ITransformable {
   constructor() {
     this.Segments = new Array<Segment>()
     this.Center = new Vector3D()
@@ -31,11 +40,11 @@ export class Polygon extends ITransformable {
   ///  </summary>
   static FromPoints(points: Array<Vector3D>): Polygon {
     let result: Polygon = new Polygon()
-    for (let i: number = 0; i < points.Length; i++) {
+    for (let i: number = 0; i < points.length; i++) {
       let idx1: number = i
-      let idx2: number = i == points.Length - 1 ? 0 : i + 1
+      let idx2: number = i == points.length - 1 ? 0 : i + 1
       let newSeg: Segment = Segment.Line(points[idx1], points[idx2])
-      result.Segments.Add(newSeg)
+      result.Segments.push(newSeg)
     }
 
     result.Center = result.CentroidApprox
@@ -43,14 +52,14 @@ export class Polygon extends ITransformable {
   }
 
   Clear() {
-    this.Segments.Clear()
+    this.Segments.length = 0
   }
 
   Clone(): Polygon {
     let newPoly: Polygon = new Polygon()
     // newPoly.Segments = new Array<Segment>( Segments );
-    for (let s: Segment in this.Segments) {
-      newPoly.Segments.Add(s.Clone())
+    for (let s of this.Segments) {
+      newPoly.Segments.push(s.Clone())
     }
 
     newPoly.Center = this.Center
@@ -58,29 +67,34 @@ export class Polygon extends ITransformable {
   }
 
   CreateRegular(p: number, q: number) {
-    this.Segments.Clear()
+    this.Clear()
+
     let points: Array<Vector3D> = new Array<Vector3D>()
     let g: Geometry = Geometry2D.GetGeometry(p, q)
     let circumRadius: number = Geometry2D.GetNormalizedCircumRadius(
       p,
       q,
     )
+
     let angle: number = 0
+
     for (let i: number = 0; i < p; i++) {
-      let point: Vector3D = new Vector3D()
+      let point: Vector3D = Vector3D.construct()
       point.X = circumRadius * Math.cos(angle)
       point.Y = circumRadius * Math.sin(angle)
-      points.Add(point)
+      points.push(point)
       angle = angle + Utils.DegreesToRadians(360 / p)
     }
 
     //  Turn this into segments.
-    for (let i: number = 0; i < points.Count; i++) {
+    for (let i: number = 0; i < points.length; i++) {
       let idx1: number = i
-      let idx2: number = i == points.Count - 1 ? 0 : i + 1
+      let idx2: number = i == points.length - 1 ? 0 : i + 1
+
       let newSegment: Segment = new Segment()
       newSegment.P1 = points[idx1]
       newSegment.P2 = points[idx2]
+
       if (g != Geometry.Euclidean) {
         newSegment.Type = SegmentType.Arc
         if (2 == p) {
@@ -717,7 +731,7 @@ export class Segment implements ITransformable {
     return m_circle
   }
 
-  #m_circle: Circle
+  m_circle: Circle
 
   get Length(): number {
     if (SegmentType.Arc == this.Type) {
@@ -857,48 +871,51 @@ export class Segment implements ITransformable {
     }
   }
 
-  Transform(m: Mobius) {
+  TransformMobius(m: Mobius) {
     this.TransformInternal(m)
   }
 
-  Transform(i: Isometry) {
+  TransformIsometry(i: Isometry) {
     this.TransformInternal(i)
   }
 
   ///  <summary>
   ///  Apply a transform to us.
   ///  </summary>
-  #TransformInternal(transform: T) {
+  TransformInternal<T extends ITransform>(transform: T) {
     //  NOTES:
     //  Arcs can go to lines, and lines to arcs.
     //  Rotations may reverse arc directions as well.
     //  Arc centers can't be transformed directly.
     //  NOTE: We must calc this before altering the endpoints.
     let mid: Vector3D = this.Midpoint
-    if (isInfinite(mid)) {
-      mid = this.P2 * Infinity.FiniteScale
+    if (UtilsInfinity.IsInfiniteVector3D(mid)) {
+      mid = this.P2.MultiplyWithNumber(UtilsInfinity.FiniteScale)
     }
 
-    mid = isInfinite(P1)
-      ? P2 * Infinity.FiniteScale
-      : P1 * Infinity.FiniteScale
+    mid = UtilsInfinity.IsInfiniteVector3D(this.P1)
+      ? this.P2.MultiplyWithNumber(UtilsInfinity.FiniteScale)
+      : this.P1.MultiplyWithNumber(UtilsInfinity.FiniteScale)
+
     this.P1 = transform.Apply(this.P1)
     this.P2 = transform.Apply(this.P2)
     mid = transform.Apply(mid)
+
     //  Can we make a circle out of the transformed points?
     let temp: Circle = new Circle()
+
     if (
-      !isInfinite(this.P1) &&
-      !isInfinite(this.P2) &&
-      !isInfinite(mid) &&
+      !UtilsInfinity.IsInfiniteVector3D(this.P1) &&
+      !UtilsInfinity.IsInfiniteVector3D(this.P2) &&
+      !UtilsInfinity.IsInfiniteVector3D(mid) &&
       temp.From3Points(this.P1, mid, this.P2)
     ) {
       this.Type = SegmentType.Arc
       this.Center = temp.Center
       //  Work out the orientation of the arc.
-      let t1: Vector3D = this.P1 - this.Center
-      let t2: Vector3D = mid - this.Center
-      let t3: Vector3D = this.P2 - this.Center
+      let t1: Vector3D = this.P1.Subtract(this.Center)
+      let t2: Vector3D = mid.Subtract(this.Center)
+      let t3: Vector3D = this.P2.Subtract(this.Center)
       let a1: number = Euclidean2D.AngleToCounterClock(t2, t1)
       let a2: number = Euclidean2D.AngleToCounterClock(t3, t1)
       this.Clockwise = a2 > a1
@@ -917,10 +934,11 @@ export class Segment implements ITransformable {
   ///  Apply a Euclidean translation to us.
   ///  </summary>
   Translate(v: Vector3D) {
-    this.P1 = this.P1 + v
-    this.P2 = this.P2 + v
+    this.P1 = this.P1.Add(v)
+    this.P2 = this.P2.Add(v)
+
     if (this.Type == SegmentType.Arc) {
-      this.Center = this.Center + v
+      this.Center = this.Center.Add(v)
     }
   }
 

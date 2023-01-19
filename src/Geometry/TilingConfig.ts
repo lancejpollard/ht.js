@@ -1,6 +1,7 @@
 // Information we need for a tiling.
 
 import { Mobius } from '@Math/Mobius'
+import { Utils } from '@Math/Utils'
 import { Geometry } from './Geometry'
 import { Geometry2D } from './Geometry2D'
 import { Polygon, Segment } from './Polygon'
@@ -52,7 +53,7 @@ export class TilingConfig {
   // This Mobius transform will center the tiling on a vertex.
 
   VertexCenteredMobius(): Mobius {
-    return this.VertexCenteredMobius(this.P, this.Q)
+    return TilingConfig.VertexCenteredMobius(this.P, this.Q)
   }
 
   static VertexCenteredMobius(p: number, q: number): Mobius {
@@ -87,7 +88,7 @@ export class TilingConfig {
     let angle: number = Math.PI / this.P
     offset.RotateXY(angle * -1)
     let m: Mobius = Mobius.construct()
-    this.m.Isometry(g, angle * -1, offset * -1)
+    this.m.Isometry(g, angle * -1, offset.Negate())
     return this.m
   }
 }
