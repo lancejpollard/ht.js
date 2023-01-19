@@ -76,14 +76,14 @@ export class Tile {
   // Apply a Mobius transform to us.
 
   TransformMobius(m: Mobius) {
-    this.Boundary.Transform(m)
-    this.Drawn.Transform(m)
+    this.Boundary.TransformMobius(m)
+    this.Drawn.TransformMobius(m)
     this.VertexCircle.Transform(m)
   }
 
   TransformIsometry(i: Isometry) {
-    this.Boundary.Transform(i)
-    this.Drawn.Transform(i)
+    this.Boundary.TransformIsometry(i)
+    this.Drawn.TransformIsometry(i)
     this.VertexCircle.Transform(i)
   }
 
@@ -182,7 +182,7 @@ export class Tile {
       Vector3D.construct().ToComplex(),
       shrinkFactor,
     )
-    tile.Drawn.Transform(m)
+    tile.Drawn.TransformMobius(m)
     return
   }
 }

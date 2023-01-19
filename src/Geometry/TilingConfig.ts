@@ -9,11 +9,12 @@ import { Vector3D } from './Vector3D'
 
 export class TilingConfig {
   constructor(p: number, q: number, maxTiles: number) {
+    this.M = Mobius.construct()
     this.P = p
     this.Q = q
-    m.Unity()
     this.MaxTiles = maxTiles
     this.Shrink = 1
+    this.M.Unity()
   }
 
   // constructor (p: number, q: number) {
@@ -37,8 +38,6 @@ export class TilingConfig {
   // A Mobius transformation to apply while creating the tiling.
 
   M: Mobius
-
-  m: Mobius
 
   // The max number of tiles to include in the tiling.
 
@@ -69,12 +68,8 @@ export class TilingConfig {
     )
     offset.RotateXY(angle)
     let m: Mobius = Mobius.construct()
-    this.m.Isometry(
-      Geometry2D.GetGeometry(p, q),
-      angle,
-      offset.ToComplex(),
-    )
-    return this.m
+    m.Isometry(Geometry2D.GetGeometry(p, q), angle, offset.ToComplex())
+    return m
   }
 
   // This Mobius transform will center the tiling on an edge.
@@ -88,7 +83,7 @@ export class TilingConfig {
     let angle: number = Math.PI / this.P
     offset.RotateXY(angle * -1)
     let m: Mobius = Mobius.construct()
-    this.m.Isometry(g, angle * -1, offset.Negate())
-    return this.m
+    m.Isometry(g, angle * -1, offset.Negate().ToComplex())
+    return m
   }
 }

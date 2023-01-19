@@ -1,18 +1,24 @@
 ///  <summary>
 ///  For objects that can transform.
+
+import { Isometry } from '@Math/Isometry'
+import { Mobius } from '@Math/Mobius'
+import { Complex } from './Complex'
+import { Vector3D } from './Vector3D'
+
 ///  </summary>
 export interface ITransform {
-  Apply: (input: Vector3D) => Vector3D
+  ApplyComplex: (input: Complex) => Complex
 
-  Apply: (input: Complex) => Complex
+  ApplyVector3D: (input: Vector3D) => Vector3D
 }
 
 ///  <summary>
 ///  For objects that can be transformed.
 ///  </summary>
 export interface ITransformable {
-  //  ZZZ - Make this take in an ITransform?
-  Transform: (m: Mobius) => void
+  TransformIsometry: (m: Isometry) => void
 
-  Transform: (m: Isometry) => void
+  //  ZZZ - Make this take in an ITransform?
+  TransformMobius: (m: Mobius) => void
 }

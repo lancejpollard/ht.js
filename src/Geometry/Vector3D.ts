@@ -73,18 +73,18 @@ export class Vector3D {
   }
 
   /* override */ Equals(obj: Object): boolean {
-    let v: Vector3D = obj
+    let v = obj as Vector3D
     return v.Equals(this)
   }
 
   /* override */ GetHashCode(): number {
-    return this.GetHashCode(Tolerance.Threshold)
+    return this.GetHashCodeWithTolerance(Tolerance.Threshold)
   }
 
-  GetHashCode(tolerance: number): number {
+  GetHashCodeWithTolerance(tolerance: number): number {
     //  Normalize DNE vectors (since we consider any with any NaN component the same).
     if (this.DNE) {
-      return number.GetHashCode()
+      return Number.NaN
     }
 
     //  The hash code is dependent on the tolerance: more precision -> less rounding.
@@ -93,11 +93,12 @@ export class Vector3D {
     //  without the rounding.
     let inverse: number = 1 / tolerance
     let decimals: number = Math.log10(inverse)
+
     return (
-      Utils.Round(this.X, decimals).GetHashCode() |
-      (Utils.Round(this.Y, decimals).GetHashCode() |
-        (Utils.Round(this.Z, decimals).GetHashCode() |
-          Utils.Round(this.W, decimals).GetHashCode()))
+      Utils.Round(this.X, decimals) |
+      Utils.Round(this.Y, decimals) |
+      Utils.Round(this.Z, decimals) |
+      Utils.Round(this.W, decimals)
     )
     // The operator should be an XOR ^ instead of an OR, but not available in CodeDOM
     // The operator should be an XOR ^ instead of an OR, but not available in CodeDOM

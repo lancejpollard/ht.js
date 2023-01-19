@@ -1,3 +1,7 @@
+import { UtilsInfinity } from '@Math/Infinity'
+import { Sterographic } from './Sterographic'
+import { Vector3D } from './Vector3D'
+
 export enum SphericalModel {
   Sterographic,
 
@@ -25,13 +29,13 @@ export class SphericalModels {
     if (sphere.Z >= 0) {
       sphere.Z = 0
       sphere.Normalize()
-      sphere = sphere * Infinity.FiniteScale
+      sphere = sphere * UtilsInfinity.FiniteScale
       return sphere
     }
 
     let z: number = sphere.Z
     sphere.Z = 0
-    return sphere * (m_gScale / z) * -1
+    return sphere * (this.m_gScale / z) * -1
   }
 
   static GnomonicToStereo(g: Vector3D): Vector3D {

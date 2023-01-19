@@ -409,9 +409,9 @@ export class Polygon implements ITransformable {
   ///  <summary>
   ///  Apply a Mobius transform to us.
   ///  </summary>
-  Transform(m: Mobius) {
-    for (let s: Segment in this.Segments) {
-      s.Transform(m)
+  TransformMobius(m: Mobius) {
+    for (let s of this.Segments) {
+      s.TransformMobius(m)
     }
 
     this.Center = m.Apply(this.Center)
@@ -420,9 +420,9 @@ export class Polygon implements ITransformable {
   ///  <summary>
   ///  Apply an isometry to us.
   ///  </summary>
-  Transform(isometry: Isometry) {
-    for (let s: Segment in this.Segments) {
-      s.Transform(isometry)
+  TransformIsometry(isometry: Isometry) {
+    for (let s of this.Segments) {
+      s.TransformIsometry(isometry)
     }
 
     this.Center = isometry.Apply(this.Center)
@@ -432,11 +432,11 @@ export class Polygon implements ITransformable {
   ///  Apply a Euclidean translation to us.
   ///  </summary>
   Translate(v: Vector3D) {
-    for (let s: Segment in this.Segments) {
+    for (let s of this.Segments) {
       s.Translate(v)
     }
 
-    this.Center = this.Center + v
+    this.Center = this.Center.Add(v)
   }
 
   ///  <summary>

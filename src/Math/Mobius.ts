@@ -5,14 +5,12 @@ import { Vector3D } from '@Geometry/Vector3D'
 import { UtilsInfinity } from './Infinity'
 import { isInfinite, Utils } from './Utils'
 
-const PLACEHOLDER_COMPLEX = new Complex(0, 0)
-
 export class Mobius implements ITransform {
   constructor() {
-    this.A = PLACEHOLDER_COMPLEX
-    this.B = PLACEHOLDER_COMPLEX
-    this.C = PLACEHOLDER_COMPLEX
-    this.D = PLACEHOLDER_COMPLEX
+    this.A = new Complex(0, 0)
+    this.B = new Complex(0, 0)
+    this.C = new Complex(0, 0)
+    this.D = new Complex(0, 0)
   }
 
   static construct() {
