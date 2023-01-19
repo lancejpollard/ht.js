@@ -15,11 +15,11 @@ export class HighToleranceVectorEqualityComparer
   implements IEqualityComparer<Vector3D>
 {
   Equals(v1: Vector3D, v2: Vector3D): boolean {
-    return v1.Compare(v2, this.m_tolerance)
+    return v1.CompareWithThreshold(v2, this.m_tolerance)
   }
 
   GetHashCode(v: Vector3D): number {
-    return v.GetHashCode(this.m_tolerance)
+    return v.GetHashCodeWithTolerance(this.m_tolerance)
   }
 
   //  Argh, between a rock and a hard place.
@@ -30,7 +30,7 @@ export class HighToleranceVectorEqualityComparer
 export class Polygon implements ITransformable {
   constructor() {
     this.Segments = new Array<Segment>()
-    this.Center = new Vector3D()
+    this.Center = Vector3D.construct()
   }
 
   Center: Vector3D
@@ -101,11 +101,20 @@ export class Polygon implements ITransformable {
       if (g != Geometry.Euclidean) {
         newSegment.Type = SegmentType.Arc
         if (2 == p) {
-          const factor = Math.Tan(Math.PI / 6)
+          const factor = Math.tan(Math.PI / 6)
+
           newSegment.Center =
             newSegment.P1.X > 0
-              ? new Vector3D(0, -circumRadius, 0) * factor
-              : new Vector3D(0, circumRadius, 0) * factor
+              ? Vector3D.construct3d(
+                  0,
+                  -circumRadius,
+                  0,
+                ).MultiplyWithNumber(factor)
+              : Vector3D.construct3d(
+                  0,
+                  circumRadius,
+                  0,
+                ).MultiplyWithNumber(factor)
         } else {
           //  Our segments are arcs in Non-Euclidean geometries.
           //  Magically, the same formula turned out to work for both.
@@ -115,8 +124,10 @@ export class Polygon implements ITransformable {
           //  Handle q infinite.
           let t1: number = Math.PI / p
           let t2: number = Math.PI / 2 - (piq - t1)
-          let factor: number = (Math.Tan(t1) / Math.Tan(t2) + 1) / 2
-          newSegment.Center = (newSegment.P1 + newSegment.P2) * factor
+          let factor: number = (Math.tan(t1) / Math.tan(t2) + 1) / 2
+          newSegment.Center = newSegment.P1.Add(
+            newSegment.P2,
+          ).MultiplyWithNumber(factor)
         }
 
         newSegment.Clockwise = Geometry.Spherical == g ? false : true
@@ -125,7 +136,7 @@ export class Polygon implements ITransformable {
       //  XXX - Make this configurable?
       //  This is the color of cell boundary lines.
       // newSegment.m_color = CColor( 1, 1, 0, 1 );
-      this.Segments.Add(newSegment)
+      this.Segments.push(newSegment)
     }
   }
 
@@ -138,20 +149,21 @@ export class Polygon implements ITransformable {
   ///  centered at the origin with the first vertex on the x axis.
   ///  </summary>
   static CreateEuclidean(n: number): Polygon {
-    let polyPoints: Array<Vector3D> = new Array<Vector3D>()
+    let polyPoints: Array<Vector3D> = []
     let centralAngle: number = 2 * (Math.PI / n)
+
     for (let i: number = 0; i < n; i++) {
-      let v: Vector3D = new Vector3D(1, 0)
+      let v: Vector3D = Vector3D.construct2d(1, 0)
       v.RotateXY(centralAngle * i)
-      polyPoints.Add(v)
+      polyPoints.push(v)
     }
 
     let poly: Polygon = new Polygon()
-    poly.CreateEuclidean(polyPoints.ToArray())
+    poly.CreateEuclidean(polyPoints)
     return poly
   }
 
-  static CreateEuclidean(
+  static CreateEuclideanWithNormal(
     n: number,
     p1: Vector3D,
     p2: Vector3D,
@@ -159,20 +171,20 @@ export class Polygon implements ITransformable {
   ): Polygon {
     let polyPoints: Array<Vector3D> = new Array<Vector3D>()
     let centralAngle: number = 2 * (Math.PI / n)
-    let direction: Vector3D = p2 - p1
+    let direction: Vector3D = p2.Subtract(p1)
     direction.RotateAboutAxis(normal, Math.PI / 2)
     direction.Normalize()
-    let dist: number = (p2 - p1).Abs() / 2 / Math.Tan(Math.PI / n)
+    let dist: number = p2.Subtract(p1).Abs() / 2 / Math.tan(Math.PI / n)
     let center: Vector3D = p1 + ((p2 - p1) / 2 + direction * dist)
     for (let i: number = 0; i < n; i++) {
-      let v: Vector3D = p1 - center
+      let v: Vector3D = p1.Subtract(center)
       v.RotateAboutAxis(normal, centralAngle * i)
-      v = v + center
-      polyPoints.Add(v)
+      v = v.Add(center)
+      polyPoints.push(v)
     }
 
     let poly: Polygon = new Polygon()
-    poly.CreateEuclidean(polyPoints.ToArray())
+    poly.CreateEuclidean(polyPoints)
     return poly
   }
 

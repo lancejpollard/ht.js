@@ -45,7 +45,7 @@ export class SkewPolyhedron {
           ),
         )
         let poly: Polygon = new Polygon()
-        poly.CreateEuclidean(polyPoints.ToArray())
+        poly.CreateEuclidean(polyPoints)
         polys.Add(poly)
         angle2 = angle2 + angleInc
       }
@@ -69,7 +69,7 @@ export class SkewPolyhedron {
       poly.Rotate(m2)
     }
 
-    return polys.ToArray()
+    return polys
   }
 
   static BuildBitruncated5Cell(): Array<Polygon> {
@@ -261,7 +261,7 @@ export class SkewPolyhedron {
       cycle.RemoveAt(cycle.Count - 1)
     }
 
-    cycles = cycles.Distinct(new CycleEqualityComparer()).ToArray()
+    cycles = cycles.Distinct(new CycleEqualityComparer())
     //  Now turn into polygons.
     let result: Array<Polygon> = new Array<Polygon>()
     for (let cycle: Array<number> in cycles) {
@@ -277,7 +277,7 @@ export class SkewPolyhedron {
         points[i] = normalized
       }
 
-      let poly: Polygon = Polygon.FromPoints(points.ToArray())
+      let poly: Polygon = Polygon.FromPoints(points)
       //  Only add if coplanar.
       //  Assume our polygons are regular and even-sized,
       //  in which case we can do a hackish check here.
@@ -299,7 +299,7 @@ export class SkewPolyhedron {
       result.Add(poly)
     }
 
-    return result.ToArray()
+    return result
   }
 
   // This might end up being useful if we need to optimize.
@@ -312,9 +312,10 @@ export class SkewPolyhedron {
   ): Array<Array<number>> {
     if (cycles[0].Count - 1 == cycleLength) {
       //  Return the ones where we ended where we started.
-      let result: Array<Array<number>> = cycles
-        .Where(c => c.First() == c.Last())
-        .ToArray()
+      let result: Array<Array<number>> = cycles.Where(
+        c => c.First() == c.Last(),
+      )
+
       return result
     }
 
