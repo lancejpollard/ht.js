@@ -1,10 +1,12 @@
 // Class for generalized circles (lines are a limiting case).
 
+import { Isometry } from '@Math/Isometry'
+import { Mobius } from '@Math/Mobius'
 import { isInfinite, Tolerance, Utils } from '@Math/Utils'
 import { Euclidean2D } from './Euclidean2D'
 import { IEqualityComparer } from './IEqualityComparer'
 import { Segment, SegmentType } from './Polygon'
-import { ITransformable } from './Transformable'
+import { ITransform, ITransformable } from './Transformable'
 import { Vector3D } from './Vector3D'
 
 export class Circle implements ITransformable {
@@ -162,7 +164,10 @@ export class Circle implements ITransformable {
       )
     }
 
-    return Tolerance.Equal((test - this.Center).Abs(), this.Radius)
+    return Tolerance.Equal(
+      test.Subtract(this.Center).Abs(),
+      this.Radius,
+    )
   }
 
   // Reflect ourselves about another circle.
@@ -233,34 +238,35 @@ export class Circle implements ITransformable {
     }
   }
 
-  Transform(m: Mobius) {
+  TransformMobius(m: Mobius) {
     this.TransformInternal(m)
   }
 
-  Transform(i: Isometry) {
+  TransformIsometry(i: Isometry) {
     this.TransformInternal(i)
   }
 
   // Apply a transform to us.
 
-  TransformInternal(transform: T) {
+  TransformInternal<T extends ITransform>(transform: T) {
     //  Get 3 points on the circle.
     let p3: Vector3D
     let p1: Vector3D
     let p2: Vector3D
     if (this.IsLine) {
       p1 = this.P1
-      p2 = (this.P1 + this.P2) / 2
+      p2 = this.P1.Add(this.P2).Divide(2)
       p3 = this.P2
     } else {
-      p1 = this.Center + Vector3D.construct3d(this.Radius, 0, 0)
-      p2 = this.Center + Vector3D.construct3d(this.Radius * -1, 0, 0)
-      p3 = this.Center + Vector3D.construct3d(0, this.Radius, 0)
+      p1 = this.Center.Add(Vector3D.construct3d(this.Radius, 0, 0))
+      p2 = this.Center.Add(Vector3D.construct3d(this.Radius * -1, 0, 0))
+      p3 = this.Center.Add(Vector3D.construct3d(0, this.Radius, 0))
     }
 
     p1 = transform.Apply(p1)
     p2 = transform.Apply(p2)
     p3 = transform.Apply(p3)
+
     this.From3Points(p1, p2, p3)
   }
 
@@ -384,12 +390,12 @@ export class CircleNE extends Circle implements ITransformable {
     this.CenterNE = s.ReflectPoint(this.CenterNE)
   }
 
-  Transform(m: Mobius) {
+  TransformMobius(m: Mobius) {
     super.Transform(m)
     this.CenterNE = m.Apply(this.CenterNE)
   }
 
-  Transform(i: Isometry) {
+  TransformIsometry(i: Isometry) {
     super.Transform(i)
     this.CenterNE = i.Apply(this.CenterNE)
   }
