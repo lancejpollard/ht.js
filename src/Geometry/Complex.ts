@@ -177,7 +177,7 @@ export class Complex implements IEquatable<Complex>, IFormattable {
   }
 
   //  --------------SECTION: Comparison operations (methods implementing IEquatable<ComplexNumber>,IComparable<ComplexNumber>) -------------- //
-  /* override */ Equals(obj: Object): boolean {
+  /* override */ EqualsObject(obj: Object): boolean {
     if (!(obj instanceof Complex)) {
       return false
     }
@@ -187,20 +187,15 @@ export class Complex implements IEquatable<Complex>, IFormattable {
 
   Equals(value: Complex): boolean {
     return (
-      this.m_real.Equals(value.m_real) &&
-      this.m_imaginary.Equals(value.m_imaginary)
+      this.m_real == value.m_real &&
+      this.m_imaginary == value.m_imaginary
     )
-  }
-
-  //  --------------SECTION: Formattig/Parsing options  -------------- //
-  ToString(): String {
-    return String.Format('({0}, {1})', this.m_real, this.m_imaginary)
   }
 
   /* override */ GetHashCode(): number {
     let n1: number = 99999997
-    let hash_real: number = this.m_real.GetHashCode() % n1
-    let hash_imaginary: number = this.m_imaginary.GetHashCode()
+    let hash_real: number = this.m_real % n1
+    let hash_imaginary: number = this.m_imaginary
     let final_hashcode: number = hash_real ^ hash_imaginary
     // The operator should be an XOR ^ instead of an OR, but not available in CodeDOM
     return final_hashcode
@@ -254,21 +249,23 @@ export class Complex implements IEquatable<Complex>, IFormattable {
   }
 
   static Acos(value: Complex): Complex {
-    return (
-      ImaginaryOne *
-      -1 *
+    return Complex.ImaginaryOne.Negate().Multiply(
       Complex.Log(
-        value + ImaginaryOne * Complex.Sqrt(One - value * value),
-      )
+        value.Add(
+          Complex.ImaginaryOne.Multiply(
+            Complex.Sqrt(Complex.One.Subtract(value.Multiply(value))),
+          ),
+        ),
+      ),
     )
   }
 
   static Tan(value: Complex): Complex {
-    return Complex.Sin(value) / Complex.Cos(value)
+    return Complex.Sin(value).Divide(Complex.Cos(value))
   }
 
   static Tanh(value: Complex): Complex {
-    return Complex.Sinh(value) / Complex.Cosh(value)
+    return Complex.Sinh(value).Divide(Complex.Cosh(value))
   }
 
   static Atan(value: Complex): Complex {
@@ -285,22 +282,24 @@ export class Complex implements IEquatable<Complex>, IFormattable {
   //  --------------SECTION: Other numerical functions  -------------- //
   static Log(value: Complex): Complex {
     return new Complex(
-      Math.Log(Complex.Abs(value)),
+      Math.log(Complex.Abs(value)),
       Math.atan2(value.m_imaginary, value.m_real),
     )
   }
 
-  static Log(value: Complex, baseValue: number): Complex {
-    return Complex.Log(value) / Complex.Log(baseValue)
+  static LogWithBase(value: Complex, baseValue: number): Complex {
+    return Complex.Log(value).Divide(
+      Complex.Log(new Complex(baseValue, 0)),
+    )
   }
 
   static Log10(value: Complex): Complex {
     let temp_log: Complex = Complex.Log(value)
-    return Complex.Scale(temp_log, <number>LOG_10_INV)
+    return Complex.Scale(temp_log, Complex.LOG_10_INV)
   }
 
   static Exp(value: Complex): Complex {
-    let temp_factor: number = Math.Exp(value.m_real)
+    let temp_factor: number = Math.exp(value.m_real)
     let result_re: number = temp_factor * Math.cos(value.m_imaginary)
     let result_im: number = temp_factor * Math.sin(value.m_imaginary)
     return new Complex(result_re, result_im)
@@ -313,7 +312,7 @@ export class Complex implements IEquatable<Complex>, IFormattable {
     )
   }
 
-  static Pow(value: Complex, power: Complex): Complex {
+  static PowComplex(value: Complex, power: Complex): Complex {
     if (power == Complex.Zero) {
       return Complex.One
     }
@@ -328,13 +327,13 @@ export class Complex implements IEquatable<Complex>, IFormattable {
     let d: number = power.m_imaginary
     let rho: number = Complex.Abs(value)
     let theta: number = Math.atan2(b, a)
-    let newRho: number = c * theta + d * Math.Log(rho)
-    let t: number = Math.Pow(rho, c) * Math.Pow(Math.E, d * theta * -1)
+    let newRho: number = c * theta + d * Math.log(rho)
+    let t: number = Math.pow(rho, c) * Math.pow(Math.E, d * theta * -1)
     return new Complex(t * Math.cos(newRho), t * Math.sin(newRho))
   }
 
   static Pow(value: Complex, power: number): Complex {
-    return Complex.Pow(value, new Complex(power, 0))
+    return Complex.PowComplex(value, new Complex(power, 0))
   }
 
   // --------------- SECTION: Private member functions for internal use -----------------------------------//
