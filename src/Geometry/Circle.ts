@@ -482,15 +482,15 @@ export class CircleNE_EqualityComparer
 
   GetHashCode(c: CircleNE): number {
     if (c.IsLine) {
-      return c.P1.GetHashCode() | c.P2.GetHashCode()
+      return c.P1.GetHashCode() ^ c.P2.GetHashCode()
     } else {
       let inverse: number = 1 / Tolerance.Threshold
       // The operator should be an XOR ^ instead of an OR, but not available in CodeDOM
       let decimals: number = Math.log10(inverse)
       return (
-        c.Center.GetHashCode() |
-        (c.CenterNE.GetHashCode() |
-          Utils.Round(c.Radius, decimals).GetHashCode())
+        c.Center.GetHashCode() ^
+        c.CenterNE.GetHashCode() ^
+        Utils.Round(c.Radius, decimals)
       )
       // The operator should be an XOR ^ instead of an OR, but not available in CodeDOM
       // The operator should be an XOR ^ instead of an OR, but not available in CodeDOM

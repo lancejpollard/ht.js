@@ -1,6 +1,7 @@
-# honey.js
+# HCA.js
 
-Hyperbolic tessellations in JavaScript.
+Hyperbolic tessellations and cellular automata in the 2D plane in
+JavaScript.
 
 ## Overview
 

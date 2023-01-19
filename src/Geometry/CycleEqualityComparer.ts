@@ -19,11 +19,11 @@ export class CycleEqualityComparer
 
   GetHashCode(cycle: Array<number>): number {
     let hCode: number = 0
-    for (let idx: number in cycle) {
-      hCode = hCode | idx.GetHashCode()
+    for (let idx of cycle) {
+      hCode = hCode ^ idx
     }
 
     // The operator should be an XOR ^ instead of an OR, but not available in CodeDOM
-    return hCode.GetHashCode()
+    return hCode
   }
 }

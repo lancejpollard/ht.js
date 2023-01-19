@@ -73,11 +73,11 @@ export class Fraction {
   }
 
   /* override */ GetHashCode(): number {
-    return this.A.GetHashCode() | this.B.GetHashCode()
+    return this.A ^ this.B
     // The operator should be an XOR ^ instead of an OR, but not available in CodeDOM
   }
 
-  #Reverse() {
+  Reverse() {
     this.A = this.A * -1
     this.B = this.B * -1
   }

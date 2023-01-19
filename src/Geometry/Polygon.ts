@@ -15,16 +15,16 @@ export class HighToleranceVectorEqualityComparer
   implements IEqualityComparer<Vector3D>
 {
   Equals(v1: Vector3D, v2: Vector3D): boolean {
-    return v1.Compare(v2, m_tolerance)
+    return v1.Compare(v2, this.m_tolerance)
   }
 
   GetHashCode(v: Vector3D): number {
-    return v.GetHashCode(m_tolerance)
+    return v.GetHashCode(this.m_tolerance)
   }
 
   //  Argh, between a rock and a hard place.
   //  Making this smaller causes issues, making this bigger causes issues.
-  #m_tolerance: number = 0.0001
+  m_tolerance: number = 0.0001
 }
 
 export class Polygon implements ITransformable {
@@ -611,12 +611,12 @@ export class PolygonEqualityComparer extends IEqualityComparer<Polygon> {
   GetHashCode(poly: Polygon): number {
     //  Is this ok? (I'm assuming ^ operator commutes, and order of applying doesn't matter)
     let hCode: number = 0
-    for (let v: Vector3D in poly.Vertices) {
+    for (let v of poly.Vertices) {
       hCode = hCode ^ v.GetHashCode()
     }
 
     // The operator should be an XOR ^ instead of an OR, but not available in CodeDOM
-    return hCode.GetHashCode()
+    return hCode
   }
 }
 

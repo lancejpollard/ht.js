@@ -67,7 +67,7 @@ class Golden {
   }
 
   /* override */ GetHashCode(): number {
-    return this.A.GetHashCode() | this.B.GetHashCode()
+    return this.A.GetHashCode() ^ this.B.GetHashCode()
     // The operator should be an XOR ^ instead of an OR, but not available in CodeDOM
   }
 
@@ -146,9 +146,10 @@ export class GoldenVector4D {
 
   /* override */ GetHashCode(): number {
     return (
-      this.X.GetHashCode() |
-      (this.Y.GetHashCode() |
-        (this.Z.GetHashCode() | this.U.GetHashCode()))
+      this.X.GetHashCode() ^
+      this.Y.GetHashCode() ^
+      this.Z.GetHashCode() ^
+      this.U.GetHashCode()
     )
     // The operator should be an XOR ^ instead of an OR, but not available in CodeDOM
     // The operator should be an XOR ^ instead of an OR, but not available in CodeDOM
