@@ -165,13 +165,13 @@ export class Mesh {
   static MakeEdgeMesh(p: number, q: number): Mesh {
     let mesh: Mesh = new Mesh()
     let maxTiles: number = 400
-    let tiling: Tiling = new Tiling()
     let config: TilingConfig = new TilingConfig(
       p,
       q,
       /* maxTiles:*/ maxTiles,
     )
     config.Shrink = 0.6
+    let tiling: Tiling = new Tiling(config)
     tiling.GenerateInternal(config)
     let boundaryConfig: TilingConfig = new TilingConfig(
       14,

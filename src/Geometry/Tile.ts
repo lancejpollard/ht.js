@@ -59,7 +59,7 @@ export class Tile {
 
   // Used to track vertex-adjacent tiles in a tiling.
 
-  VertexIndicences?: Array<Tile>
+  VertexIndicences: Array<Tile>
 
   Clone(): Tile {
     let next: Tile = new Tile(this.Boundary, this.Drawn, this.Geometry)

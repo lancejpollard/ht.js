@@ -37,9 +37,9 @@ import { Tiling } from './src/Geometry/Tiling'
 import { TilingConfig } from './src/Geometry/Tiling'
 import { SVG } from './src/Format/SVG'
 
-const tiling = new Tiling()
 const config = new TilingConfig(3, 7, 10000)
-tiling.Generate(config)
+const tiling = new Tiling(config)
+tiling.Generate()
 const polygons = tiling.m_tiles.map(tile => tile.Boundary)
 SVG.WritePolygons('example.svg', polygons)
 ```

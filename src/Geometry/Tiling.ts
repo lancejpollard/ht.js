@@ -1,4 +1,5 @@
 import { Mobius } from '@Math/Mobius'
+import _ from 'lodash'
 import { Circle, CircleNE } from './Circle'
 import { Geometry } from './Geometry'
 import { Polygon, Segment } from './Polygon'
@@ -9,9 +10,10 @@ import { TilingConfig } from './TilingConfig'
 import { Vector3D } from './Vector3D'
 
 export class Tiling {
-  constructor() {
-    this.m_tiles = new Array<Tile>()
-    this.TilePositions = new Record<Vector3D, Tile>()
+  constructor(config: TilingConfig) {
+    this.m_tiles = []
+    this.TilePositions = {}
+    this.TilingConfig = config
   }
 
   // The tiling configuration.
@@ -24,59 +26,39 @@ export class Tiling {
 
   // A Record from tile centers to tiles.
 
-  TilePositions: Record<Vector3D, Tile>
-
-  // A static helper to generate two dual tilings.
-
-  // <remarks>{p,q} will have a vertex at the center.</remarks>
-  // <remarks>{q,p} will have its center at the center.</remarks>
-  static MakeDualTilings(
-    /* out */ tiling1: Tiling,
-    /* out */ tiling2: Tiling,
-    p: number,
-    q: number,
-  ) {
-    tiling1 = new Tiling()
-    tiling2 = new Tiling()
-    let maxTiles: number = 2000
-    let config1: TilingConfig = new TilingConfig(p, q, maxTiles)
-    let config2: TilingConfig = new TilingConfig(q, p, maxTiles)
-    tiling1.GenerateInternal(config1, PolytopeProjection.FaceCentered)
-    tiling2.GenerateInternal(config2, PolytopeProjection.VertexCentered)
-  }
+  TilePositions: Record<number, Tile>
 
   // Generate ourselves from a tiling config.
 
-  Generate(config: TilingConfig) {
-    this.GenerateInternal(config)
+  Generate() {
+    this.GenerateInternal()
   }
 
   GenerateInternal(
-    config: TilingConfig,
     projection: PolytopeProjection = PolytopeProjection.FaceCentered,
   ) {
-    this.TilingConfig = config
     //  Create a base tile.
-    let tile: Tile = Tiling.CreateBaseTile(config)
+    let tile: Tile = Tiling.CreateBaseTile(this.TilingConfig)
     //  Handle edge/vertex centered projections.
     if (projection == PolytopeProjection.VertexCentered) {
-      let mobius: Mobius = config.VertexCenteredMobius()
-      tile.Transform(mobius)
+      let mobius: Mobius = this.TilingConfig.VertexCenteredMobius()
+      tile.TransformMobius(mobius)
     } else if (projection == PolytopeProjection.EdgeCentered) {
-      let mobius: Mobius = config.EdgeMobius()
-      tile.Transform(mobius)
+      let mobius: Mobius = this.TilingConfig.EdgeMobius()
+      tile.TransformMobius(mobius)
     }
 
     this.TransformAndAdd(tile)
     let tiles: Array<Tile> = new Array<Tile>()
     tiles.push(tile)
-    let completed: Record<Vector3D, boolean> = new Record<
-      Vector3D,
-      boolean
-    >()
-    completed[tile.Boundary.Center] = true
+    let completed: Record<number, boolean> = {}
+    completed[tile.Boundary.Center.GetHashCode()] = true
     this.ReflectRecursive(tiles, completed)
-    Tiling.FillOutIsometries(tile, this.m_tiles, config.Geometry)
+    Tiling.FillOutIsometries(
+      tile,
+      this.m_tiles,
+      this.TilingConfig.Geometry,
+    )
     this.FillOutIncidences()
   }
 
@@ -92,66 +74,72 @@ export class Tiling {
     }
   }
 
+  static TryGetTile(
+    edges: Record<number, Array<Tile>>,
+    edge: Vector3D,
+    ref: { passThrough: Array<unknown> },
+  ) {
+    const resolved = edges[edge.GetHashCode()]
+    ref.passThrough = resolved ?? []
+    return Boolean(resolved)
+  }
+
   // Fill out all the incidence information.
   // If performance became an issue, we could do some of this at tile generation time.
 
   FillOutIncidences() {
-    let Edges: Record<Vector3D, Array<Tile>> = new Record<
-      Vector3D,
-      Array<Tile>
-    >()
+    const Edges: Record<number, Array<Tile>> = {}
+    const Vertices: Record<number, Array<Tile>> = {}
 
-    let Vertices: Record<Vector3D, Array<Tile>> = new Record<
-      Vector3D,
-      Array<Tile>
-    >()
-
-    for (let t: Tile of this.m_tiles) {
-      for (let edge: Vector3D in t.Boundary.EdgeMidpoints) {
+    for (let t of this.m_tiles) {
+      for (let edge of t.Boundary.EdgeMidpoints) {
         let list: Array<Tile>
-        if (!Edges.TryGetValue(edge, /* out */ list)) {
-          list = new Array<Tile>()
-          Edges[edge] = list
+        let state: { passThrough: Array<Tile> } = { passThrough: [] }
+        if (!Tiling.TryGetTile(Edges, edge, state)) {
+          list = []
+          Edges[edge.GetHashCode()] = list
+        } else {
+          list = state.passThrough
         }
 
-        list.Add(t)
+        list.push(t)
       }
 
-      for (let vertex: Vector3D of t.Boundary.Vertices) {
-        let list: Array<Tile>
-        if (!Vertices.TryGetValue(vertex, /* out */ list)) {
-          list = new Array<Tile>()
-          Vertices[vertex] = list
+      for (let vertex of t.Boundary.Vertices) {
+        let list: Array<Tile> = []
+        let state: { passThrough: Array<Tile> } = { passThrough: [] }
+        if (!Tiling.TryGetTile(Vertices, vertex, state)) {
+          list = []
+          Vertices[vertex.GetHashCode()] = list
+        } else {
+          list = state.passThrough
         }
 
-        list.Add(t)
+        list.push(t)
       }
     }
 
-    for (let list: Array<Tile> of Edges.Values) {
-      for (let t: Tile in list) {
-        t.EdgeIncidences.AddRange(list)
+    for (let list of Object.values(Edges)) {
+      for (let t of list) {
+        t.EdgeIncidences.push(...list)
       }
     }
 
-    for (let list: Array<Tile> of Vertices.Values) {
-      for (let t: Tile in list) {
-        t.VertexIndicences.AddRange(list)
+    for (let list of Object.values(Vertices)) {
+      for (let t of list) {
+        t.VertexIndicences.push(...list)
       }
     }
 
-    for (let t: Tile of this.m_tiles) {
+    for (let t of this.m_tiles) {
       //  Remove duplicates and ourselves from lists.
-      t.EdgeIncidences = t.EdgeIncidences.Distinct()
-        .Except([t])
-        .ToArray()
-      t.VertexIndicences = t.VertexIndicences.Distinct()
-        .Except([t])
-        .ToArray()
-      //  Also, make sure we only track vertex incidences that do not have edge incidences too.
-      t.VertexIndicences = t.VertexIndicences.Except(
-        t.EdgeIncidences,
-      ).ToArray()
+      t.EdgeIncidences = _.pull(_.uniq(t.EdgeIncidences), t)
+      t.VertexIndicences = _.pull(
+        _.uniq(t.VertexIndicences),
+        t,
+        //  Also, make sure we only track vertex incidences that do not have edge incidences too.
+        ...t.EdgeIncidences,
+      )
     }
   }
 
@@ -171,11 +159,7 @@ export class Tiling {
     //  ( 3, 10 ), ( 3, 9 )
     //  ( 6, 4 ), ( 6, 8 )
     //  ( 7, 3 ), ( 7, 9 )
-    let tile: Tile = Tile.constructWithBoundary(
-      boundary,
-      drawn,
-      config.Geometry,
-    )
+    let tile: Tile = new Tile(boundary, drawn, config.Geometry)
     Tile.ShrinkTile(/* ref */ tile, config.Shrink)
     return tile
   }
@@ -195,9 +179,9 @@ export class Tiling {
     }
 
     let clone: Tile = tile.Clone()
-    clone.Transform(this.TilingConfig.M)
+    clone.TransformMobius(this.TilingConfig.M)
     this.m_tiles.push(clone)
-    this.TilePositions[clone.Boundary.Center] = clone
+    this.TilePositions[clone.Boundary.Center.GetHashCode()] = clone
     return true
   }
 
@@ -207,19 +191,19 @@ export class Tiling {
   NewTileAfterReflect(
     t: Tile,
     s: Segment,
-    completed: Record<Vector3D, boolean>,
+    completed: Record<number, boolean>,
   ): boolean {
     let newVertexCircle: CircleNE = t.VertexCircle.Clone()
-    newVertexCircle.Reflect(s)
+    newVertexCircle.ReflectSegment(s)
     let testCenter: Vector3D = this.TilingConfig.M.Apply(
       newVertexCircle.CenterNE,
     )
-    return !completed.hasOwnProperty(testCenter)
+    return !completed.hasOwnProperty(testCenter.GetHashCode())
   }
 
   ReflectRecursive(
     tiles: Array<Tile>,
-    completed: Record<Vector3D, boolean>,
+    completed: Record<number, boolean>,
   ) {
     //  Breadth first recursion.
     if (0 == tiles.length) {
@@ -253,10 +237,12 @@ export class Tiling {
 
         if (this.TransformAndAdd(newBase)) {
           console.assert(
-            !completed.hasOwnProperty(newBase.Boundary.Center),
+            !completed.hasOwnProperty(
+              newBase.Boundary.Center.GetHashCode(),
+            ),
           )
           reflected.push(newBase)
-          completed[newBase.Boundary.Center] = true
+          completed[newBase.Boundary.Center.GetHashCode()] = true
         }
       }
     }
