@@ -1,5 +1,8 @@
 import { Mobius } from '@Math/Mobius'
+import { Complex } from './Complex'
 import { Euclidean2D } from './Euclidean2D'
+import { Geometry } from './Geometry'
+import { Geometry2D } from './Geometry2D'
 import { HyperbolicModels } from './HyperbolicModels'
 import { SphericalModels } from './SphericalModels'
 import { Vector3D } from './Vector3D'
@@ -80,9 +83,9 @@ export class EuclideanModels {
     let mob: Mobius = Mobius.CreateFromIsometry(
       Geometry.Spherical,
       0,
-      new System.Numerics.Complex(1, 0),
+      new Complex(1, 0),
     )
-    v = mob.Apply(v)
+    v = mob.ApplyVector3D(v)
     return EuclideanModels.SpiralToIsometric(v, p, m, n)
   }
 }
