@@ -55,7 +55,6 @@ export class EuclideanModels {
         break
       default:
         throw new Error('Argument Error')
-        break
     }
 
     let scale: number = Math.sqrt(m * m + n * n)
@@ -65,11 +64,11 @@ export class EuclideanModels {
     )
     v.RotateXY(a)
     //  Rotate
-    v = v * scale
+    v = v.MultiplyWithNumber(scale)
     //  Scale
-    v =
-      v *
-      (Math.sqrt(2) * (Geometry2D.EuclideanHypotenuse / (2 * Math.PI)))
+    v = v.MultiplyWithNumber(
+      Math.sqrt(2) * (Geometry2D.EuclideanHypotenuse / (2 * Math.PI)),
+    )
     v.RotateXY(Math.PI / 4)
     return v
   }
