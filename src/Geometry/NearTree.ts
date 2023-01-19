@@ -1,12 +1,20 @@
-import { Geometry } from './Geometry2D'
+import { DonHatch } from '@Math/DonHatch'
+import { Mobius } from '@Math/Mobius'
+import assert from 'assert'
+import { Geometry } from './Geometry'
 import { Metric } from './Metric'
+import { Spherical2D } from './Spherical2D'
+import { Vector3D } from './Vector3D'
 
 export class NearTree {
-  constructor() {
-    this.Reset(Metric.Euclidean)
-  }
+  // this.Reset(Metric.Euclidean)
 
   constructor(m: Metric) {
+    this.Metric = m
+
+    this.m_maxLeft = Number.MIN_SAFE_INTEGER
+    this.m_maxRight = Number.MIN_SAFE_INTEGER
+
     this.Reset(m)
   }
 
@@ -27,41 +35,40 @@ export class NearTree {
 
   Reset(m: Metric) {
     this.Metric = m
-    m_pRightBranch = null
-    m_pLeftBranch = null
-    m_pRight = null
-    m_pLeft = null
-    m_maxLeft = double.MinValue
-    m_maxRight = double.MinValue
+    this.m_pRightBranch = undefined
+    this.m_pLeftBranch = undefined
+    this.m_pRight = undefined
+    this.m_pLeft = undefined
+    this.m_maxLeft = Number.MIN_SAFE_INTEGER
+    this.m_maxRight = Number.MIN_SAFE_INTEGER
   }
 
   // The distance metric to use.
 
-  get Metric(): Metric {}
-
-  set Metric(value: Metric) {}
+  Metric: Metric
 
   //  Left/right objects stored in this node.
-  #m_pLeft: NearTreeObject
+  m_pLeft?: NearTreeObject
 
-  #m_pRight: NearTreeObject
+  m_pRight?: NearTreeObject
 
   //  Longest distance from the left/right
   //  objects to anything below it in the tree.
-  #m_maxLeft: number
+  m_maxLeft: number
 
-  #m_maxRight: number
+  m_maxRight: number
 
   //  Tree descending from the left/right.
-  #m_pLeftBranch: NearTree
+  m_pLeftBranch?: NearTree
 
-  #m_pRightBranch: NearTree
+  m_pRightBranch?: NearTree
 
   // Inserts an object into the neartree.
 
   InsertObject(nearTreeObject: NearTreeObject) {
     let tempRight: number = 0
     let tempLeft: number = 0
+
     if (this.m_pRight != null) {
       tempRight = this.Dist(
         nearTreeObject.Location,
@@ -139,7 +146,7 @@ export class NearTree {
     return found
   }
 
-  #FindNearestNeighborRecursive(
+  FindNearestNeighborRecursive(
     /* ref */ closest: NearTreeObject,
     location: Vector3D,
     /* ref */ searchRadius: number,
@@ -263,27 +270,30 @@ export class NearTree {
   }
 
   //  Gets the distance between two points.
-  #Dist(p1: Vector3D, p2: Vector3D): number {
+  Dist(p1: Vector3D, p2: Vector3D = Vector3D.construct()): number {
     switch (this.Metric) {
-      case this.Metric.Spherical:
+      case Metric.Spherical: {
         //  ZZZ - Is it too expensive to build up a mobius every time?
         //          I wonder if there is a better way.
         let m: Mobius = Mobius.construct()
-        m.Isometry(Geometry.Spherical, 0, p1 * -1)
-        let temp: Vector3D = m.Apply(p2)
+        m.Isometry(Geometry.Spherical, 0, p1.Negate().ToComplex())
+        let temp: Vector3D = m.ApplyVector3D(p2)
         return Spherical2D.e2sNorm(temp.Abs())
-      case this.Metric.Euclidean:
-        return (p2 - p1).Abs()
-      case this.Metric.Hyperbolic:
+      }
+      case Metric.Euclidean: {
+        return p2.Subtract(p1).Abs()
+      }
+      case Metric.Hyperbolic: {
         //  ZZZ - Is it too expensive to build up a mobius every time?
         //          I wonder if there is a better way.
         let m: Mobius = Mobius.construct()
-        m.Isometry(Geometry.Hyperbolic, 0, p1 * -1)
-        let temp: Vector3D = m.Apply(p2)
+        m.Isometry(Geometry.Hyperbolic, 0, p1.Negate().ToComplex())
+        let temp: Vector3D = m.ApplyVector3D(p2)
         return DonHatch.e2hNorm(temp.Abs())
+      }
+      default:
+        throw new Error('Not implemented')
     }
-
-    throw new Error('Not implemented')
   }
 }
 

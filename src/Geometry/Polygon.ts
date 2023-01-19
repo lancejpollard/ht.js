@@ -3,30 +3,14 @@ import { Isometry } from '@Math/Isometry'
 import { Matrix4D } from '@Math/Matrix4D'
 import { Mobius } from '@Math/Mobius'
 import { Tolerance, Utils } from '@Math/Utils'
+import _ from 'lodash'
 import { Circle, CircleNE } from './Circle'
 import { Euclidean2D } from './Euclidean2D'
 import { Euclidean3D } from './Euclidean3D'
 import { Geometry } from './Geometry'
 import { Geometry2D } from './Geometry2D'
-import { IEqualityComparer } from './IEqualityComparer'
 import { ITransform, ITransformable } from './Transformable'
 import { Vector3D } from './Vector3D'
-
-export class HighToleranceVectorEqualityComparer
-  implements IEqualityComparer<Vector3D>
-{
-  Equals(v1: Vector3D, v2: Vector3D): boolean {
-    return v1.CompareWithThreshold(v2, this.m_tolerance)
-  }
-
-  GetHashCode(v: Vector3D): number {
-    return v.GetHashCodeWithTolerance(this.m_tolerance)
-  }
-
-  //  Argh, between a rock and a hard place.
-  //  Making this smaller causes issues, making this bigger causes issues.
-  m_tolerance: number = 0.0001
-}
 
 export class Polygon implements ITransformable {
   constructor() {
@@ -200,7 +184,8 @@ export class Polygon implements ITransformable {
   ///  NOTE: Do not include starting point twice.
   ///  </summary>
   CreateEuclidean(points: Array<Vector3D>) {
-    this.Segments.Clear()
+    this.Segments.length = 0
+
     for (let i: number = 0; i < points.length; i++) {
       let idx1: number = i
       let idx2: number = i + 1
@@ -519,13 +504,19 @@ export class Polygon implements ITransformable {
     //  Since not many polygons will actually make it here, these extra calculations are ok.
     //  It does seem to help a lot.
     let ray: Circle = new Circle()
-    ray.From2Points(this.Center, this.Center + new Vector3D(103, 10007))
-    if (!this.IsPointInside(this.Center, ray)) {
+    ray.From2Points(
+      this.Center,
+      this.Center.Add(Vector3D.construct2d(103, 10007)),
+    )
+    if (!this.IsPointInsideWithRay(this.Center, ray)) {
       return true
     }
 
-    ray.From2Points(this.Center, this.Center + new Vector3D(7001, 7993))
-    return !this.IsPointInside(this.Center, ray)
+    ray.From2Points(
+      this.Center,
+      this.Center.Add(Vector3D.construct2d(7001, 7993)),
+    )
+    return !this.IsPointInsideWithRay(this.Center, ray)
   }
 
   ///  <summary>
@@ -540,13 +531,13 @@ export class Polygon implements ITransformable {
       insideCount++
     }
 
-    ray.From2Points(p, p + new Vector3D(103, 10007))
-    if (this.IsPointInside(p, ray)) {
+    ray.From2Points(p, p.Add(Vector3D.construct2d(103, 10007)))
+    if (this.IsPointInsideWithRay(p, ray)) {
       insideCount++
     }
 
-    ray.From2Points(p, p + new Vector3D(7001, 7993))
-    if (this.IsPointInside(p, ray)) {
+    ray.From2Points(p, p.Add(Vector3D.construct2d(7001, 7993)))
+    if (this.IsPointInsideWithRay(p, ray)) {
       insideCount++
     }
 
@@ -563,16 +554,16 @@ export class Polygon implements ITransformable {
     let ray: Circle = new Circle()
     // ray.From3Points( p + new Vector3D( -500, 1 ), p, p + new Vector3D( 500, 1 ) );        // Circle was too huge (r ~= 125000), which caused tolerance issues.
     // ray.From3Points( p + new Vector3D( -103, 1 ), p, p + new Vector3D( 193, 1 ) );        // primes! (r ~= 10000)  Still suffering
-    ray.From2Points(p, p + new Vector3D(10007, 103))
+    ray.From2Points(p, p.Add(Vector3D.construct2d(10007, 103)))
     //  Best, but still not perfect.
-    return this.IsPointInside(p, ray)
+    return this.IsPointInsideWithRay(p, ray)
   }
 
   ///  <summary>
   ///  Warning, this suffers from FP tolerance issues,
   ///  when the polygon has arc segments with very large radii (for instance).
   ///  </summary>
-  IsPointInside(p: Vector3D, ray: Circle): boolean {
+  IsPointInsideWithRay(p: Vector3D, ray: Circle): boolean {
     //  We use the ray casting since that will work for arcs as well.
     //  NOTE: This impl is known to not be fully general yet,
     //          since some issues won't arise in MagicTile.
@@ -583,53 +574,23 @@ export class Polygon implements ITransformable {
     }
 
     //  Get all of the the boundary intersection points.
-    let iPoints: Array<Vector3D> =
-      this.GetIntersectionPoints(ray).ToArray()
+    let iPoints: Array<Vector3D> = this.GetIntersectionPoints(ray)
     //  Keep only the positive, distinct ones.
-    iPoints = iPoints
-      .Where(v => v.X > p.X)
-      .Distinct(new HighToleranceVectorEqualityComparer())
-      .ToArray()
+    iPoints = _.uniqBy(
+      iPoints.filter(v => v.X > p.X),
+      //  Argh, between a rock and a hard place.
+      //  Making this smaller causes issues, making this bigger causes issues.
+      v => v.GetHashCodeWithTolerance(0.0001),
+    )
     //  Even number of intersection points means we're outside, odd means inside
-    let inside: boolean = Utils.Odd(iPoints.Count)
+    let inside: boolean = Utils.Odd(iPoints.length)
     return inside
   }
-}
 
-///  <summary>
-///  For simple comparison of two polygons.
-///  Warning!  This will only check that they contain the same set of vertices,
-///  though the order of the vertices in the two polygons may be arbitrary.
-///  </summary>
-export class PolygonEqualityComparer extends IEqualityComparer<Polygon> {
-  Equals(poly1: Polygon, poly2: Polygon): boolean {
-    let orderedVerts1: Array<Vector3D> = poly1.Vertices.OrderBy(
-      v => v,
-      new Vector3DComparer(),
-    ).ToArray()
-
-    let orderedVerts2: Array<Vector3D> = poly2.Vertices.OrderBy(
-      v => v,
-      new Vector3DComparer(),
-    ).ToArray()
-
-    if (orderedVerts1.Length != orderedVerts2.Length) {
-      return false
-    }
-
-    for (let i: number = 0; i < orderedVerts1.Length; i++) {
-      if (orderedVerts1[i] != orderedVerts2[i]) {
-        return false
-      }
-    }
-
-    return true
-  }
-
-  GetHashCode(poly: Polygon): number {
+  GetHashCode(): number {
     //  Is this ok? (I'm assuming ^ operator commutes, and order of applying doesn't matter)
     let hCode: number = 0
-    for (let v of poly.Vertices) {
+    for (let v of this.Vertices) {
       hCode = hCode ^ v.GetHashCode()
     }
 
@@ -639,7 +600,7 @@ export class PolygonEqualityComparer extends IEqualityComparer<Polygon> {
 }
 
 export class Segment implements ITransformable {
-  Type: SegmentType
+  Type?: SegmentType
 
   P1: Vector3D
 
@@ -649,6 +610,13 @@ export class Segment implements ITransformable {
   Center: Vector3D
 
   Clockwise: boolean
+
+  constructor() {
+    this.P1 = Vector3D.construct()
+    this.P2 = Vector3D.construct()
+    this.Center = Vector3D.construct()
+    this.Clockwise = false
+  }
 
   Clone(): Segment {
     let newSeg: Segment = new Segment()
@@ -756,7 +724,7 @@ export class Segment implements ITransformable {
     return this.m_circle
   }
 
-  m_circle: Circle
+  m_circle?: Circle
 
   get Length(): number {
     if (SegmentType.Arc == this.Type) {
@@ -1098,4 +1066,40 @@ export enum SegmentType {
   Line,
 
   Arc,
+}
+
+function Vector3DCompare(v1: Vector3D, v2: Vector3D): number {
+  const less = -1
+  const greater = 1
+
+  if (Tolerance.LessThan(v1.X, v2.X)) {
+    return less
+  }
+  if (Tolerance.GreaterThan(v1.X, v2.X)) {
+    return greater
+  }
+
+  if (Tolerance.LessThan(v1.Y, v2.Y)) {
+    return less
+  }
+  if (Tolerance.GreaterThan(v1.Y, v2.Y)) {
+    return greater
+  }
+
+  if (Tolerance.LessThan(v1.Z, v2.Z)) {
+    return less
+  }
+  if (Tolerance.GreaterThan(v1.Z, v2.Z)) {
+    return greater
+  }
+
+  if (Tolerance.LessThan(v1.W, v2.W)) {
+    return less
+  }
+  if (Tolerance.GreaterThan(v1.W, v2.W)) {
+    return greater
+  }
+
+  // Making it here means we are equal.
+  return 0
 }

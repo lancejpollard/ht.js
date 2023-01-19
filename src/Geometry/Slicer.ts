@@ -1,5 +1,6 @@
 import { Mobius } from '@Math/Mobius'
 import { Utils } from '@Math/Utils'
+import _ from 'lodash'
 import { Circle, CircleNE } from './Circle'
 import { Geometry } from './Geometry'
 import { Polygon, Segment } from './Polygon'
@@ -252,7 +253,7 @@ export class Slicer {
     //
     //  Remove duplicate polygons.
     //
-    output = output.Distinct(new PolygonEqualityComparer()).ToArray()
+    output = _.uniqBy(output, v => v.GetHashCode())
     return true
   }
 
