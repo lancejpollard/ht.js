@@ -6,6 +6,7 @@ import { Tile } from '@Geometry/Tile'
 import { ITransform } from '@Geometry/Transformable'
 import { Vector3D } from '@Geometry/Vector3D'
 import { Mobius } from './Mobius'
+import { assert } from './Utils'
 
 // Class to represent an isometry.
 // This is really just a wrapper around a Mobius transformation,
@@ -14,30 +15,25 @@ import { Mobius } from './Mobius'
 // NOTE: The order in which the two elements are applied is important.  We will apply the Mobius part of the isometry first.
 export class Isometry implements ITransform {
   static constructUnity() {
-    const isometry = new Isometry()
-    isometry.Mobius = Mobius.construct()
-    isometry.Mobius.Unity()
+    const mobius = Mobius.construct()
+    mobius.Unity()
+    const isometry = new Isometry(mobius)
     return isometry
   }
 
-  static constructWithMobius(m: Mobius, r: Circle) {
-    const isometry = new Isometry()
-    isometry.Mobius = m
-    isometry.Reflection = r
-    return isometry
-  }
+  constructor(mobius: Mobius, reflection?: Circle) {
+    this.Mobius = mobius
 
-  static constructFromIsometry(i: Isometry) {
-    const next = new Isometry()
-    next.Mobius = i.Mobius
-    if (i.Reflection != null) {
-      next.Reflection = i.Reflection.Clone()
+    if (reflection) {
+      this.Reflection = reflection
     }
-    return next
   }
 
   Clone(): Isometry {
-    return Isometry.constructFromIsometry(this)
+    const reflection = this.Reflection
+      ? this.Reflection.Clone()
+      : undefined
+    return new Isometry(this.Mobius, reflection)
   }
 
   // Mobius Transform for this isometry.
@@ -47,12 +43,13 @@ export class Isometry implements ITransform {
   // Defines the circle (or line) in which to reflect for this isometry.
   // Null if we don't want to include a reflection.
 
-  get Reflection(): Circle {
+  get Reflection(): Circle | undefined {
     return this.m_reflection
   }
 
-  set Reflection(value: Circle) {
+  set Reflection(value: Circle | undefined) {
     this.m_reflection = value
+    assert(this.m_reflection)
     this.CacheCircleInversion(this.m_reflection)
   }
 
@@ -63,14 +60,14 @@ export class Isometry implements ITransform {
   }
 
   //  NOTE: Applying isometries with reflections was really slow, so we cache the Mobius transforms we need to more quickly do it.
-  m_reflection: Circle
+  m_reflection?: Circle
 
-  m_cache1: Mobius
+  m_cache1?: Mobius
 
-  m_cache2: Mobius
+  m_cache2?: Mobius
 
   // Composition operator.
-  static Operator(i1: Isometry, i2: Isometry): Isometry {
+  static Multiply(i1: Isometry, i2: Isometry): Isometry {
     //  ZZZ - Probably a better way.
     //  We'll just apply both isometries to a canonical set of points,
     //  Then calc which isometry makes that.
@@ -80,21 +77,25 @@ export class Isometry implements ITransform {
     let w3: Complex = p3
     let w1: Complex = p1
     let w2: Complex = p2
+
     //  Compose (apply in reverse order).
-    w1 = i2.Apply(w1)
-    w2 = i2.Apply(w2)
-    w3 = i2.Apply(w3)
-    w1 = i1.Apply(w1)
-    w2 = i1.Apply(w2)
-    w3 = i1.Apply(w3)
+    w1 = i2.ApplyComplex(w1)
+    w2 = i2.ApplyComplex(w2)
+    w3 = i2.ApplyComplex(w3)
+    w1 = i1.ApplyComplex(w1)
+    w2 = i1.ApplyComplex(w2)
+    w3 = i1.ApplyComplex(w3)
+
     let m: Mobius = Mobius.construct()
-    m.MapPoints(p1, p2, p3, w1, w2, w3)
+    m.MapPoints6d(p1, p2, p3, w1, w2, w3)
+
     let result: Isometry = Isometry.constructUnity()
     result.Mobius = m
+
     //  Need to reflect at end?
     let r1: boolean = i1.Reflection != null
     let r2: boolean = i2.Reflection != null
-    if (r1 | r2) {
+    if (r1 || r2) {
       result.Reflection = new Circle(
         Vector3D.FromComplex(w1),
         Vector3D.FromComplex(w2),
@@ -140,13 +141,13 @@ export class Isometry implements ITransform {
     } else {
       p1 = inversionCircle.Center.Add(
         Vector3D.construct2d(inversionCircle.Radius, 0),
-      )
+      ).ToComplex()
       p2 = inversionCircle.Center.Add(
         Vector3D.construct2d(inversionCircle.Radius * -1, 0),
-      )
+      ).ToComplex()
       p3 = inversionCircle.Center.Add(
         Vector3D.construct2d(0, inversionCircle.Radius),
-      )
+      ).ToComplex()
     }
 
     this.CacheCircleInversionFromComplex(p1, p2, p3)
@@ -160,7 +161,8 @@ export class Isometry implements ITransform {
     c3: Complex,
   ) {
     let toUnitCircle: Mobius = Mobius.construct()
-    toUnitCircle.MapPoints(
+
+    toUnitCircle.MapPoints6d(
       c1,
       c2,
       c3,
@@ -168,14 +170,17 @@ export class Isometry implements ITransform {
       new Complex(-1, 0),
       new Complex(0, 1),
     )
+
     this.m_cache1 = toUnitCircle
     this.m_cache2 = this.m_cache1.Inverse()
   }
 
   ApplyCachedCircleInversion(input: Complex): Complex {
-    let result: Complex = this.m_cache1.Apply(input)
+    let result = this.m_cache1?.ApplyComplex(input)
+    assert(result)
     result = this.CircleInversion(result)
-    result = this.m_cache2.Apply(result)
+    result = this.m_cache2?.ApplyComplex(result)
+    assert(result)
     return result
   }
 
@@ -200,11 +205,11 @@ export class Isometry implements ITransform {
   Inverse(): Isometry {
     let inverse: Mobius = this.Mobius.Inverse()
     if (this.Reflection == null) {
-      return Isometry.constructWithMobius(inverse, null)
+      return new Isometry(inverse)
     } else {
       let reflection: Circle = this.Reflection.Clone()
       reflection.Transform(inverse)
-      return Isometry.constructWithMobius(inverse, reflection)
+      return new Isometry(inverse, reflection)
     }
   }
 
@@ -224,10 +229,10 @@ export class Isometry implements ITransform {
 
   CalculateFromTwoPolygons(home: Tile, tile: Tile, g: Geometry) {
     let poly: Polygon = tile.Boundary
-    this.CalculateFromTwoPolygons(home, poly, g)
+    this.CalculateFromTwoPolygonsWithBoundary(home, poly, g)
   }
 
-  CalculateFromTwoPolygons(
+  CalculateFromTwoPolygonsWithBoundary(
     home: Tile,
     boundaryPolygon: Polygon,
     g: Geometry,
@@ -250,7 +255,7 @@ export class Isometry implements ITransform {
     //          Trying to use the Drawn tile produced weird (yet interesting) results.
     let poly1: Polygon = boundary
     let poly2: Polygon = home
-    if (poly1.Segments.Count < 3 || poly2.Segments.Count < 3) {
+    if (poly1.Segments.length < 3 || poly2.Segments.length < 3) {
       console.assert(false)
       return
     }
@@ -263,13 +268,22 @@ export class Isometry implements ITransform {
     let w1: Vector3D = poly2.Segments[0].P1
     let w2: Vector3D = poly2.Segments[1].P1
     if (p1 == w1 && p2 == w2 && p3 == w3) {
-      this.Mobius = this.Mobius.Identity()
+      this.Mobius = Mobius.Identity()
       return
     }
 
     let m: Mobius = Mobius.construct()
-    m.MapPoints(p1, p2, p3, w1, w2, w3)
+    m.MapPoints6d(
+      p1.ToComplex(),
+      p2.ToComplex(),
+      p3.ToComplex(),
+      w1.ToComplex(),
+      w2.ToComplex(),
+      w3.ToComplex(),
+    )
+
     this.Mobius = m
+
     //  Worry about reflections as well.
     if (g == Geometry.Spherical) {
       //  If inverted matches the orientation, we need a reflection.
@@ -284,7 +298,8 @@ export class Isometry implements ITransform {
     }
 
     //  Some testing.
-    let test: Vector3D = this.Apply(boundary.Center)
+    let test: Vector3D = this.ApplyVector3D(boundary.Center)
+
     if (test != home.Center) {
       //  ZZZ: What is happening here is that the mobius can project a point to infinity before the reflection brings it back to the origin.
       //         It hasn't been much of a problem in practice yet, but will probably need fixing at some point.
@@ -301,8 +316,8 @@ export class Isometry implements ITransform {
   ): Array<Vector3D> {
     let result: Array<Vector3D> = []
 
-    for (let i: number = 0; i < vertices.Length; i++) {
-      let transformed: Vector3D = isometry.Apply(vertices[i])
+    for (let i: number = 0; i < vertices.length; i++) {
+      let transformed: Vector3D = isometry.ApplyVector3D(vertices[i])
       result.push(transformed)
     }
 

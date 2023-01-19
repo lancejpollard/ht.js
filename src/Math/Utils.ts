@@ -1,4 +1,5 @@
 import { IEqualityComparer } from '@Geometry/IEqualityComparer'
+import _ from 'lodash'
 import { UtilsInfinity } from './Infinity'
 
 export class DoubleEqualityComparer implements IEqualityComparer {
@@ -118,6 +119,12 @@ export class Utils {
     }
 
     return Math.round(value)
+  }
+}
+
+export function assert(val: unknown): asserts val is object {
+  if (val == null) {
+    throw new Error('Invalid object')
   }
 }
 
