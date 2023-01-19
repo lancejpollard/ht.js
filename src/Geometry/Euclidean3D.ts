@@ -228,9 +228,9 @@ export class Euclidean3D {
 
     planeNormal.Normalize()
 
-    let closest: Vector3D = pl
-      .Subtract(planeNormal)
-      .MultiplyWithNumber(signedDistance)
+    let closest: Vector3D = pl.Subtract(
+      planeNormal.MultiplyWithNumber(signedDistance),
+    )
 
     let v1: Vector3D = closest.Subtract(pl)
     let v2: Vector3D = nl
