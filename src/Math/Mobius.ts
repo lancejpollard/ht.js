@@ -5,7 +5,7 @@ import { ITransform } from '@Geometry/Transformable'
 import { Vector3D } from '@Geometry/Vector3D'
 import { DonHatch } from './DonHatch'
 import { UtilsInfinity } from './Infinity'
-import { UtilsInfinity.IsInfiniteVector3D, Utils } from './Utils'
+import { Utils } from './Utils'
 
 export class Mobius implements ITransform {
   constructor() {
@@ -109,6 +109,7 @@ export class Mobius implements ITransform {
     //
     //  I figured out that the other cases can be handled with simple variations of the C coefficients.
     let T: Complex = new Complex(Math.cos(angle), Math.sin(angle))
+
     this.A = T
     this.B = P
     this.D = new Complex(1, 0)
@@ -153,17 +154,13 @@ export class Mobius implements ITransform {
   PureTranslation(g: Geometry, p1: Complex, p2: Complex) {
     let A: Complex = p2.Subtract(p1)
     let B: Complex = p2.Multiply(p1)
+
     let denom: number =
-      1 -
-      (this.B.Real * this.B.Real + this.B.Imaginary * this.B.Imaginary)
+      1 - (B.Real * B.Real + B.Imaginary * B.Imaginary)
 
     let P: Complex = new Complex(
-      (this.A.Real * (1 + this.B.Real) +
-        this.A.Imaginary * this.B.Imaginary) /
-        denom,
-      (this.A.Imaginary * (1 - this.B.Real) +
-        this.A.Real * this.B.Imaginary) /
-        denom,
+      (A.Real * (1 + B.Real) + A.Imaginary * B.Imaginary) / denom,
+      (A.Imaginary * (1 - B.Real) + A.Real * B.Imaginary) / denom,
     )
 
     this.Isometry(g, 0, P)
@@ -261,7 +258,7 @@ export class Mobius implements ITransform {
   // This will transform the unit disk to the upper half plane.
 
   UpperHalfPlane() {
-    this.MapPoints(
+    this.MapPoints3d(
       Complex.ImaginaryOne.Negate(),
       Complex.One,
       Complex.ImaginaryOne,
@@ -273,10 +270,13 @@ export class Mobius implements ITransform {
   // If one of the zi is , then the proper formula is obtained by first
   // dividing all entries by zi and then taking the limit zi � 
 
-  MapPoints(z1: Complex, z2: Complex, z3: Complex) {
+  MapPoints3d(z1: Complex, z2: Complex, z3: Complex) {
     if (UtilsInfinity.IsInfiniteComplex(z1)) {
       this.A = new Complex(0, 0)
-      this.B = new Complex(Complex.Multiply(new Complex(1, 0), z2.Subtract(z3)).Negate(), 0)
+      this.B = new Complex(
+        Complex.Multiply(new Complex(1, 0), z2.Subtract(z3)).Negate(),
+        0,
+      )
       this.C = new Complex(-1, 0)
       this.D = z3
     } else if (UtilsInfinity.IsInfiniteComplex(z2)) {
@@ -301,7 +301,7 @@ export class Mobius implements ITransform {
 
   // This transform will map the z points to the respective w points.
 
-  MapPoints(
+  MapPoints6d(
     z1: Complex,
     z2: Complex,
     z3: Complex,
@@ -311,9 +311,11 @@ export class Mobius implements ITransform {
   ) {
     let m2: Mobius = Mobius.construct()
     let m1: Mobius = Mobius.construct()
-    m1.MapPoints(z1, z2, z3)
-    m2.MapPoints(w1, w2, w3)
-    this = m2.Inverse() * m1
+
+    m1.MapPoints3d(z1, z2, z3)
+    m2.MapPoints3d(w1, w2, w3)
+
+    this.Merge(m2.Inverse().Multiply(m1))
   }
 
   // Applies a Mobius transformation to a vector.
@@ -349,7 +351,7 @@ export class Mobius implements ITransform {
   // Applies a Mobius transformation to the point at infinity.
 
   ApplyToInfinite(): Vector3D {
-    return Vector3D.FromComplex(this.A / this.C)
+    return Vector3D.FromComplex(this.A.Divide(this.C))
   }
 
   // Applies a Mobius transformation to a quaternion with a zero k component (handled as a vector).
@@ -367,8 +369,8 @@ export class Mobius implements ITransform {
     let c: Vector3D = Vector3D.FromComplex(this.C)
     let d: Vector3D = Vector3D.FromComplex(this.D)
     return this.DivideQuat(
-      this.MultQuat(a, q) + b,
-      this.MultQuat(c, q) + d,
+      this.MultQuat(a, q).Add(b),
+      this.MultQuat(c, q).Add(d),
     )
   }
 
@@ -414,7 +416,7 @@ export class Mobius implements ITransform {
 
   static Scale(scale: number): Mobius {
     return Mobius.construct4d(
-      scale,
+      new Complex(scale, 0),
       Complex.Zero,
       Complex.Zero,
       Complex.One,

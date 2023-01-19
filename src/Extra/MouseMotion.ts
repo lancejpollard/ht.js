@@ -385,22 +385,26 @@ class MouseMotion {
             //  Don's pure translation code has to be composed in the correct order.
             //  (the pan must be applied first).
             pan.PureTranslation(Geometry.Hyperbolic, point1, point2)
-            this.m_isometry.Mobius = pan * this.m_isometry.Mobius
+            this.m_isometry.Mobius = pan.Multiply(
+              this.m_isometry.Mobius,
+            )
             //  Numerical stability hack.
             //  Things explode after panning for a while otherwise.
             let temp: Mobius = this.m_isometry.Mobius
-            temp.Round(/* digits:*/ 5)
+
             //  6 didn't turn out to be enough for one puzzle.  Downside to rounding too much?
+            temp.Round(5)
+
             this.m_isometry.Mobius = temp
             //  Should have a 0 imaginary component.
             // System.Diagnostics.Trace.WriteLine( "TraceSquared:" + m_isometry.Mobius.TraceSquared );
-            break
             break
           case Geometry.Euclidean:
           case Geometry.Spherical:
             //  Do a geodesic pan.
             this.GeodesicPan(point1, point2)
             break
+          default:
             break
         }
 

@@ -130,10 +130,10 @@ export class Vector3D {
     }
 
     return (
-      Tolerance.Equal(this.X, other.X, threshold) &&
-      Tolerance.Equal(this.Y, other.Y, threshold) &&
-      Tolerance.Equal(this.Z, other.Z, threshold) &&
-      Tolerance.Equal(this.W, other.W, threshold)
+      Tolerance.EqualWithThreshold(this.X, other.X, threshold) &&
+      Tolerance.EqualWithThreshold(this.Y, other.Y, threshold) &&
+      Tolerance.EqualWithThreshold(this.Z, other.Z, threshold) &&
+      Tolerance.EqualWithThreshold(this.W, other.W, threshold)
     )
   }
 
@@ -235,7 +235,7 @@ export class Vector3D {
 
   Normalize(): boolean {
     let magnitude: number = this.Abs()
-    if (Tolerance.Zero(magnitude, 1e-10)) {
+    if (Tolerance.ZeroWithThreshold(magnitude, 1e-10)) {
       return false
     }
 

@@ -42,40 +42,32 @@ export class Isometry implements ITransform {
 
   // Mobius Transform for this isometry.
 
-  get Mobius(): Mobius {
-    return m_mobius
-  }
-
-  set Mobius(value: Mobius) {
-    m_mobius = value
-  }
-
-  m_mobius: Mobius
+  Mobius: Mobius
 
   // Defines the circle (or line) in which to reflect for this isometry.
   // Null if we don't want to include a reflection.
 
   get Reflection(): Circle {
-    return m_reflection
+    return this.m_reflection
   }
 
   set Reflection(value: Circle) {
-    m_reflection = value
-    this.CacheCircleInversion(m_reflection)
+    this.m_reflection = value
+    this.CacheCircleInversion(this.m_reflection)
   }
 
   // Whether or not we are reflected.
 
   get Reflected(): boolean {
-    return m_reflection != null
+    return this.m_reflection != null
   }
 
   //  NOTE: Applying isometries with reflections was really slow, so we cache the Mobius transforms we need to more quickly do it.
-  #m_reflection: Circle
+  m_reflection: Circle
 
-  #m_cache1: Mobius
+  m_cache1: Mobius
 
-  #m_cache2: Mobius
+  m_cache2: Mobius
 
   // Composition operator.
   static Operator(i1: Isometry, i2: Isometry): Isometry {
@@ -115,16 +107,16 @@ export class Isometry implements ITransform {
   }
 
   // Applies an isometry to a vector.
-  Apply(z: Vector3D): Vector3D {
-    let cInput: Complex = z
-    let cOutput: Complex = this.Apply(cInput)
+  ApplyVector3D(z: Vector3D): Vector3D {
+    let cInput: Complex = z.ToComplex()
+    let cOutput: Complex = this.ApplyComplex(cInput)
     return Vector3D.FromComplex(cOutput)
   }
 
   // Applies an isometry to a complex number.
 
-  Apply(z: Complex): Complex {
-    z = this.Mobius.Apply(z)
+  ApplyComplex(z: Complex): Complex {
+    z = this.Mobius.ApplyComplex(z)
     if (this.Reflection != null) {
       z = this.ApplyCachedCircleInversion(z)
     }
@@ -142,9 +134,9 @@ export class Isometry implements ITransform {
     let p1: Complex
     let p2: Complex
     if (inversionCircle.IsLine) {
-      p1 = inversionCircle.P1
-      p2 = inversionCircle.P2
-      p3 = (p1 + p2) / 2
+      p1 = inversionCircle.P1.ToComplex()
+      p2 = inversionCircle.P2.ToComplex()
+      p3 = p1.Add(p2).Divide(new Complex(2, 0))
     } else {
       p1 = inversionCircle.Center.Add(
         Vector3D.construct2d(inversionCircle.Radius, 0),
@@ -157,12 +149,16 @@ export class Isometry implements ITransform {
       )
     }
 
-    this.CacheCircleInversion(p1, p2, p3)
+    this.CacheCircleInversionFromComplex(p1, p2, p3)
   }
 
   // Does a circle inversion in an arbitrary, generalized circle.
   // IOW, the three points may be collinear, in which case we are talking about a reflection.
-  CacheCircleInversion(c1: Complex, c2: Complex, c3: Complex) {
+  CacheCircleInversionFromComplex(
+    c1: Complex,
+    c2: Complex,
+    c3: Complex,
+  ) {
     let toUnitCircle: Mobius = Mobius.construct()
     toUnitCircle.MapPoints(
       c1,
@@ -303,12 +299,13 @@ export class Isometry implements ITransform {
     vertices: Array<Vector3D>,
     isometry: Isometry,
   ): Array<Vector3D> {
-    let result: Array<Vector3D> = new Array<Vector3D>()
+    let result: Array<Vector3D> = []
+
     for (let i: number = 0; i < vertices.Length; i++) {
       let transformed: Vector3D = isometry.Apply(vertices[i])
-      result.Add(transformed)
+      result.push(transformed)
     }
 
-    return result.ToArray()
+    return result
   }
 }

@@ -195,7 +195,7 @@ export class Tiling {
   ): boolean {
     let newVertexCircle: CircleNE = t.VertexCircle.Clone()
     newVertexCircle.ReflectSegment(s)
-    let testCenter: Vector3D = this.TilingConfig.M.Apply(
+    let testCenter: Vector3D = this.TilingConfig.M.ApplyVector3D(
       newVertexCircle.CenterNE,
     )
     return !completed.hasOwnProperty(testCenter.GetHashCode())
