@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "AMD",
+    "outDir": "dist.test"
+  },
+  "include": ["src/*.ts", "test.ts", "package.d.ts"],
+  "exclude": ["node_modules", "dist", "dist.test"]
+}

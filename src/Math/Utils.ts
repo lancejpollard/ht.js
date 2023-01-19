@@ -2,7 +2,8 @@ import { IEqualityComparer } from '@Geometry/IEqualityComparer'
 import _ from 'lodash'
 import { UtilsInfinity } from './Infinity'
 
-export class DoubleEqualityComparer implements IEqualityComparer {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export class DoubleEqualityComparer implements IEqualityComparer<any> {
   constructor(tol: number) {
     this.m_tolerance = tol
   }
