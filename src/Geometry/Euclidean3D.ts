@@ -1,4 +1,4 @@
-import { Tolerance } from '@Math/Utils'
+import { Tolerance, Utils } from '@Math/Utils'
 import { Vector3D } from './Vector3D'
 
 export class Euclidean3D {
@@ -12,7 +12,7 @@ export class Euclidean3D {
       return NaN
     }
 
-    return (point - p1).Cross(n1).Abs() / n1.Abs()
+    return point.Subtract(p1).Cross(n1).Abs() / n1.Abs()
   }
 
   static DistancePointPlane(
@@ -26,7 +26,9 @@ export class Euclidean3D {
     }
 
     //  Here is the distance (signed depending on which side of the plane we are on).
-    return (point - planePoint).Dot(normalVector) / normalVector.Abs()
+    return (
+      point.Subtract(planePoint).Dot(normalVector) / normalVector.Abs()
+    )
   }
 
   static ProjectOntoLine(
@@ -36,9 +38,9 @@ export class Euclidean3D {
   ): Vector3D {
     //  http://gamedev.stackexchange.com/a/72529
     //  A + dot(AP,AB) / dot(AB,AB) * AB
-    let AP: Vector3D = point - pl
+    let AP: Vector3D = point.Subtract(pl)
     let AB: Vector3D = nl
-    return pl + AB * (AP.Dot(AB) / AB.Dot(AB))
+    return pl.Add(AB.MultiplyWithNumber(AP.Dot(AB) / AB.Dot(AB)))
   }
 
   static ProjectOntoPlane(
@@ -55,8 +57,10 @@ export class Euclidean3D {
       planePoint,
       point,
     )
-    normalVector = normalVector * dist
-    return point - normalVector
+
+    normalVector = normalVector.MultiplyWithNumber(dist)
+
+    return point.Subtract(normalVector)
   }
 
   static DistanceLineLine(
@@ -90,9 +94,10 @@ export class Euclidean3D {
     point: Vector3D,
   ): boolean {
     //  Look for a degenerate triangle.
-    let d1: number = (point - s1).MagSquared()
-    let d2: number = (s2 - point).MagSquared()
-    let d3: number = (s2 - s1).MagSquared()
+    let d1: number = point.Subtract(s1).MagSquared()
+    let d2: number = s2.Subtract(point).MagSquared()
+    let d3: number = s2.Subtract(s1).MagSquared()
+
     return Tolerance.Equal(d1 + d2, d3)
   }
 
@@ -118,8 +123,9 @@ export class Euclidean3D {
     }
 
     //  (2)
-    let ma: Vector3D = a2 - a1
-    let mb: Vector3D = b2 - b1
+    let ma: Vector3D = a2.Subtract(a1)
+    let mb: Vector3D = b2.Subtract(b1)
+
     if (
       Tolerance.GreaterThan(
         Euclidean3D.DistanceLineLine(ma, a1, mb, b1),
@@ -130,7 +136,7 @@ export class Euclidean3D {
     }
 
     //  (3)
-    let D: Vector3D = a1 - b1
+    let D: Vector3D = a1.Subtract(b1)
     let a: number = ma.Dot(ma)
     let b: number = ma.Dot(mb) * -1
     let c: number = mb.Dot(mb)
@@ -149,11 +155,11 @@ export class Euclidean3D {
   // Calculate a plane normal after a transformation function is applied
   // to the points.
 
-  static NormalFrom3Points(
+  static NormalFrom3PointsWithTransform(
     p1: Vector3D,
     p2: Vector3D,
     p3: Vector3D,
-    transform: System.Func<Vector3D, Vector3D>,
+    transform: (p: Vector3D) => Vector3D,
   ): Vector3D {
     let p1t: Vector3D = transform(p1)
     let p2t: Vector3D = transform(p2)
@@ -166,47 +172,47 @@ export class Euclidean3D {
     p2: Vector3D,
     p3: Vector3D,
   ): Vector3D {
-    let v1: Vector3D = p1 - p3
-    let v2: Vector3D = p2 - p3
+    let v1: Vector3D = p1.Subtract(p3)
+    let v2: Vector3D = p2.Subtract(p3)
     let normal: Vector3D = v1.Cross(v2)
     normal.Normalize()
     return normal
   }
 
-  static TriangleAreaAfterTransform(
-    /* ref */ p1: Vector3D,
-    /* ref */ p2: Vector3D,
-    /* ref */ p3: Vector3D,
-    transform: System.Func<Vector3D, Vector3D>,
-  ): number {
-    p1 = transform(p1)
-    p2 = transform(p2)
-    p3 = transform(p3)
-    let v1: Vector3D = p1 - p3
-    let v2: Vector3D = p2 - p3
-    return 0.5 * v1.Cross(v2).Abs()
-  }
+  // static TriangleAreaAfterTransform(
+  //   /* ref */ p1: Vector3D,
+  //   /* ref */ p2: Vector3D,
+  //   /* ref */ p3: Vector3D,
+  //   transform: System.Func<Vector3D, Vector3D>,
+  // ): number {
+  //   p1 = transform(p1)
+  //   p2 = transform(p2)
+  //   p3 = transform(p3)
+  //   let v1: Vector3D = p1 - p3
+  //   let v2: Vector3D = p2 - p3
+  //   return 0.5 * v1.Cross(v2).Abs()
+  // }
 
-  static MaxTriangleEdgeLengthAfterTransform(
-    /* ref */ p1: Vector3D,
-    /* ref */ p2: Vector3D,
-    /* ref */ p3: Vector3D,
-    transform: System.Func<Vector3D, Vector3D>,
-  ): number {
-    p1 = transform(p1)
-    p2 = transform(p2)
-    p3 = transform(p3)
-    let l1Squared: number = (p2 - p1).MagSquared()
-    let l2Squared: number = (p3 - p2).MagSquared()
-    let l3Squared: number = (p1 - p3).MagSquared()
-    return Math.sqrt(
-      Math.Max(l1Squared, Math.Max(l2Squared, l3Squared)),
-    )
-  }
+  // static MaxTriangleEdgeLengthAfterTransform(
+  //   /* ref */ p1: Vector3D,
+  //   /* ref */ p2: Vector3D,
+  //   /* ref */ p3: Vector3D,
+  //   transform: System.Func<Vector3D, Vector3D>,
+  // ): number {
+  //   p1 = transform(p1)
+  //   p2 = transform(p2)
+  //   p3 = transform(p3)
+  //   let l1Squared: number = (p2 - p1).MagSquared()
+  //   let l2Squared: number = (p3 - p2).MagSquared()
+  //   let l3Squared: number = (p1 - p3).MagSquared()
+  //   return Math.sqrt(
+  //     Math.Max(l1Squared, Math.Max(l2Squared, l3Squared)),
+  //   )
+  // }
 
-  static Coplanar(points: Array<Vector3D>): boolean {
-    throw new Error('Not implemented')
-  }
+  // static Coplanar(points: Array<Vector3D>): boolean {
+  //   throw new Error('Not implemented')
+  // }
 
   static IntersectionPlaneLine(
     planeNormal: Vector3D,
@@ -219,13 +225,22 @@ export class Euclidean3D {
       planePoint,
       pl,
     )
+
     planeNormal.Normalize()
-    let closest: Vector3D = pl - planeNormal * signedDistance
-    let v1: Vector3D = closest - pl
+
+    let closest: Vector3D = pl
+      .Subtract(planeNormal)
+      .MultiplyWithNumber(signedDistance)
+
+    let v1: Vector3D = closest.Subtract(pl)
     let v2: Vector3D = nl
     let angle: number = v1.AngleTo(v2)
+
     nl.Normalize()
-    return pl + nl * (signedDistance / Math.cos(angle))
+
+    return pl.Add(
+      nl.MultiplyWithNumber(signedDistance / Math.cos(angle)),
+    )
     //  XXX - needs improvement.
   }
 
@@ -246,6 +261,7 @@ export class Euclidean3D {
       pl,
       sphereCenter,
     )
+
     if (Number.isNaN(distance)) {
       return -1
     }
@@ -260,9 +276,9 @@ export class Euclidean3D {
         //  There are 2 intersection points.
         let tempDV: Vector3D = nl
         tempDV.Normalize()
-        tempDV = tempDV * sphereRadius
-        int1 = sphereCenter + tempDV
-        int2 = sphereCenter - tempDV
+        tempDV = tempDV.MultiplyWithNumber(sphereRadius)
+        int1 = sphereCenter.Add(tempDV)
+        int2 = sphereCenter.Subtract(tempDV)
         return 2
       }
     }
@@ -274,17 +290,23 @@ export class Euclidean3D {
 
     //  Find a normalized direction vector from the sphere center to the closest point on the line.
     //  This will help to determine the intersection points for the remaining cases.
-    let vector: Vector3D = (pl - sphereCenter).Cross(nl).Cross(nl) * -1
+    let vector: Vector3D = pl
+      .Subtract(sphereCenter)
+      .Cross(nl)
+      .Cross(nl)
+      .Negate()
+
     if (!vector.Normalize()) {
       return -1
     }
 
     //  Scale the direction vector to the sphere radius.
-    vector = vector * sphereRadius
+    vector = vector.MultiplyWithNumber(sphereRadius)
+
     //  Handle the case of 1 intersection.
     if (Tolerance.Equal(distance, sphereRadius)) {
       //  We just need to add the vector to the center.
-      vector = vector + sphereCenter
+      vector = vector.Add(sphereCenter)
       int1 = vector
       return 1
     }
@@ -294,18 +316,20 @@ export class Euclidean3D {
       //  We need to rotate the vector by an angle +- alpha,
       //  where cos( alpha ) = distance / sphereRadius;
       console.assert(!Tolerance.Zero(sphereRadius))
+
       let alpha: number = Utils.RadiansToDegrees(
         Math.acos(distance / sphereRadius),
       )
       //  Rotation vector.
-      let rotationVector: Vector3D = (pl - sphereCenter).Cross(nl)
+      let rotationVector: Vector3D = pl.Subtract(sphereCenter).Cross(nl)
       let vector2: Vector3D = vector
       let vector1: Vector3D = vector
+
       vector1.RotateAboutAxis(rotationVector, alpha)
       vector2.RotateAboutAxis(rotationVector, 1 * alpha * -1)
       //  Here are the intersection points.
-      int1 = vector1 + sphereCenter
-      int2 = vector2 + sphereCenter
+      int1 = vector1.Add(sphereCenter)
+      int2 = vector2.Add(sphereCenter)
       return 2
     }
 
