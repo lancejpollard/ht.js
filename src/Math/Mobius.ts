@@ -1,9 +1,11 @@
 import { Complex } from '@Geometry/Complex'
 import { Geometry } from '@Geometry/Geometry'
+import { Spherical2D } from '@Geometry/Spherical2D'
 import { ITransform } from '@Geometry/Transformable'
 import { Vector3D } from '@Geometry/Vector3D'
+import { DonHatch } from './DonHatch'
 import { UtilsInfinity } from './Infinity'
-import { isInfinite, Utils } from './Utils'
+import { UtilsInfinity.IsInfiniteVector3D, Utils } from './Utils'
 
 export class Mobius implements ITransform {
   constructor() {
@@ -25,6 +27,13 @@ export class Mobius implements ITransform {
     self.C = d
     self.D = d
     return self
+  }
+
+  Merge(other: Mobius) {
+    this.A = other.A
+    this.B = other.B
+    this.C = other.C
+    this.D = other.D
   }
 
   // This transform will map z1 to Zero, z2, to One, and z3 to Infinity.
@@ -58,6 +67,10 @@ export class Mobius implements ITransform {
     return result
   }
 
+  Multiply(m2: Mobius): Mobius {
+    return Mobius.Multiply(this, m2)
+  }
+
   // Normalize so that ad - bc = 1
 
   Normalize() {
@@ -78,11 +91,11 @@ export class Mobius implements ITransform {
   }
 
   get Trace(): Complex {
-    return this.A + this.D
+    return this.A.Add(this.D)
   }
 
   get TraceSquared(): Complex {
-    return this.Trace * this.Trace
+    return this.Trace.Multiply(this.Trace)
   }
 
   // This will calculate the Mobius transform that represents an isometry in the given geometry.
@@ -98,16 +111,17 @@ export class Mobius implements ITransform {
     let T: Complex = new Complex(Math.cos(angle), Math.sin(angle))
     this.A = T
     this.B = P
-    this.D = 1
+    this.D = new Complex(1, 0)
+
     switch (g) {
       case Geometry.Spherical:
-        this.C = Complex.Conjugate(P) * (T * -1)
+        this.C = Complex.Conjugate(P).Multiply(T.Negate())
         break
       case Geometry.Euclidean:
-        this.C = 0
+        this.C = new Complex(0, 0)
         break
       case Geometry.Hyperbolic:
-        this.C = Complex.Conjugate(P) * T
+        this.C = Complex.Conjugate(P).Multiply(T)
         break
       default:
         break
@@ -137,11 +151,12 @@ export class Mobius implements ITransform {
   // I borrowed this from Don's hyperbolic applet.
 
   PureTranslation(g: Geometry, p1: Complex, p2: Complex) {
-    let A: Complex = p2 - p1
-    let B: Complex = p2 * p1
+    let A: Complex = p2.Subtract(p1)
+    let B: Complex = p2.Multiply(p1)
     let denom: number =
       1 -
       (this.B.Real * this.B.Real + this.B.Imaginary * this.B.Imaginary)
+
     let P: Complex = new Complex(
       (this.A.Real * (1 + this.B.Real) +
         this.A.Imaginary * this.B.Imaginary) /
@@ -150,6 +165,7 @@ export class Mobius implements ITransform {
         this.A.Real * this.B.Imaginary) /
         denom,
     )
+
     this.Isometry(g, 0, P)
     this.Normalize()
   }
@@ -159,32 +175,37 @@ export class Mobius implements ITransform {
 
   Geodesic(g: Geometry, p1: Complex, p2: Complex) {
     let t: Mobius = Mobius.construct()
-    t.Isometry(g, 0, p1 * -1)
-    let p2t: Complex = t.Apply(p2)
+    t.Isometry(g, 0, p1.Negate())
+
+    let p2t: Complex = t.ApplyComplex(p2)
     let m2: Mobius = Mobius.construct()
     let m1: Mobius = Mobius.construct()
-    m1.Isometry(g, 0, p1 * -1)
+    m1.Isometry(g, 0, p1.Negate())
     m2.Isometry(g, 0, p2t)
+
     let m3: Mobius = m1.Inverse()
-    this = m3 * (m2 * m1)
+    this.Merge(m3.Multiply(m2.Multiply(m1)))
   }
 
   Hyperbolic(g: Geometry, fixedPlus: Complex, scale: number) {
     //  To the origin.
     let m1: Mobius = Mobius.construct()
-    m1.Isometry(g, 0, fixedPlus * -1)
+    m1.Isometry(g, 0, fixedPlus.Negate())
+
     //  Scale.
     let m2: Mobius = Mobius.construct()
-    m2.A = scale
-    m2.C = 0
-    m2.B = 0
-    m2.D = 1
+    m2.A = new Complex(scale, 0)
+    m2.C = new Complex(0, 0)
+    m2.B = new Complex(0, 0)
+    m2.D = new Complex(1, 0)
+
     //  Back.
     // Mobius m3 = m1.Inverse();    // Doesn't work well if fixedPlus is on disk boundary.
     let m3: Mobius = Mobius.construct()
     m3.Isometry(g, 0, fixedPlus)
+
     //  Compose them (multiply in reverse order).
-    this = m3 * (m2 * m1)
+    this.Merge(m3.Multiply(m2.Multiply(m1)))
   }
 
   // Allow a hyperbolic transformation using an absolute offset.
@@ -198,9 +219,11 @@ export class Mobius implements ITransform {
   ) {
     //  To the origin.
     let m: Mobius = Mobius.construct()
-    m.Isometry(g, 0, fixedPlus * -1)
-    let eRadius: number = m.Apply(point).Magnitude
+    m.Isometry(g, 0, fixedPlus.Negate())
+
+    let eRadius: number = m.ApplyComplex(point).Magnitude
     let scale: number = 1
+
     switch (g) {
       case Geometry.Spherical:
         let sRadius: number = Spherical2D.e2sNorm(eRadius)
@@ -225,19 +248,21 @@ export class Mobius implements ITransform {
   Elliptic(g: Geometry, fixedPlus: Complex, angle: number) {
     //  To the origin.
     let origin: Mobius = Mobius.construct()
-    origin.Isometry(g, 0, fixedPlus * -1)
+    origin.Isometry(g, 0, fixedPlus.Negate())
+
     //  Rotate.
     let rotate: Mobius = Mobius.construct()
-    rotate.Isometry(g, angle, new Complex())
+    rotate.Isometry(g, angle, new Complex(0, 0))
+
     //  Conjugate.
-    this = origin.Inverse().Multiply(rotate.Multiply(origin))
+    this.Merge(origin.Inverse().Multiply(rotate.Multiply(origin)))
   }
 
   // This will transform the unit disk to the upper half plane.
 
   UpperHalfPlane() {
     this.MapPoints(
-      Complex.ImaginaryOne * -1,
+      Complex.ImaginaryOne.Negate(),
       Complex.One,
       Complex.ImaginaryOne,
     )
@@ -249,17 +274,17 @@ export class Mobius implements ITransform {
   // dividing all entries by zi and then taking the limit zi � 
 
   MapPoints(z1: Complex, z2: Complex, z3: Complex) {
-    if (isInfinite(z1)) {
-      this.A = 0
-      this.B = 1 * (z2 - z3) * -1
-      this.C = -1
+    if (UtilsInfinity.IsInfiniteComplex(z1)) {
+      this.A = new Complex(0, 0)
+      this.B = new Complex(Complex.Multiply(new Complex(1, 0), z2.Subtract(z3)).Negate(), 0)
+      this.C = new Complex(-1, 0)
       this.D = z3
-    } else if (isInfinite(z2)) {
-      this.A = 1
-      this.B = z1 * -1
-      this.C = 1
-      this.D = z3 * -1
-    } else if (isInfinite(z3)) {
+    } else if (UtilsInfinity.IsInfiniteComplex(z2)) {
+      this.A = new Complex(1, 0)
+      this.B = z1.Negate()
+      this.C = new Complex(1, 0)
+      this.D = z3.Negate()
+    } else if (UtilsInfinity.IsInfiniteComplex(z3)) {
       this.A = -1
       this.B = z1
       this.C = 0
@@ -294,25 +319,27 @@ export class Mobius implements ITransform {
   // Applies a Mobius transformation to a vector.
 
   // <remarks>Use the complex number version if you can.</remarks>
-  Apply(z: Vector3D): Vector3D {
-    let cInput: Complex = z
-    let cOutput: Complex = this.Apply(cInput)
+  ApplyVector3D(z: Vector3D): Vector3D {
+    let cInput: Complex = z.ToComplex()
+    let cOutput: Complex = this.ApplyComplex(cInput)
     return Vector3D.FromComplex(cOutput)
   }
 
   // Applies a Mobius transformation to a complex number.
 
-  Apply(z: Complex): Complex {
-    return (this.A * z + this.B) / (this.C * z + this.D)
+  ApplyComplex(z: Complex): Complex {
+    return this.A.Multiply(z)
+      .Add(this.B)
+      .Divide(this.C.Multiply(z).Add(this.D))
   }
 
   ApplyInfiniteSafe(z: Vector3D): Vector3D {
-    if (isInfinite(z)) {
+    if (UtilsInfinity.IsInfiniteVector3D(z)) {
       return this.ApplyToInfinite()
     }
 
-    let result: Vector3D = this.Apply(z)
-    if (isInfinite(result)) {
+    let result: Vector3D = this.ApplyVector3D(z)
+    if (UtilsInfinity.IsInfiniteVector3D(result)) {
       return UtilsInfinity.InfinityVector
     }
 
@@ -330,7 +357,7 @@ export class Mobius implements ITransform {
   // This is also infinity safe.
 
   ApplyToQuaternion(q: Vector3D): Vector3D {
-    if (isInfinite(q)) {
+    if (UtilsInfinity.IsInfiniteVector3D(q)) {
       return this.ApplyToInfinite()
     }
 
