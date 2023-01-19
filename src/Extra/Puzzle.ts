@@ -414,19 +414,19 @@ export class Puzzle {
         this.Config.Q == 4 &&
         this.Config.ExpectedNumColors == 4
       ) {
-        let index: index<
-          index,
-          ToArray,
-          Config.P,
-          Config.Q,
-          Config.ExpectedNumColors,
-          masterCandidates,
-          tiling.Tiles.Where,
-          t,
-          index
-        >
-        8 || index == 15
-        ToArray()
+        masterCandidates = tiling.Tiles.Where(
+          (t, index) => index < 3 || index == 5,
+        ).ToArray()
+      }
+
+      if (
+        this.Config.P == 6 &&
+        this.Config.Q == 3 &&
+        this.Config.ExpectedNumColors == 9
+      ) {
+        masterCandidates = tiling.Tiles.Where(
+          (t, index) => index < 8 || index == 15,
+        ).ToArray()
       }
     }
 

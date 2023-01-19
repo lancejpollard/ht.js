@@ -1,4 +1,4 @@
-import { isInfinite } from '@Math/Utils'
+import { isInfinite, Tolerance } from '@Math/Utils'
 import { Vector3D } from './Vector3D'
 
 export class Circle3D {
@@ -8,15 +8,25 @@ export class Circle3D {
 
   Normal: Vector3D
 
+  static construct() {
+    return new Circle3D(
+      Vector3D.construct(),
+      Vector3D.construct(),
+      Vector3D.construct(),
+    )
+  }
+
   constructor(t1: Vector3D, t2: Vector3D, t3: Vector3D) {
-    let center: Vector3D
-    let radius: number
-    Circle3D.From3Points(t1, t2, t3, /* out */ center, /* out */ radius)
+    const { center, radius } = Circle3D.From3Points(t1, t2, t3)
+
     this.Center = center
     this.Radius = radius
-    let normal: Vector3D = (t2 - t1).Cross(t3 - t1)
+
+    let normal: Vector3D = t2.Subtract(t1).Cross(t3.Subtract(t1))
+
     if (isInfinite(this.Radius)) {
       this.Center = Vector3D.DneVector()
+
       normal = !t1.IsOrigin ? t1 : !t2.IsOrigin ? t2 : t3 // Hacky rep of line.
     }
 
@@ -25,13 +35,11 @@ export class Circle3D {
   }
 
   Clone(): Circle3D {
-    return MemberwiseClone()
-  }
-
-  // Caller is responsible to make sure our normal is in the z direction.
-
-  ToFlatCircle(): Circle {
-    return [][((Center = Center), (Radius = Radius))]
+    const next = Circle3D.construct()
+    next.Center = this.Center
+    next.Radius = this.Radius
+    next.Normal = this.Normal
+    return next
   }
 
   static FromCenterAnd2Points(
@@ -39,22 +47,25 @@ export class Circle3D {
     p1: Vector3D,
     p2: Vector3D,
   ): Circle3D {
-    let circle: Circle3D = new Circle3D()
+    let circle: Circle3D = Circle3D.construct()
     circle.Center = cen
-    circle.Radius = (p1 - cen).Abs()
-    if (!Tolerance.Equal(circle.Radius, (p2 - cen).Abs())) {
+    circle.Radius = p1.Subtract(cen).Abs()
+
+    if (!Tolerance.Equal(circle.Radius, p2.Subtract(cen).Abs())) {
       throw new Error('Points are not on the same circle.')
     }
 
-    let normal: Vector3D = (p2 - cen).Cross(p1 - cen)
+    let normal: Vector3D = p2.Subtract(cen).Cross(p1.Subtract(cen))
     normal.Normalize()
+
     circle.Normal = normal
+
     return circle
   }
 
   get PointOnCircle(): Vector3D {
     let points: Array<Vector3D> = this.Subdivide(1)
-    return points.First()
+    return points[0]
   }
 
   // Returns 3 points that will define the circle (120 degrees apart).
@@ -67,35 +78,33 @@ export class Circle3D {
 
   Subdivide(n: number): Array<Vector3D> {
     let points: Array<Vector3D> = new Array<Vector3D>()
+
     let start: Vector3D = this.Normal.Perpendicular()
-    start = start * this.Radius
+    start = start.MultiplyWithNumber(this.Radius)
+
     let angleInc: number = 2 * (Math.PI / n)
+
     for (let i: number = 0; i < n; i++) {
       let v: Vector3D = start
       v.RotateAboutAxis(this.Normal, angleInc * i)
-      points.Add(this.Center + v)
+
+      points.push(this.Center.Add(v))
     }
 
-    return points.ToArray()
+    return points
   }
 
-  static From3Points(
-    v1: Vector3D,
-    v2: Vector3D,
-    v3: Vector3D,
-    /* out */ center: Vector3D,
-    /* out */ radius: number,
-  ) {
+  static From3Points(v1: Vector3D, v2: Vector3D, v3: Vector3D) {
     //  Circumcenter/Circumradius of triangle (circle from 3 points)
     //  http://mathworld.wolfram.com/Circumcenter.html
     //  http://mathworld.wolfram.com/Circumradius.html
     //  http://mathworld.wolfram.com/BarycentricCoordinates.html
     //  side lengths and their squares
-    let a: number = (v3 - v2).Abs()
+    let a: number = v3.Subtract(v2).Abs()
     //  Opposite v1
-    let b: number = (v1 - v3).Abs()
+    let b: number = v1.Subtract(v3).Abs()
     //  Opposite v2
-    let c: number = (v2 - v1).Abs()
+    let c: number = v2.Subtract(v1).Abs()
     //  Opposite v3
     let a2: number = a * a
     let b2: number = b * b
@@ -107,28 +116,26 @@ export class Circle3D {
     )
     circumCenterBary.X + (circumCenterBary.Y + circumCenterBary.Z)
     //  Normalize.
-    center = Circle3D.BaryToCartesian(v1, v2, v3, circumCenterBary)
-    let s: number = (a + (b + c)) / 2
-    //  semiperimeter
-    radius =
-      a *
-      (b *
-        (c /
-          (4 *
-            Math.sqrt(
-              s * ((a + (b - s)) * ((a + (c - s)) * (b + (c - s)))),
-            ))))
+    let center = Circle3D.BaryToCartesian(v1, v2, v3, circumCenterBary)
+    let s: number = (a + b + c) / 2
+    let radius =
+      (a * b * c) /
+      (4 * Math.sqrt(s * (a + b - s) * (a + c - s) * (b + c - s)))
+
+    return { center, radius }
   }
 
   // Barycentric coords to Cartesian
   // http://stackoverflow.com/questions/11262391/from-barycentric-to-cartesian
 
-  static #BaryToCartesian(
+  static BaryToCartesian(
     t1: Vector3D,
     t2: Vector3D,
     t3: Vector3D,
     bary: Vector3D,
   ): Vector3D {
-    return bary.X * t1 + (bary.Y * t2 + bary.Z * t3)
+    return Vector3D.MultiplyNumberByVector(bary.X, t1)
+      .Add(Vector3D.MultiplyNumberByVector(bary.Y, t2))
+      .Add(Vector3D.MultiplyNumberByVector(bary.Z, t3))
   }
 }
