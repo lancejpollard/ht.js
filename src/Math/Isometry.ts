@@ -8,6 +8,16 @@ import { Vector3D } from '@Geometry/Vector3D'
 import { Mobius } from './Mobius'
 import { assert } from './Utils'
 
+// A hyperbolic isometry is an orientation-preserving isometry
+// with exactly two fixed points in H.
+// https://encycla.com/Hyperbolic_plane_isometry
+//
+// A hyperbolic isometry is sometimes called a "translation."
+// A hyperbolic isometry fixes (as a set) the geodesic that
+// connects its two fixed points. This geodesic is sometimes
+// called its "axis." The isometry translates all points in this
+// geodesic by a common distance.
+//
 // Class to represent an isometry.
 // This is really just a wrapper around a Mobius transformation,
 // but also includes a reflection in a generalized circle.
@@ -256,6 +266,7 @@ export class Isometry implements ITransform {
     //          Trying to use the Drawn tile produced weird (yet interesting) results.
     let poly1: Polygon = boundary
     let poly2: Polygon = home
+
     if (poly1.Segments.length < 3 || poly2.Segments.length < 3) {
       console.assert(false)
       return
@@ -268,12 +279,14 @@ export class Isometry implements ITransform {
     let w3: Vector3D = poly2.Segments[2].P1
     let w1: Vector3D = poly2.Segments[0].P1
     let w2: Vector3D = poly2.Segments[1].P1
+
     if (p1 == w1 && p2 == w2 && p3 == w3) {
       this.Mobius = Mobius.Identity()
       return
     }
 
     let m: Mobius = Mobius.construct()
+
     m.MapPoints6d(
       p1.ToComplex(),
       p2.ToComplex(),

@@ -273,10 +273,7 @@ export class Mobius implements ITransform {
   MapPoints3d(z1: Complex, z2: Complex, z3: Complex) {
     if (UtilsInfinity.IsInfiniteComplex(z1)) {
       this.A = new Complex(0, 0)
-      this.B = new Complex(
-        Complex.Multiply(new Complex(1, 0), z2.Subtract(z3)).Negate(),
-        0,
-      )
+      this.B = Complex.Multiply(new Complex(-1, 0), z2.Subtract(z3))
       this.C = new Complex(-1, 0)
       this.D = z3
     } else if (UtilsInfinity.IsInfiniteComplex(z2)) {
@@ -285,15 +282,15 @@ export class Mobius implements ITransform {
       this.C = new Complex(1, 0)
       this.D = z3.Negate()
     } else if (UtilsInfinity.IsInfiniteComplex(z3)) {
-      this.A = -1
+      this.A = new Complex(-1, 0)
       this.B = z1
-      this.C = 0
-      this.D = 1 * (z2 - z1) * -1
+      this.C = new Complex(0, 0)
+      this.D = new Complex(1, 0).Multiply(z2.Subtract(z1)).Negate()
     } else {
-      this.A = z2 - z3
-      this.B = z1 * (z2 - z3) * -1
-      this.C = z2 - z1
-      this.D = z3 * (z2 - z1) * -1
+      this.A = z2.Subtract(z3)
+      this.B = z1.Multiply(z2.Subtract(z3)).Negate()
+      this.C = z2.Subtract(z1)
+      this.D = z3.Multiply(z2.Subtract(z1)).Negate()
     }
 
     this.Normalize()
@@ -368,13 +365,13 @@ export class Mobius implements ITransform {
     let b: Vector3D = Vector3D.FromComplex(this.B)
     let c: Vector3D = Vector3D.FromComplex(this.C)
     let d: Vector3D = Vector3D.FromComplex(this.D)
-    return this.DivideQuat(
-      this.MultQuat(a, q).Add(b),
-      this.MultQuat(c, q).Add(d),
+    return this.DivideQuaternion(
+      this.MultiplyQuaternion(a, q).Add(b),
+      this.MultiplyQuaternion(c, q).Add(d),
     )
   }
 
-  MultQuat(a: Vector3D, b: Vector3D): Vector3D {
+  MultiplyQuaternion(a: Vector3D, b: Vector3D): Vector3D {
     return Vector3D.construct4d(
       a.X * b.X - (a.Y * b.Y - (a.Z * b.Z - a.W * b.W)),
       a.X * b.Y + (a.Y * b.X + (a.Z * b.W - a.W * b.Z)),
@@ -383,7 +380,7 @@ export class Mobius implements ITransform {
     )
   }
 
-  DivideQuat(a: Vector3D, b: Vector3D): Vector3D {
+  DivideQuaternion(a: Vector3D, b: Vector3D): Vector3D {
     let magSquared: number = b.MagSquared()
     let bInv: Vector3D = Vector3D.construct4d(
       b.X / magSquared,
@@ -391,7 +388,7 @@ export class Mobius implements ITransform {
       (b.Z / magSquared) * -1,
       (b.W / magSquared) * -1,
     )
-    return this.MultQuat(a, bInv)
+    return this.MultiplyQuaternion(a, bInv)
   }
 
   // Returns a new Mobius transformation that is the inverse of us.
@@ -400,8 +397,8 @@ export class Mobius implements ITransform {
     //  See http://en.wikipedia.org/wiki/M�bius_transformation
     let result: Mobius = Mobius.construct4d(
       this.D,
-      this.B * -1,
-      this.C * -1,
+      this.B.Negate(),
+      this.C.Negate(),
       this.A,
     )
     result.Normalize()
