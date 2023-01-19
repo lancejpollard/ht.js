@@ -2,15 +2,18 @@ import { UtilsInfinity } from '@Math/Infinity'
 import { Isometry } from '@Math/Isometry'
 import { Matrix4D } from '@Math/Matrix4D'
 import { Mobius } from '@Math/Mobius'
-import { Utils } from '@Math/Utils'
+import { Tolerance, Utils } from '@Math/Utils'
 import { Circle, CircleNE } from './Circle'
 import { Euclidean2D } from './Euclidean2D'
 import { Geometry } from './Geometry'
 import { Geometry2D } from './Geometry2D'
+import { IEqualityComparer } from './IEqualityComparer'
 import { ITransform, ITransformable } from './Transformable'
 import { Vector3D } from './Vector3D'
 
-export class HighToleranceVectorEqualityComparer extends IEqualityComparer<Vector3D> {
+export class HighToleranceVectorEqualityComparer
+  implements IEqualityComparer<Vector3D>
+{
   Equals(v1: Vector3D, v2: Vector3D): boolean {
     return v1.Compare(v2, m_tolerance)
   }
@@ -583,13 +586,15 @@ export class Polygon implements ITransformable {
 export class PolygonEqualityComparer extends IEqualityComparer<Polygon> {
   Equals(poly1: Polygon, poly2: Polygon): boolean {
     let orderedVerts1: Array<Vector3D> = poly1.Vertices.OrderBy(
-      v => v
+      v => v,
       new Vector3DComparer(),
     ).ToArray()
+
     let orderedVerts2: Array<Vector3D> = poly2.Vertices.OrderBy(
-      v => v
+      v => v,
       new Vector3DComparer(),
     ).ToArray()
+
     if (orderedVerts1.Length != orderedVerts2.Length) {
       return false
     }
@@ -645,7 +650,7 @@ export class Segment implements ITransformable {
     return newSeg
   }
 
-  static Arc(
+  static ArcWithClockwise(
     start: Vector3D,
     end: Vector3D,
     center: Vector3D,
@@ -669,9 +674,9 @@ export class Segment implements ITransformable {
     c.From3Points(start, mid, end)
     newSeg.Center = c.Center
     //  Obtain vectors from center point of circle (as if at the origin)
-    let startOrigin: Vector3D = start - c.Center
-    let midOrigin: Vector3D = mid - c.Center
-    let endOrigin: Vector3D = end - c.Center
+    let startOrigin: Vector3D = start.Subtract(c.Center)
+    let midOrigin: Vector3D = mid.Subtract(c.Center)
+    let endOrigin: Vector3D = end.Subtract(c.Center)
     //  Calculate the normal vector and angle to traverse.
     //  ZZZ - worry about failure of cross product here.
     let normalVector: Vector3D = startOrigin.Cross(endOrigin)
@@ -685,6 +690,7 @@ export class Segment implements ITransformable {
       angleToTraverse,
       compareAngle,
     )
+
     if (reverse) {
       newSeg.Clockwise = !newSeg.Clockwise
     }
@@ -694,7 +700,7 @@ export class Segment implements ITransformable {
 
   get Radius(): number {
     console.assert(SegmentType.Arc == this.Type)
-    return (this.P1 - this.Center).Abs()
+    return this.P1.Subtract(this.Center).Abs()
   }
 
   get Angle(): number {
@@ -703,10 +709,10 @@ export class Segment implements ITransformable {
       return 0
     }
 
-    let v1: Vector3D = this.P1 - this.Center
-    let v2: Vector3D = this.P2 - this.Center
-    return Euclidean2D.AngleToClock(v1, v2)
-    return Clockwise
+    let v1: Vector3D = this.P1.Subtract(this.Center)
+    let v2: Vector3D = this.P2.Subtract(this.Center)
+
+    return this.Clockwise
       ? Euclidean2D.AngleToClock(v1, v2)
       : Euclidean2D.AngleToCounterClock(v1, v2)
   }
@@ -716,19 +722,20 @@ export class Segment implements ITransformable {
     //  Avoiding allocations of new circles,
     //  (Memory profiling showed this was responsible
     //  for many allocations.)
-    if (m_circle != null) {
+    if (this.m_circle != null) {
       if (
-        m_circle.Center == this.Center &&
-        m_circle.Radius == this.Radius
+        this.m_circle.Center.Equals(this.Center) &&
+        this.m_circle.Radius === this.Radius
       ) {
-        return m_circle
+        return this.m_circle
       }
     }
 
-    m_circle = new Circle()
-    m_circle.Center = this.Center
-    m_circle.Radius = this.Radius
-    return m_circle
+    this.m_circle = new Circle()
+    this.m_circle.Center = this.Center
+    this.m_circle.Radius = this.Radius
+
+    return this.m_circle
   }
 
   m_circle: Circle
@@ -737,19 +744,19 @@ export class Segment implements ITransformable {
     if (SegmentType.Arc == this.Type) {
       return this.Radius * this.Angle
     } else {
-      return (this.P2 - this.P1).Abs()
+      return this.P2.Subtract(this.P1).Abs()
     }
   }
 
   get Midpoint(): Vector3D {
     if (SegmentType.Arc == this.Type) {
       let a: number = this.Angle / 2
-      let ret: Vector3D = this.P1 - this.Center
-      ret.RotateXY(this.Clockwise)
-      ret.RotateXY(Clockwise ? -a : a)
+      let ret: Vector3D = this.P1.Subtract(this.Center)
+      ret.RotateXY(this.Clockwise ? -a : a)
+      ret = ret.Add(this.Center)
       return ret
     } else {
-      return (this.P1 + this.P2) / 2
+      return this.P1.Add(this.P2).Divide(2)
     }
   }
 
@@ -764,30 +771,35 @@ export class Segment implements ITransformable {
   ///  Return the vertices from subdividing ourselves.
   ///  </summary>
   Subdivide(numSegments: number): Array<Vector3D> {
-    let ret: Array<Vector3D> = new Array<Vector3D>()
+    let ret: Array<Vector3D> = []
+
     if (numSegments < 1) {
       console.assert(false)
-      return ret.ToArray()
+      return ret
     }
 
     if (this.Type == SegmentType.Arc) {
-      let v: Vector3D = this.P1 - this.Center
+      let v: Vector3D = this.P1.Subtract(this.Center)
       let angle: number = this.Angle / numSegments
       for (let i: number = 0; i < numSegments; i++) {
-        ret.Add(this.Center + v)
-        v.RotateXY(Clockwise ? -angle : angle)
+        ret.push(this.Center.Add(v))
+        v.RotateXY(this.Clockwise ? -angle : angle)
       }
     } else {
-      let v: Vector3D = this.P2 - this.P1
+      let v: Vector3D = this.P2.Subtract(this.P1)
       v.Normalize()
       for (let i: number = 0; i < numSegments; i++) {
-        ret.Add(this.P1 + v * (i * (this.Length / numSegments)))
+        ret.push(
+          this.P1.Add(v).MultiplyWithNumber(
+            i * (this.Length / numSegments),
+          ),
+        )
       }
     }
 
     //  Add in the last point and return.
-    ret.Add(this.P2)
-    return ret.ToArray()
+    ret.push(this.P2)
+    return ret
   }
 
   SwapPoints() {
@@ -802,7 +814,7 @@ export class Segment implements ITransformable {
       : PointOnLineSegment(test, this)
   }
 
-  static #PointOnArcSegment(p: Vector3D, seg: Segment): boolean {
+  static PointOnArcSegment(p: Vector3D, seg: Segment): boolean {
     let maxAngle: number = seg.Angle
     let v1: Vector3D = seg.P1 - seg.Center
     let v2: Vector3D = p - seg.Center
@@ -818,7 +830,7 @@ export class Segment implements ITransformable {
     return Tolerance.LessThanOrEqual(angle, maxAngle)
   }
 
-  static #PointOnLineSegment(p: Vector3D, seg: Segment): boolean {
+  static PointOnLineSegment(p: Vector3D, seg: Segment): boolean {
     //  This will be so if the point and the segment ends represent
     //  the vertices of a degenerate triangle.
     let d1: number = (seg.P2 - seg.P1).Abs()
@@ -836,8 +848,8 @@ export class Segment implements ITransformable {
     let mid: Vector3D = this.Midpoint
     if (isInfinite(mid)) {
       mid = isInfinite(s.P1)
-        ? s.P2 * Infinity.FiniteScale
-        : s.P1 * Infinity.FiniteScale
+        ? s.P2.MultiplyWithNumber(UtilsInfinity.FiniteScale)
+        : s.P1.MultiplyWithNumber(UtilsInfinity.FiniteScale)
     }
 
     this.P1 = s.ReflectPoint(this.P1)
@@ -958,17 +970,18 @@ export class Segment implements ITransformable {
   ///  NOTE: Currently only works for line segments.
   ///  </summary>
   Scale(center: Vector3D, factor: number) {
-    this.Translate(center * -1)
+    this.Translate(center.Negate())
+
     if (this.Type == SegmentType.Line) {
-      this.P1 = this.P1 * factor
-      this.P2 = this.P2 * factor
+      this.P1 = this.P1.MultiplyWithNumber(factor)
+      this.P2 = this.P2.MultiplyWithNumber(factor)
     } else if (this.Type == SegmentType.Arc) {
       let p1: Vector3D = this.P1
       let p2: Vector3D = this.P2
       let mid: Vector3D = this.Midpoint
-      p1 = p1 * factor
-      p2 = p2 * factor
-      mid = mid * factor
+      p1 = p1.MultiplyWithNumber(factor)
+      p2 = p2.MultiplyWithNumber(factor)
+      mid = mid.MultiplyWithNumber(factor)
       let temp: Segment = Segment.Arc(p1, mid, p2)
       this.P1 = p1
       this.P2 = p2
@@ -1008,8 +1021,8 @@ export class Segment implements ITransformable {
     let s2: Segment = this.Clone()
     s1.P2 = point
     s2.P1 = point
-    split.Add(s1)
-    split.Add(s2)
+    split.push(s1)
+    split.push(s2)
     return true
   }
 
@@ -1043,20 +1056,20 @@ export class Segment implements ITransformable {
     }
 
     if (SegmentType.Arc == this.Type) {
-      let t1: Vector3D = this.P1 - this.Center
-      let t2: Vector3D = test1 - this.Center
-      let t3: Vector3D = test2 - this.Center
+      let t1: Vector3D = this.P1.Add(this.Center)
+      let t2: Vector3D = test1.Add(this.Center)
+      let t3: Vector3D = test2.Add(this.Center)
 
-      const a1 = Clockwise
+      const a1 = this.Clockwise
         ? Euclidean2D.AngleToClock(t1, t2)
         : Euclidean2D.AngleToCounterClock(t1, t2)
-      const a2 = Clockwise
+      const a2 = this.Clockwise
         ? Euclidean2D.AngleToClock(t1, t3)
         : Euclidean2D.AngleToCounterClock(t1, t3)
       return a1 < a2
     } else {
-      let d1: number = (test1 - this.P1).MagSquared()
-      let d2: number = (test2 - this.P1).MagSquared()
+      let d1: number = test1.Add(this.P1).MagSquared()
+      let d2: number = test2.Add(this.P1).MagSquared()
       return d1 < d2
     }
   }

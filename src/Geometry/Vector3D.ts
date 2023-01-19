@@ -152,11 +152,13 @@ export class Vector3D {
     return Vector3D.construct4d(v.X / s, v.Y / s, v.Z / s, v.W / s)
   }
 
-  Divide(s: number) {
-    this.X /= s
-    this.Y /= s
-    this.Z /= s
-    this.W /= s
+  Divide(s: number): Vector3D {
+    return Vector3D.construct4d(
+      this.X / s,
+      this.Y / s,
+      this.Z / s,
+      this.W / s,
+    )
   }
 
   static Add(v1: Vector3D, v2: Vector3D): Vector3D {
