@@ -40,7 +40,7 @@ export class Mobius implements ITransform {
 
   static construct3d(z1: Complex, z2: Complex, z3: Complex) {
     const self = new Mobius()
-    self.MapPoints(z1, z2, z3)
+    self.MapPoints3d(z1, z2, z3)
     return self
   }
 
