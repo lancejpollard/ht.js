@@ -1,18 +1,37 @@
 import { Complex } from '@Geometry/Complex'
 import { Geometry } from '@Geometry/Geometry'
+import { ITransform } from '@Geometry/Transformable'
+
+const PLACEHOLDER_COMPLEX = new Complex(0, 0)
 
 export class Mobius implements ITransform {
-  constructor(a: Complex, b: Complex, c: Complex, d: Complex) {
-    this.A = a
-    this.B = b
-    this.C = c
-    this.D = d
+  constructor() {
+    this.A = PLACEHOLDER_COMPLEX
+    this.B = PLACEHOLDER_COMPLEX
+    this.C = PLACEHOLDER_COMPLEX
+    this.D = PLACEHOLDER_COMPLEX
+  }
+
+  static construct() {
+    const self = new Mobius()
+    return self
+  }
+
+  static construct4d(a: Complex, b: Complex, c: Complex, d: Complex) {
+    const self = new Mobius()
+    self.A = a
+    self.B = b
+    self.C = d
+    self.D = d
+    return self
   }
 
   // This transform will map z1 to Zero, z2, to One, and z3 to Infinity.
 
-  constructor(z1: Complex, z2: Complex, z3: Complex) {
-    this.MapPoints(z1, z2, z3)
+  static construct3d(z1: Complex, z2: Complex, z3: Complex) {
+    const self = new Mobius()
+    self.MapPoints(z1, z2, z3)
+    return self
   }
 
   A: Complex
@@ -28,11 +47,11 @@ export class Mobius implements ITransform {
   }
 
   static Operator(m1: Mobius, m2: Mobius): Mobius {
-    let result: Mobius = new Mobius(
-      m1.A * m2.A + m1.B * m2.C,
-      m1.A * m2.B + m1.B * m2.D,
-      m1.C * m2.A + m1.D * m2.C,
-      m1.C * m2.B + m1.D * m2.D,
+    let result: Mobius = Mobius.construct4d(
+      m1.A.Multiply(m2.A).Add(m1.B.Multiply(m2.C)),
+      m1.A.Multiply(m2.B).Add(m1.B.Multiply(m2.D)),
+      m1.C.Multiply(m2.A).Add(m1.D.Multiply(m2.C)),
+      m1.C.Multiply(m2.B).Add(m1.D.Multiply(m2.D)),
     )
     result.Normalize()
     return result
@@ -43,16 +62,18 @@ export class Mobius implements ITransform {
   Normalize() {
     //  See Visual Complex Analysis, p150
     let k: Complex = Complex.Reciprocal(
-      Complex.Sqrt(this.A * this.D - this.B * this.C),
+      Complex.Sqrt(
+        this.A.Multiply(this.D).Subtract(this.B.Multiply(this.C)),
+      ),
     )
     this.ScaleComponents(k)
   }
 
   ScaleComponents(k: Complex) {
-    this.A = this.A * k
-    this.B = this.B * k
-    this.C = this.C * k
-    this.D = this.D * k
+    this.A = this.A.Multiply(k)
+    this.B = this.B.Multiply(k)
+    this.C = this.C.Multiply(k)
+    this.D = this.D.Multiply(k)
   }
 
   get Trace(): Complex {
@@ -97,7 +118,7 @@ export class Mobius implements ITransform {
     angle: number,
     P: Complex,
   ): Mobius {
-    let m: Mobius = new Mobius()
+    let m: Mobius = Mobius.construct()
     m.Isometry(g, angle, P)
     return m
   }
@@ -136,11 +157,11 @@ export class Mobius implements ITransform {
   // Also somewhat from Don.
 
   Geodesic(g: Geometry, p1: Complex, p2: Complex) {
-    let t: Mobius = new Mobius()
+    let t: Mobius = Mobius.construct()
     t.Isometry(g, 0, p1 * -1)
     let p2t: Complex = t.Apply(p2)
-    let m2: Mobius = new Mobius()
-    let m1: Mobius = new Mobius()
+    let m2: Mobius = Mobius.construct()
+    let m1: Mobius = Mobius.construct()
     m1.Isometry(g, 0, p1 * -1)
     m2.Isometry(g, 0, p2t)
     let m3: Mobius = m1.Inverse()
@@ -149,17 +170,17 @@ export class Mobius implements ITransform {
 
   Hyperbolic(g: Geometry, fixedPlus: Complex, scale: number) {
     //  To the origin.
-    let m1: Mobius = new Mobius()
+    let m1: Mobius = Mobius.construct()
     m1.Isometry(g, 0, fixedPlus * -1)
     //  Scale.
-    let m2: Mobius = new Mobius()
+    let m2: Mobius = Mobius.construct()
     m2.A = scale
     m2.C = 0
     m2.B = 0
     m2.D = 1
     //  Back.
     // Mobius m3 = m1.Inverse();    // Doesn't work well if fixedPlus is on disk boundary.
-    let m3: Mobius = new Mobius()
+    let m3: Mobius = Mobius.construct()
     m3.Isometry(g, 0, fixedPlus)
     //  Compose them (multiply in reverse order).
     this = m3 * (m2 * m1)
@@ -175,7 +196,7 @@ export class Mobius implements ITransform {
     offset: number,
   ) {
     //  To the origin.
-    let m: Mobius = new Mobius()
+    let m: Mobius = Mobius.construct()
     m.Isometry(g, 0, fixedPlus * -1)
     let eRadius: number = m.Apply(point).Magnitude
     let scale: number = 1
@@ -200,10 +221,10 @@ export class Mobius implements ITransform {
 
   Elliptic(g: Geometry, fixedPlus: Complex, angle: number) {
     //  To the origin.
-    let origin: Mobius = new Mobius()
+    let origin: Mobius = Mobius.construct()
     origin.Isometry(g, 0, fixedPlus * -1)
     //  Rotate.
-    let rotate: Mobius = new Mobius()
+    let rotate: Mobius = Mobius.construct()
     rotate.Isometry(g, angle, new Complex())
     //  Conjugate.
     this = origin.Inverse() * (rotate * origin)
@@ -260,8 +281,8 @@ export class Mobius implements ITransform {
     w2: Complex,
     w3: Complex,
   ) {
-    let m2: Mobius = new Mobius()
-    let m1: Mobius = new Mobius()
+    let m2: Mobius = Mobius.construct()
+    let m1: Mobius = Mobius.construct()
     m1.MapPoints(z1, z2, z3)
     m2.MapPoints(w1, w2, w3)
     this = m2.Inverse() * m1
@@ -345,7 +366,7 @@ export class Mobius implements ITransform {
 
   Inverse(): Mobius {
     //  See http://en.wikipedia.org/wiki/M�bius_transformation
-    let result: Mobius = new Mobius(
+    let result: Mobius = Mobius.construct4d(
       this.D,
       this.B * -1,
       this.C * -1,
@@ -356,13 +377,18 @@ export class Mobius implements ITransform {
   }
 
   static Identity(): Mobius {
-    let m: Mobius = new Mobius()
+    let m: Mobius = Mobius.construct()
     m.Unity()
     return m
   }
 
   static Scale(scale: number): Mobius {
-    return new Mobius(scale, Complex.Zero, Complex.Zero, Complex.One)
+    return Mobius.construct4d(
+      scale,
+      Complex.Zero,
+      Complex.Zero,
+      Complex.One,
+    )
   }
 
   // This is only here for a numerical accuracy hack.

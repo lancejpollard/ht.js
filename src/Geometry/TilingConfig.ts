@@ -67,7 +67,7 @@ export class TilingConfig {
       0,
     )
     offset.RotateXY(angle)
-    let m: Mobius = new Mobius()
+    let m: Mobius = Mobius.construct()
     this.m.Isometry(
       Geometry2D.GetGeometry(p, q),
       angle,
@@ -86,7 +86,7 @@ export class TilingConfig {
     let offset: Vector3D = seg.Midpoint
     let angle: number = Math.PI / this.P
     offset.RotateXY(angle * -1)
-    let m: Mobius = new Mobius()
+    let m: Mobius = Mobius.construct()
     this.m.Isometry(g, angle * -1, offset * -1)
     return this.m
   }

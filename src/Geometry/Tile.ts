@@ -186,7 +186,7 @@ export class Tile {
     //  This code is not correct in non-Euclidean cases!
     //  But it works reasonable well for small shrink factors.
     //  For example, you can easily use this function to grow a hyperbolic tile beyond the disk.
-    let m: Mobius = new Mobius()
+    let m: Mobius = Mobius.construct()
     m.Hyperbolic(tile.Geometry, Vector3D.construct(), shrinkFactor)
     tile.Drawn.Transform(m)
     return

@@ -268,7 +268,7 @@ export class NearTree {
       case this.Metric.Spherical:
         //  ZZZ - Is it too expensive to build up a mobius every time?
         //          I wonder if there is a better way.
-        let m: Mobius = new Mobius()
+        let m: Mobius = Mobius.construct()
         m.Isometry(Geometry.Spherical, 0, p1 * -1)
         let temp: Vector3D = m.Apply(p2)
         return Spherical2D.e2sNorm(temp.Abs())
@@ -277,7 +277,7 @@ export class NearTree {
       case this.Metric.Hyperbolic:
         //  ZZZ - Is it too expensive to build up a mobius every time?
         //          I wonder if there is a better way.
-        let m: Mobius = new Mobius()
+        let m: Mobius = Mobius.construct()
         m.Isometry(Geometry.Hyperbolic, 0, p1 * -1)
         let temp: Vector3D = m.Apply(p2)
         return DonHatch.e2hNorm(temp.Abs())

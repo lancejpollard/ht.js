@@ -71,8 +71,8 @@ export class HyperbolicModels {
       return
     }
 
-    let m2: Mobius = new Mobius()
-    let m1: Mobius = new Mobius()
+    let m2: Mobius = Mobius.construct()
+    let m1: Mobius = Mobius.construct()
     m2.Isometry(Geometry.Euclidean, 0, new Complex(0, -1))
     m1.UpperHalfPlane()
     m_upper = m2 * m1

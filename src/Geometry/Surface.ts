@@ -86,7 +86,7 @@ export class Surface {
   }
 
   static DiskToUpper(input: Vector3D): Vector3D {
-    let m: Mobius = new Mobius()
+    let m: Mobius = Mobius.construct()
     m.UpperHalfPlane()
     return m.Apply(input)
   }

@@ -12,7 +12,7 @@ import { Mobius } from './Mobius'
 export class Isometry implements ITransform {
   static constructUnity() {
     const isometry = new Isometry()
-    isometry.Mobius = new Mobius()
+    isometry.Mobius = Mobius.construct()
     isometry.Mobius.Unity()
     return isometry
   }
@@ -97,7 +97,7 @@ export class Isometry implements ITransform {
     w1 = i1.Apply(w1)
     w2 = i1.Apply(w2)
     w3 = i1.Apply(w3)
-    let m: Mobius = new Mobius()
+    let m: Mobius = Mobius.construct()
     m.MapPoints(p1, p2, p3, w1, w2, w3)
     let result: Isometry = Isometry.constructUnity()
     result.Mobius = m
@@ -171,7 +171,7 @@ export class Isometry implements ITransform {
   // IOW, the three points may be collinear, in which case we are talking about a reflection.
 
   #CacheCircleInversion(c1: Complex, c2: Complex, c3: Complex) {
-    let toUnitCircle: Mobius = new Mobius()
+    let toUnitCircle: Mobius = Mobius.construct()
     toUnitCircle.MapPoints(
       c1,
       c2,
@@ -284,7 +284,7 @@ export class Isometry implements ITransform {
       return
     }
 
-    let m: Mobius = new Mobius()
+    let m: Mobius = Mobius.construct()
     m.MapPoints(p1, p2, p3, w1, w2, w3)
     this.Mobius = m
     //  Worry about reflections as well.

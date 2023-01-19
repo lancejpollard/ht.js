@@ -58,47 +58,47 @@ export class Complex implements IEquatable<Complex>, IFormattable {
     )
   }
 
-  static Negate(value: Complex): Complex {
-    return value * -1
+  Negate(): Complex {
+    return Complex.Negate(this)
   }
 
-  static Add(left: Complex, right: Complex): Complex {
-    return left + right
+  Add(right: Complex): Complex {
+    return Complex.Add(this, right)
   }
 
-  static Subtract(left: Complex, right: Complex): Complex {
-    return left - right
+  Subtract(right: Complex): Complex {
+    return Complex.Subtract(this, right)
   }
 
-  static Multiply(left: Complex, right: Complex): Complex {
-    return left * right
+  Multiply(right: Complex): Complex {
+    return Complex.Multiply(this, right)
   }
 
-  static Divide(dividend: Complex, divisor: Complex): Complex {
-    return dividend / divisor
+  Divide(divisor: Complex): Complex {
+    return Complex.Divide(this, divisor)
   }
 
   //  --------------SECTION: Arithmetic Operator(unary) Overloading -------------- //
-  static negate(value: Complex): Complex {
+  static Negate(value: Complex): Complex {
     return new Complex(value.m_real * -1, value.m_imaginary * -1)
   }
 
   //  --------------SECTION: Arithmetic Operator(binary) Overloading -------------- //
-  static add(left: Complex, right: Complex): Complex {
+  static Add(left: Complex, right: Complex): Complex {
     return new Complex(
       left.m_real + right.m_real,
       left.m_imaginary + right.m_imaginary,
     )
   }
 
-  static subtract(left: Complex, right: Complex): Complex {
+  static Subtract(left: Complex, right: Complex): Complex {
     return new Complex(
       left.m_real - right.m_real,
       left.m_imaginary - right.m_imaginary,
     )
   }
 
-  static multiply(left: Complex, right: Complex): Complex {
+  static Multiply(left: Complex, right: Complex): Complex {
     //  Multiplication:  (a + bi)(c + di) = (ac -bd) + (bc + ad)i
     let result_Realpart: number =
       left.m_real * right.m_real - left.m_imaginary * right.m_imaginary
@@ -107,7 +107,7 @@ export class Complex implements IEquatable<Complex>, IFormattable {
     return new Complex(result_Realpart, result_Imaginarypart)
   }
 
-  static divide(left: Complex, right: Complex): Complex {
+  static Divide(left: Complex, right: Complex): Complex {
     //  Division : Smith's formula.
     let a: number = left.m_real
     let b: number = left.m_imaginary

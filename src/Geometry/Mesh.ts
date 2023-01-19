@@ -243,7 +243,7 @@ export class Mesh {
       let a: Vector3D = tile.Boundary.Segments[0].P1
       let b: Vector3D = tile.Boundary.Segments[1].P1
       let c: Vector3D = tile.Boundary.Segments[2].P1
-      let m: Mobius = new Mobius()
+      let m: Mobius = Mobius.construct()
       if (tile.Isometry.Reflected) {
         m.MapPoints(
           template.Segments[0].P1,

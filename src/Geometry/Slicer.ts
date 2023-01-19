@@ -25,7 +25,7 @@ export class Slicer {
     //  Setup the two slicing circles.
     let c2: CircleNE = c.Clone()
     let c1: CircleNE = c.Clone()
-    let m: Mobius = new Mobius()
+    let m: Mobius = Mobius.construct()
     const pointOnCircle: Vector3D = c.IsLine
       ? c.P1
       : c.Center + Vector3D.construct2d(c.Radius, 0)
