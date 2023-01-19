@@ -1,5 +1,6 @@
 // Class for generalized circles (lines are a limiting case).
 
+import { UtilsInfinity } from '@Math/Infinity'
 import { Isometry } from '@Math/Isometry'
 import { Mobius } from '@Math/Mobius'
 import { isInfinite, Tolerance, Utils } from '@Math/Utils'
@@ -10,8 +11,20 @@ import { ITransform, ITransformable } from './Transformable'
 import { Vector3D } from './Vector3D'
 
 export class Circle implements ITransformable {
-  constructor() {
-    this.Reset()
+  constructor(p1: Vector3D, p2: Vector3D, p3: Vector3D, r = 1) {
+    this.P2 = p1
+    this.P1 = p2
+    this.Center = p3
+    this.Radius = r
+  }
+
+  static construct() {
+    return new Circle(
+      Vector3D.construct(),
+      Vector3D.construct(),
+      Vector3D.construct(),
+      1,
+    )
   }
 
   Reset() {
@@ -23,14 +36,18 @@ export class Circle implements ITransformable {
 
   // Constructs a circle from 3 points.
 
-  constructor(p1: Vector3D, p2: Vector3D, p3: Vector3D) {
-    this.From3Points(p1, p2, p3)
+  static construct3d(p1: Vector3D, p2: Vector3D, p3: Vector3D) {
+    const self = Circle.construct()
+    self.From3Points(p1, p2, p3)
+    return self
   }
 
   // Constructs a circle with infinite radius going through 2 points.
 
-  constructor(p1: Vector3D, p2: Vector3D) {
-    this.From2Points(p1, p2)
+  static construct2d(p1: Vector3D, p2: Vector3D) {
+    const self = Circle.construct()
+    self.From2Points(p1, p2)
+    return self
   }
 
   Center: Vector3D
@@ -46,15 +63,11 @@ export class Circle implements ITransformable {
   // Whether we are a line.
 
   get IsLine(): boolean {
-    return number.IsInfinity(this.Radius)
+    return isInfinite(this.Radius)
   }
 
   Clone(): Circle {
-    const next = new Circle()
-    next.Center = this.Center
-    next.Radius = this.Radius
-    next.P1 = this.P1
-    next.P2 = this.P2
+    const next = new Circle(this.P1, this.P2, this.Center, this.Radius)
     return next
   }
 
@@ -63,53 +76,56 @@ export class Circle implements ITransformable {
   // <returns>false if the construction failed (if we are a line).</returns>
   From3Points(p1: Vector3D, p2: Vector3D, p3: Vector3D): boolean {
     this.Reset()
+
     //  Check for any infinite points, in which case we are a line.
     //  I'm not sure these checks are smart, since our IsInfinite check is so inclusive,
     //  but Big Chop puzzle doesn't work if we don't do this.
     //  ZZZ - Still, I need to think on this more.
-    if (isInfinite(p1)) {
+    if (UtilsInfinity.IsInfiniteVector3D(p1)) {
       this.From2Points(p2, p3)
       return false
-    } else if (isInfinite(p2)) {
+    } else if (UtilsInfinity.IsInfiniteVector3D(p2)) {
       this.From2Points(p1, p3)
       return false
-    } else if (isInfinite(p3)) {
+    } else if (UtilsInfinity.IsInfiniteVector3D(p3)) {
       this.From2Points(p1, p2)
       return false
     }
 
     //  Midpoints.
-    let m1: Vector3D = (p1 + p2) / 2
-    let m2: Vector3D = (p1 + p3) / 2
+    let m1: Vector3D = p1.Add(p2).Divide(2)
+    let m2: Vector3D = p1.Add(p3).Divide(2)
+
     //  Perpendicular bisectors.
-    let b1: Vector3D = (p2 - p1) / 2
-    let b2: Vector3D = (p3 - p1) / 2
+    let b1: Vector3D = p2.Subtract(p1).Divide(2)
+    let b2: Vector3D = p3.Subtract(p1).Divide(2)
+
     b1.Normalize()
     b2.Normalize()
     b1.RotateXY(Math.PI / 2)
     b2.RotateXY(Math.PI / 2)
-    let newCenter: Vector3D
-    let found: number = Euclidean2D.IntersectionLineLine(
-      m1,
-      m1 + b1,
-      m2,
-      m2 + b2,
-      /* out */ newCenter,
-    )
-    this.Center = newCenter
-    if (0 == found) {
+
+    let newCenter: Vector3D | undefined =
+      Euclidean2D.IntersectionLineLine(m1, m1.Add(b1), m2, m2.Add(b2))
+
+    this.Center = newCenter || Vector3D.construct()
+
+    if (!newCenter) {
       //  The points are collinear, so we are a line.
       this.From2Points(p1, p2)
       return false
     }
 
-    this.Radius = (p1 - this.Center).Abs()
+    this.Radius = p1.Subtract(this.Center).Abs()
+
     console.assert(
-      Tolerance.Equal(this.Radius, (p2 - this.Center).Abs()),
+      Tolerance.Equal(this.Radius, p2.Subtract(this.Center).Abs()),
     )
+
     console.assert(
-      Tolerance.Equal(this.Radius, (p3 - this.Center).Abs()),
+      Tolerance.Equal(this.Radius, p3.Subtract(this.Center).Abs()),
     )
+
     return true
   }
 
@@ -132,13 +148,16 @@ export class Circle implements ITransformable {
       return
     }
 
-    let d: Vector3D = this.P2 - this.P1
+    let d: Vector3D = this.P2.Subtract(this.P1)
+
     d.Normalize()
+
     this.P1 = Euclidean2D.ProjectOntoLine(
       Vector3D.construct(),
       this.P1,
       this.P2,
     )
+
     //  ZZZ - Could probably do something more robust to choose proper direction.
     if (
       Tolerance.GreaterThanOrEqual(
@@ -146,15 +165,18 @@ export class Circle implements ITransformable {
         Math.PI,
       )
     ) {
-      d = d * -1
+      d = d.Negate()
     }
 
-    this.P2 = this.P1 + d
+    this.P2 = this.P1.Add(d)
   }
 
   //  Strictly less than.
   IsPointInside(test: Vector3D): boolean {
-    return Tolerance.LessThan((test - this.Center).Abs(), this.Radius)
+    return Tolerance.LessThan(
+      test.Subtract(this.Center).Abs(),
+      this.Radius,
+    )
   }
 
   IsPointOn(test: Vector3D): boolean {
@@ -181,11 +203,13 @@ export class Circle implements ITransformable {
     if (this.IsPointOn(c.Center)) {
       //  Grab 2 points to reflect to P1/P2.
       //  We'll use the 2 points that are 120 degrees from c.Center.
-      let v: Vector3D = c.Center - this.Center
+      let v: Vector3D = c.Center.Subtract(this.Center)
       v.RotateXY(2 * (Math.PI / 3))
-      this.P1 = c.ReflectPoint(this.Center + v)
+
+      this.P1 = c.ReflectPoint(this.Center.Add(v))
       v.RotateXY(2 * (Math.PI / 3))
-      this.P2 = c.ReflectPoint(this.Center + v)
+
+      this.P2 = c.ReflectPoint(this.Center.Add(v))
       this.Radius = Number.POSITIVE_INFINITY
       this.Center.Empty()
     } else {
@@ -193,9 +217,10 @@ export class Circle implements ITransformable {
       //          See http://mathworld.wolfram.com/Inversion.html
       let a: number = this.Radius
       let k: number = c.Radius
-      let v: Vector3D = this.Center - c.Center
+      let v: Vector3D = this.Center.Subtract(c.Center)
       let s: number = k * (k / (v.MagSquared() - a * a))
-      this.Center = c.Center + v * s
+
+      this.Center = c.Center.Add(v.MultiplyWithNumber(s))
       this.Radius = Math.abs(s) * a
       this.P1.Empty()
       this.P2.Empty()
@@ -222,7 +247,7 @@ export class Circle implements ITransformable {
       return Euclidean2D.ReflectPointInLine(p, this.P1, this.P2)
     } else {
       //  Handle infinities.
-      let infinityVector: Vector3D = Infinity.InfinityVector
+      let infinityVector: Vector3D = UtilsInfinity.InfinityVector
       if (p.Compare(this.Center)) {
         return infinityVector
       }
@@ -231,10 +256,14 @@ export class Circle implements ITransformable {
         return this.Center
       }
 
-      let v: Vector3D = p - this.Center
+      let v: Vector3D = p.Subtract(this.Center)
       let d: number = v.Abs()
+
       v.Normalize()
-      return this.Center + v * (this.Radius * (this.Radius / d))
+
+      return this.Center.Add(
+        v.MultiplyWithNumber(this.Radius * (this.Radius / d)),
+      )
     }
   }
 
@@ -263,9 +292,9 @@ export class Circle implements ITransformable {
       p3 = this.Center.Add(Vector3D.construct3d(0, this.Radius, 0))
     }
 
-    p1 = transform.Apply(p1)
-    p2 = transform.Apply(p2)
-    p3 = transform.Apply(p3)
+    p1 = transform.ApplyVector3D(p1)
+    p2 = transform.ApplyVector3D(p2)
+    p3 = transform.ApplyVector3D(p3)
 
     this.From3Points(p1, p2, p3)
   }

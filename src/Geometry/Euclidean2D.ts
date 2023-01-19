@@ -71,10 +71,7 @@ export class Euclidean2D {
     p2: Vector3D,
     p3: Vector3D,
     p4: Vector3D,
-    /* out */ intersection: Vector3D,
-  ): number {
-    intersection = Vector3D.construct()
-
+  ): Vector3D | undefined {
     let n1: Vector3D = p2.Subtract(p1)
     let n2: Vector3D = p4.Subtract(p3)
 
@@ -82,7 +79,7 @@ export class Euclidean2D {
     //  XXX - Handle the case where lines are one and the same separately?
     //          (infinite interesection points)
     if (Tolerance.Zero(n1.Cross(n2).Abs())) {
-      return 0
+      return
     }
 
     let d3: number = Euclidean2D.DistancePointLine(p3, p1, p2)
@@ -95,19 +92,9 @@ export class Euclidean2D {
     const sameSide = a3 > Math.PI ? a4 > Math.PI : a4 <= Math.PI
 
     const factor = sameSide ? d3 / (d3 - d4) : d3 / (d3 + d4)
-    intersection = p3.Add(n2.MultiplyWithNumber(factor))
+    const intersection = p3.Add(n2.MultiplyWithNumber(factor))
 
-    //  XXX - Unfortunately, this is happening sometimes.
-
-    if (
-      !Tolerance.Zero(
-        Euclidean2D.DistancePointLine(intersection, p1, p2),
-      )
-    ) {
-      // console.assert( false );
-    }
-
-    return 1
+    return intersection
   }
 
   static IntersectionCircleCircle(c1: Circle, c2: Circle): number {
