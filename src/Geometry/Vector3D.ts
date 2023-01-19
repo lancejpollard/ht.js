@@ -1,5 +1,6 @@
-import { Tolerance } from '@Math/Utils'
+import { Tolerance, Utils } from '@Math/Utils'
 import { Complex } from './Complex'
+import { IComparer } from './IComparer'
 
 export class Vector3D {
   constructor(x: number, y: number, z: number, w: number) {
@@ -50,6 +51,10 @@ export class Vector3D {
     return this.ToString()
   }
 
+  Clone(): Vector3D {
+    return Vector3D.construct4d(this.X, this.Y, this.Z, this.W)
+  }
+
   ToStringXYZOnly(): string {
     return `${this.X},${this.Y},${this.Z}`
   }
@@ -59,17 +64,17 @@ export class Vector3D {
     return v.ToComplex()
   }
 
-  static Operator(v1: Vector3D, v2: Vector3D): boolean {
+  static Equals(v1: Vector3D, v2: Vector3D): boolean {
     return v1.Compare(v2)
   }
 
-  static Operator(v1: Vector3D, v2: Vector3D): boolean {
+  static NotEquals(v1: Vector3D, v2: Vector3D): boolean {
     return !(v1 == v2)
   }
 
   /* override */ Equals(obj: Object): boolean {
     let v: Vector3D = obj
-    return v == this
+    return v.Equals(this)
   }
 
   /* override */ GetHashCode(): number {
@@ -89,10 +94,10 @@ export class Vector3D {
     let inverse: number = 1 / tolerance
     let decimals: number = Math.log10(inverse)
     return (
-      Math.round(this.X, decimals).GetHashCode() |
-      (Math.round(this.Y, decimals).GetHashCode() |
-        (Math.round(this.Z, decimals).GetHashCode() |
-          Math.round(this.W, decimals).GetHashCode()))
+      Utils.Round(this.X, decimals).GetHashCode() |
+      (Utils.Round(this.Y, decimals).GetHashCode() |
+        (Utils.Round(this.Z, decimals).GetHashCode() |
+          Utils.Round(this.W, decimals).GetHashCode()))
     )
     // The operator should be an XOR ^ instead of an OR, but not available in CodeDOM
     // The operator should be an XOR ^ instead of an OR, but not available in CodeDOM
@@ -101,7 +106,10 @@ export class Vector3D {
     // return X.GetHashCode() ^ Y.GetHashCode() ^ Z.GetHashCode();
   }
 
-  Compare(other: Vector3D, threshold: number): boolean {
+  CompareWithThreshold(
+    other: Vector3D,
+    threshold: number = 0,
+  ): boolean {
     //  NOTE: This is here because when the vector is infinite, it fails the tolerance checks below.
     if (
       this.X == other.X &&
@@ -129,18 +137,18 @@ export class Vector3D {
   }
 
   Compare(other: Vector3D): boolean {
-    return this.Compare(other, Tolerance.Threshold)
+    return this.CompareWithThreshold(other, Tolerance.Threshold)
   }
 
-  static Operator(v: Vector3D, s: number): Vector3D {
+  static MultiplyVectorByNumber(v: Vector3D, s: number): Vector3D {
     return Vector3D.construct4d(v.X * s, v.Y * s, v.Z * s, v.W * s)
   }
 
-  static Operator(s: number, v: Vector3D): Vector3D {
-    return v * s
+  static MultiplyNumberByVector(s: number, v: Vector3D): Vector3D {
+    return Vector3D.MultiplyVectorByNumber(v, s)
   }
 
-  static Operator(v: Vector3D, s: number): Vector3D {
+  static Divide(v: Vector3D, s: number): Vector3D {
     return Vector3D.construct4d(v.X / s, v.Y / s, v.Z / s, v.W / s)
   }
 
@@ -151,7 +159,7 @@ export class Vector3D {
     this.W /= s
   }
 
-  static Operator(v1: Vector3D, v2: Vector3D): Vector3D {
+  static Add(v1: Vector3D, v2: Vector3D): Vector3D {
     return Vector3D.construct4d(
       v1.X + v2.X,
       v1.Y + v2.Y,
@@ -160,19 +168,19 @@ export class Vector3D {
     )
   }
 
-  static Operator(v: Vector3D): Vector3D {
+  static Negate(v: Vector3D): Vector3D {
     return Vector3D.construct4d(v.X * -1, v.Y * -1, v.Z * -1, v.W * -1)
   }
 
-  static Operator(v1: Vector3D, v2: Vector3D): Vector3D {
-    return v1 + v2 * -1
+  static Subtract(v1: Vector3D, v2: Vector3D): Vector3D {
+    return Vector3D.Add(v1, Vector3D.Negate(v2))
   }
 
   Round(digits: number) {
-    this.X = Math.round(this.X, digits)
-    this.Y = Math.round(this.Y, digits)
-    this.Z = Math.round(this.Z, digits)
-    this.W = Math.round(this.W, digits)
+    this.X = Utils.Round(this.X, digits)
+    this.Y = Utils.Round(this.Y, digits)
+    this.Z = Utils.Round(this.Z, digits)
+    this.W = Utils.Round(this.W, digits)
   }
 
   Valid(): boolean {
@@ -223,7 +231,7 @@ export class Vector3D {
       return false
     }
 
-    this = this * scale
+    this.Merge(Vector3D.MultiplyVectorByNumber(this, scale))
     return true
   }
 
@@ -243,13 +251,13 @@ export class Vector3D {
   }
 
   get IsZAxis(): boolean {
-    let copy: Vector3D = this
+    let copy: Vector3D = this.Clone()
     copy.Normalize()
     return Tolerance.Equal(1, Math.abs(copy.Z))
   }
 
   Dist(v: Vector3D): number {
-    return (this - v).Abs()
+    return Vector3D.Subtract(this, v).Abs()
   }
 
   Dot(v: Vector3D): number {
@@ -277,10 +285,17 @@ export class Vector3D {
 
   // Rotate CCW in the XY plane about a center.  Angle is in radians.
 
-  RotateXY(center: Vector3D, angle: number) {
-    this = this - center
+  RotateXYAtCenter(center: Vector3D, angle: number) {
+    this.Merge(Vector3D.Subtract(this, center))
     this.RotateXY(angle)
-    this = this + center
+    this.Merge(Vector3D.Add(this, center))
+  }
+
+  Merge(other: Vector3D) {
+    this.X = other.X
+    this.Y = other.Y
+    this.Z = other.Z
+    this.W = other.W
   }
 
   //  NOTE: angle should be in radians.
@@ -304,11 +319,15 @@ export class Vector3D {
     let y: number = this.Y
     let z: number = this.Z
     //  do the multiplication
-    this = Vector3D.construct3d(
-      mRot[(0, 0)] * x + (mRot[(1, 0)] * y + mRot[(2, 0)] * z),
-      mRot[(0, 1)] * x + (mRot[(1, 1)] * y + mRot[(2, 1)] * z),
-      mRot[(0, 2)] * x + (mRot[(1, 2)] * y + mRot[(2, 2)] * z),
+    const next = Vector3D.construct3d(
+      mRot[0][0] * x + (mRot[1][0] * y + mRot[2][0] * z),
+      mRot[0][1] * x + (mRot[1][1] * y + mRot[2][1] * z),
+      mRot[0][2] * x + (mRot[1][2] * y + mRot[2][2] * z),
     )
+    this.X = next.X
+    this.Y = next.Y
+    this.Z = next.Z
+    this.W = next.W
   }
 
   // Unsigned (not handed) angle between 0 and pi.
@@ -413,7 +432,7 @@ export class Vector3D {
 // For comparing vectors (for ordering, etc.)
 // NOTE: I made the comparison tolerance safe.
 
-export class Vector3DComparer extends IComparer {
+export class Vector3DComparer implements IComparer {
   Compare(v1: Vector3D, v2: Vector3D): number {
     const less: number = -1
     const greater: number = 1
