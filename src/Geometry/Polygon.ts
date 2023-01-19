@@ -5,6 +5,7 @@ import { Mobius } from '@Math/Mobius'
 import { Tolerance, Utils } from '@Math/Utils'
 import { Circle, CircleNE } from './Circle'
 import { Euclidean2D } from './Euclidean2D'
+import { Euclidean3D } from './Euclidean3D'
 import { Geometry } from './Geometry'
 import { Geometry2D } from './Geometry2D'
 import { IEqualityComparer } from './IEqualityComparer'
@@ -172,10 +173,16 @@ export class Polygon implements ITransformable {
     let polyPoints: Array<Vector3D> = new Array<Vector3D>()
     let centralAngle: number = 2 * (Math.PI / n)
     let direction: Vector3D = p2.Subtract(p1)
+
     direction.RotateAboutAxis(normal, Math.PI / 2)
     direction.Normalize()
+
     let dist: number = p2.Subtract(p1).Abs() / 2 / Math.tan(Math.PI / n)
-    let center: Vector3D = p1 + ((p2 - p1) / 2 + direction * dist)
+    let center: Vector3D = p1
+      .Add(p2.Subtract(p1))
+      .Divide(2)
+      .Add(direction.MultiplyWithNumber(dist))
+
     for (let i: number = 0; i < n; i++) {
       let v: Vector3D = p1.Subtract(center)
       v.RotateAboutAxis(normal, centralAngle * i)
@@ -194,22 +201,22 @@ export class Polygon implements ITransformable {
   ///  </summary>
   CreateEuclidean(points: Array<Vector3D>) {
     this.Segments.Clear()
-    for (let i: number = 0; i < points.Length; i++) {
+    for (let i: number = 0; i < points.length; i++) {
       let idx1: number = i
       let idx2: number = i + 1
-      if (idx2 == points.Length) {
+      if (idx2 == points.length) {
         idx2 = 0
       }
 
       let newSeg: Segment = Segment.Line(points[idx1], points[idx2])
-      this.Segments.Add(newSeg)
+      this.Segments.push(newSeg)
     }
 
     this.Center = this.CentroidApprox
   }
 
   get NumSides(): number {
-    return this.Segments.Count
+    return this.Segments.length
   }
 
   get Length(): number {
@@ -229,7 +236,7 @@ export class Polygon implements ITransformable {
   ///  This is not fully accurate for arcs yet.
   ///  </summary>
   get CentroidApprox(): Vector3D {
-    let average: Vector3D = new Vector3D()
+    let average: Vector3D = Vector3D.construct()
     for (let i: number = 0; i < this.NumSides; i++) {
       //  NOTE: This is not fully accurate for arcs (using midpoint instead of true centroid).
       //          This was done on purpose in MagicTile v1, to help avoid drawing overlaps.
@@ -237,7 +244,7 @@ export class Polygon implements ITransformable {
       let s: Segment = this.Segments[i]
       //  ZZZ
       // if( s.valid() )
-      average = average + s.Midpoint * s.Length
+      average = average.Add(s.Midpoint.MultiplyWithNumber(s.Length))
     }
 
     this.Length
@@ -252,14 +259,12 @@ export class Polygon implements ITransformable {
   ///  Calculate a normal after a transformation function is applied
   ///  to the points of the polygon.
   ///  </summary>
-  NormalAfterTransform(
-    transform: System.Func<Vector3D, Vector3D>,
-  ): Vector3D {
+  NormalAfterTransform(transform: (v: Vector3D) => Vector3D): Vector3D {
     if (this.NumSides < 1) {
-      return new Vector3D(0, 0, 1)
+      return Vector3D.construct3d(0, 0, 1)
     }
 
-    return Euclidean3D.NormalFrom3Points(
+    return Euclidean3D.NormalFrom3PointsWithTransform(
       this.Segments[0].P1,
       this.Segments[0].P2,
       this.Center,
@@ -272,11 +277,11 @@ export class Polygon implements ITransformable {
   ///  </summary>
   get Vertices(): Array<Vector3D> {
     let points: Array<Vector3D> = new Array<Vector3D>()
-    for (let s: Segment in this.Segments) {
-      points.Add(s.P1)
+    for (let s of this.Segments) {
+      points.push(s.P1)
     }
 
-    return points.ToArray()
+    return points
   }
 
   ///  <summary>
@@ -284,11 +289,11 @@ export class Polygon implements ITransformable {
   ///  </summary>
   get EdgeMidpoints(): Array<Vector3D> {
     let points: Array<Vector3D> = new Array<Vector3D>()
-    for (let s: Segment in this.Segments) {
-      points.Add(s.Midpoint)
+    for (let s of this.Segments) {
+      points.push(s.Midpoint)
     }
 
-    return points.ToArray()
+    return points
   }
 
   get EdgePoints(): Array<Vector3D> {
@@ -300,13 +305,13 @@ export class Polygon implements ITransformable {
       //  ZZZ - getting lazy
       // console.assert( ! (UtilsInfinity.IsInfiniteVector3D( s.m_p1 ) && UtilsInfinity.IsInfiniteVector3D( s.m_p2 )) );
       const p1: Vector3D = UtilsInfinity.IsInfiniteVector3D(s.P1)
-        ? s.P2 * Infinity.FiniteScale
+        ? s.P2.MultiplyWithNumber(UtilsInfinity.FiniteScale)
         : s.P1
-      points.Add(p1)
+      points.push(p1)
       //  For arcs, add in a bunch of extra points.
       if (SegmentType.Arc == s.Type) {
         let maxAngle: number = s.Angle
-        let vs: Vector3D = s.P1 - s.Center
+        let vs: Vector3D = s.P1.Subtract(s.Center)
         let numSegments: number = maxAngle / arcResolution
         if (numSegments < 10) {
           numSegments = 10
@@ -315,18 +320,18 @@ export class Polygon implements ITransformable {
         let angle: number = maxAngle / numSegments
         for (let j: number = 1; j < numSegments; j++) {
           vs.RotateXY(s.Clockwise ? -angle : angle)
-          points.Add(vs + s.Center)
+          points.push(vs.Add(s.Center))
         }
       }
 
       //  Last point.
       const p2: Vector3D = UtilsInfinity.IsInfiniteVector3D(s.P2)
-        ? s.P1 * Infinity.FiniteScale
+        ? s.P1.MultiplyWithNumber(UtilsInfinity.FiniteScale)
         : s.P2
-      points.Add(p2)
+      points.push(p2)
     }
 
-    return points.ToArray()
+    return points
   }
 
   ///  <summary>
@@ -334,7 +339,7 @@ export class Polygon implements ITransformable {
   ///  NOTE: only makes sense for 2D polygons.
   ///  </summary>
   get Orientation(): boolean {
-    let sArea: number = SignedArea
+    let sArea: number = this.SignedArea
     return sArea > 0
   }
 
@@ -343,21 +348,21 @@ export class Polygon implements ITransformable {
     //  ZZZ - I'm doing arcs piecemiel at this point.  Maybe there is a better way.
     let sArea: number = 0
     let edgePoints: Array<Vector3D> = this.EdgePoints
-    for (let i: number = 0; i < edgePoints.Length; i++) {
+    for (let i: number = 0; i < edgePoints.length; i++) {
       let v1: Vector3D = edgePoints[i]
-      let v2: Vector3D = edgePoints[0]
-      const v2: Vector3D =
-        edgePoints[i == edgePoints.Length - 1 ? 0 : i + 1]
-      sArea = sArea + (v1.X * v2.Y - v1.Y * v2.X)
+      let v2: Vector3D =
+        edgePoints[i == edgePoints.length - 1 ? 0 : i + 1]
+      sArea += v1.X * v2.Y - v1.Y * v2.X
     }
 
-    2
+    sArea /= 2
     return sArea
   }
 
   get CircumCircle(): CircleNE {
     let result: CircleNE = new CircleNE()
-    if (this.Segments.Count > 2) {
+
+    if (this.Segments.length > 2) {
       result.From3Points(
         this.Segments[0].P1,
         this.Segments[1].P1,
@@ -371,7 +376,8 @@ export class Polygon implements ITransformable {
 
   get InCircle(): CircleNE {
     let result: CircleNE = new CircleNE()
-    if (this.Segments.Count > 2) {
+
+    if (this.Segments.length > 2) {
       result.From3Points(
         this.Segments[0].Midpoint,
         this.Segments[1].Midpoint,
@@ -385,11 +391,11 @@ export class Polygon implements ITransformable {
 
   Reverse() {
     //  Reverse all our segments and swap the order of them.
-    for (let s: Segment in this.Segments) {
+    for (let s of this.Segments) {
       s.Reverse()
     }
 
-    this.Segments.Reverse()
+    this.Segments.reverse()
   }
 
   ///  <summary>
@@ -404,8 +410,8 @@ export class Polygon implements ITransformable {
     for (let i: number = 0; i < num; i++) {
       //  Move the first to the last (like a CW rotation).
       let first: Segment = this.Segments[0]
-      this.Segments.RemoveAt(0)
-      this.Segments.Add(first)
+      this.Segments.unshift()
+      this.Segments.push(first)
     }
   }
 
@@ -426,7 +432,7 @@ export class Polygon implements ITransformable {
       s.TransformMobius(m)
     }
 
-    this.Center = m.Apply(this.Center)
+    this.Center = m.ApplyVector3D(this.Center)
   }
 
   ///  <summary>
@@ -437,7 +443,7 @@ export class Polygon implements ITransformable {
       s.TransformIsometry(isometry)
     }
 
-    this.Center = isometry.Apply(this.Center)
+    this.Center = isometry.ApplyVector3D(this.Center)
   }
 
   ///  <summary>
@@ -455,7 +461,7 @@ export class Polygon implements ITransformable {
   ///  Apply a Euclidean rotation to us.
   ///  </summary>
   Rotate(m: Matrix4D) {
-    for (let s: Segment in this.Segments) {
+    for (let s of this.Segments) {
       s.Rotate(m)
     }
 
@@ -466,7 +472,7 @@ export class Polygon implements ITransformable {
   ///  Euclidean scale us.
   ///  </summary>
   Scale(factor: number) {
-    for (let s: Segment in this.Segments) {
+    for (let s of this.Segments) {
       s.Scale(this.Center, factor)
     }
   }
@@ -477,10 +483,10 @@ export class Polygon implements ITransformable {
   GetIntersectionPoints(line: Circle): Array<Vector3D> {
     let iPoints: Array<Vector3D> = new Array<Vector3D>()
     for (let i: number = 0; i < this.NumSides; i++) {
-      iPoints.AddRange(line.GetIntersectionPoints(this.Segments[i]))
+      iPoints.push(...line.GetIntersectionPoints(this.Segments[i]))
     }
 
-    return iPoints.ToArray()
+    return iPoints
   }
 
   ///  <summary>
