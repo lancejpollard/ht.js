@@ -1,7 +1,7 @@
 import { Mobius } from '@Math/Mobius'
 import { Circle, CircleNE } from './Circle'
 import { Geometry } from './Geometry'
-import { Polygon } from './Polygon'
+import { Polygon, Segment } from './Polygon'
 import { Tile } from './Tile'
 import { Vector3D } from './Vector3D'
 
@@ -106,7 +106,7 @@ export class Slicer {
     return newTiles
   }
 
-  static #SlicePolygonInternal(
+  static SlicePolygonInternal(
     p: Polygon,
     c: Circle,
     /* out */ output: Array<Polygon>,
@@ -140,14 +140,14 @@ export class Slicer {
         continue
       }
 
-      switch (intersections.Length) {
+      switch (intersections.length) {
         case 0:
-          diced.Segments.Add(s)
+          diced.Segments.push(s)
           break
           break
         case 1:
           //  ZZZ - check here to see if it is a tangent iPoint?  Not sure if we need to do this.
-          diced.Segments.Add(
+          diced.Segments.push(
             Slicer.SplitHelper(s, intersections[0], diced, iPoints),
           )
           break
@@ -172,38 +172,36 @@ export class Slicer {
             diced,
             iPoints,
           )
-          diced.Segments.Add(segmentToAdd)
-          break
+          diced.Segments.push(segmentToAdd)
           break
         default:
           console.assert(false)
           return false
-          break
       }
     }
 
     //  NOTE: We've been careful to avoid adding duplicates to iPoints.
     //  Are we done? (no intersections)
-    if (0 == iPoints.Count) {
-      output.Add(p)
+    if (0 == iPoints.length) {
+      output.push(p)
       return true
     }
 
     //  We don't yet deal with tangengies,
     //  but we're going to let this case slip through as unsliced.
-    if (1 == iPoints.Count) {
-      output.Add(p)
+    if (1 == iPoints.length) {
+      output.push(p)
       return true
     }
 
     //  We don't yet deal with tangencies.
     //  We're going to fail on this case, because it could be more problematic.
-    if (Utils.Odd(iPoints.Count)) {
+    if (Utils.Odd(iPoints.length)) {
       console.assert(false)
       return false
     }
 
-    if (iPoints.Count > 2) {
+    if (iPoints.length > 2) {
       //  We may need our intersection points to all be reorded by 1.
       //  This is so that when walking from i1 -> i2 along c, we will be moving through the interior of the polygon.
       //  ZZZ - This may need to change when hack in SplicedArc is improved.
@@ -219,24 +217,24 @@ export class Slicer {
       if (!p.IsPointInsideParanoid(midpoint)) {
         let t: IntersectionPoint = iPoints[0]
         iPoints.RemoveAt(0)
-        iPoints.Add(t)
+        iPoints.push(t)
       }
     }
 
     //
     //  From each intersection point, walk the polygon.
     //
-    let numPairs: number = iPoints.Count / 2
+    let numPairs: number = iPoints.length / 2
     for (let i: number = 0; i < numPairs; i++) {
       let pair: number = i
-      output.Add(Slicer.WalkPolygon(p, diced, c, pair, iPoints, true))
-      output.Add(Slicer.WalkPolygon(p, diced, c, pair, iPoints, false))
+      output.push(Slicer.WalkPolygon(p, diced, c, pair, iPoints, true))
+      output.push(Slicer.WalkPolygon(p, diced, c, pair, iPoints, false))
     }
 
     //
     //  Recalc centers.
     //
-    for (let poly: Polygon in output) {
+    for (let poly of output) {
       poly.Center = poly.CentroidApprox
     }
 
