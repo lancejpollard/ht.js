@@ -33,15 +33,16 @@ export class Euclidean2D {
     lineP2: Vector3D,
   ): number {
     //  The line vector
-    let v1: Vector3D = lineP2 - lineP1
+    let v1: Vector3D = lineP2.Subtract(lineP1)
     let lineMag: number = v1.Abs()
+
     if (Tolerance.Zero(lineMag)) {
       //  Line definition points are the same.
       console.assert(false)
       return NaN
     }
 
-    let v2: Vector3D = p - lineP1
+    let v2: Vector3D = p.Subtract(lineP1)
     let distance: number = v1.Cross(v2).Abs() / lineMag
     return distance
   }
@@ -51,7 +52,7 @@ export class Euclidean2D {
     lineP1: Vector3D,
     lineP2: Vector3D,
   ): Vector3D {
-    let v1: Vector3D = lineP2 - lineP1
+    let v1: Vector3D = lineP2.Subtract(lineP1)
     let lineMag: number = v1.Abs()
     if (Tolerance.Zero(lineMag)) {
       console.assert(false)
@@ -59,7 +60,7 @@ export class Euclidean2D {
     }
 
     v1.Normalize()
-    let v2: Vector3D = p - lineP1
+    let v2: Vector3D = p.Subtract(lineP1)
     let distanceAlongLine: number = v2.Dot(v1)
 
     return lineP1.Add(v1.MultiplyWithNumber(distanceAlongLine))
