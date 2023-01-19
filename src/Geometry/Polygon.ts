@@ -399,7 +399,7 @@ export class Polygon implements ITransformable {
 
   Reflect(s: Segment) {
     //  Just reflect all our segments.
-    for (let i: number = 0; i < this.Segments.Count; i++) {
+    for (let i: number = 0; i < this.Segments.length; i++) {
       this.Segments[i].Reflect(s)
     }
 

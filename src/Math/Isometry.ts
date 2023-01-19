@@ -118,6 +118,7 @@ export class Isometry implements ITransform {
 
   ApplyComplex(z: Complex): Complex {
     z = this.Mobius.ApplyComplex(z)
+
     if (this.Reflection != null) {
       z = this.ApplyCachedCircleInversion(z)
     }

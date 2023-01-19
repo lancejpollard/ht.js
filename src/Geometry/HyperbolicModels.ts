@@ -1,3 +1,4 @@
+import { DonHatch } from '@Math/DonHatch'
 import { Mobius } from '@Math/Mobius'
 import { Complex } from './Complex'
 import { Geometry } from './Geometry'
@@ -37,10 +38,10 @@ export enum HyperbolicModel {
 export class HyperbolicModels {
   static PoincareToKlein(p: Vector3D): Vector3D {
     let mag: number = 2 / (1 + p.Dot(p))
-    return p * mag
+    return p.MultiplyWithNumber(mag)
   }
 
-  static KleinToPoincare(magSquared: number): number {
+  static KleinToPoincareWithNumber(magSquared: number): number {
     let dot: number = magSquared
     if (dot > 1) {
       dot = 1
@@ -49,25 +50,27 @@ export class HyperbolicModels {
     return (1 - Math.sqrt(1 - dot)) / dot
   }
 
-  static KleinToPoincare(k: Vector3D): Vector3D {
+  static KleinToPoincareWithVector3D(k: Vector3D): Vector3D {
     let dot: number = k.Dot(k)
-    return k * HyperbolicModels.KleinToPoincare(dot)
+    return k.MultiplyWithNumber(
+      HyperbolicModels.KleinToPoincareWithNumber(dot),
+    )
   }
 
   static get Upper(): Mobius {
     HyperbolicModels.Cache()
-    return m_upper
+    return this.m_upper
   }
 
   static get UpperInv(): Mobius {
     HyperbolicModels.Cache()
-    return m_upperInv
+    return this.m_upperInv
   }
 
   // This was needed for performance.  We don't want this Mobius transform calculated repeatedly.
 
   static Cache() {
-    if (m_cached) {
+    if (this.m_cached) {
       return
     }
 
@@ -75,9 +78,9 @@ export class HyperbolicModels {
     let m1: Mobius = Mobius.construct()
     m2.Isometry(Geometry.Euclidean, 0, new Complex(0, -1))
     m1.UpperHalfPlane()
-    m_upper = m2 * m1
-    m_upperInv = m_upper.Inverse()
-    m_cached = true
+    this.m_upper = m2.Multiply(m1)
+    this.m_upperInv = this.m_upper.Inverse()
+    this.m_cached = true
   }
 
   static m_cached: boolean = false
@@ -87,12 +90,12 @@ export class HyperbolicModels {
   static m_upperInv: Mobius
 
   static PoincareToUpper(v: Vector3D): Vector3D {
-    v = Upper.Apply(v)
+    v = this.Upper.Apply(v)
     return v
   }
 
   static UpperToPoincare(v: Vector3D): Vector3D {
-    v = this.UpperInv.Apply(v)
+    v = this.UpperInv.ApplyVector3D(v)
     return v
   }
 
@@ -108,7 +111,14 @@ export class HyperbolicModels {
 
   static PoincareToBand(v: Vector3D): Vector3D {
     let z: Complex = v.ToComplex()
-    z = 2 / (Math.PI * Complex.Log((1 + z) / (1 - z)))
+    z =
+      2 /
+      (Math.PI *
+        Complex.Log(
+          new Complex(1, 0)
+            .Add(z)
+            .Divide(new Complex(1, 0).Subtract(z)),
+        ))
     return Vector3D.FromComplex(z)
   }
 
@@ -176,14 +186,14 @@ export class HyperbolicModels {
     return Vector3D.FromComplex(w)
   }
 
-  static EquidistantToPoincare(p: Vector3D): Vector3D {
+  static EquidistantToPoincareWithVector3D(p: Vector3D): Vector3D {
     let result: Vector3D = p
     result.Normalize()
     result = result * HyperbolicModels.EquidistantToPoincare(p.Abs())
     return result
   }
 
-  static #EquidistantToPoincare(dist: number): number {
+  static EquidistantToPoincareWithNumber(dist: number): number {
     return DonHatch.h2eNorm(dist)
   }
 

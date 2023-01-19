@@ -210,7 +210,7 @@ export class Tiling {
       return
     }
 
-    let reflected: Array<Tile> = new Array<Tile>()
+    let reflected: Array<Tile> = []
 
     for (let tile of tiles) {
       //  We don't want to reflect tiles living out at infinity.
@@ -224,11 +224,12 @@ export class Tiling {
         return
       }
 
-      const n = tile.Boundary?.NumSides ?? 0
+      const n = tile.Boundary.NumSides
 
       for (let s: number = 0; s < n; s++) {
-        let seg: Segment | undefined = tile.Boundary?.Segments[s]
-        if (!seg || !this.NewTileAfterReflect(tile, seg, completed)) {
+        let seg: Segment = tile.Boundary.Segments[s]
+
+        if (!this.NewTileAfterReflect(tile, seg, completed)) {
           continue
         }
 
