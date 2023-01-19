@@ -3,11 +3,11 @@ import { Circle } from './Circle'
 import { Vector3D } from './Vector3D'
 
 export class Euclidean2D {
-  ///  <summary>
-  ///  Returns the counterclock angle between two vectors (between 0 and 2*pi)
-  ///  NOTE: A unique counter clockwise angle really only makes sense onces you've picked a plane normal direction.
-  ///          So as coded, this function is really only intended to be used with 2D vector inputs.
-  ///  </summary>
+  // <summary>
+  // Returns the counterclock angle between two vectors (between 0 and 2*pi)
+  // NOTE: A unique counter clockwise angle really only makes sense onces you've picked a plane normal direction.
+  //         So as coded, this function is really only intended to be used with 2D vector inputs.
+  // </summary>
   static AngleToCounterClock(v1: Vector3D, v2: Vector3D): number {
     let angle: number = Math.atan2(v2.Y, v2.X) - Math.atan2(v1.Y, v1.X)
     if (angle < 0) {
@@ -17,11 +17,11 @@ export class Euclidean2D {
     return angle
   }
 
-  ///  <summary>
-  ///  Returns the clockwise angle between two vectors (between 0 and 2*pi)
-  ///  NOTE: A unique clockwise angle really only makes sense onces you've picked a plane normal direction.
-  ///          So as coded, this function is really only intended to be used with 2D vector inputs.
-  ///  </summary>
+  // <summary>
+  // Returns the clockwise angle between two vectors (between 0 and 2*pi)
+  // NOTE: A unique clockwise angle really only makes sense onces you've picked a plane normal direction.
+  //         So as coded, this function is really only intended to be used with 2D vector inputs.
+  // </summary>
   static AngleToClock(v1: Vector3D, v2: Vector3D): number {
     let result: number = Euclidean2D.AngleToCounterClock(v1, v2)
     return 2 * Math.PI - result
@@ -55,7 +55,7 @@ export class Euclidean2D {
     let lineMag: number = v1.Abs()
     if (Tolerance.Zero(lineMag)) {
       console.assert(false)
-      return new Vector3D()
+      return Vector3D.construct()
     }
 
     v1.Normalize()
@@ -71,7 +71,7 @@ export class Euclidean2D {
     p4: Vector3D,
     /* out */ intersection: Vector3D,
   ): number {
-    intersection = new Vector3D()
+    intersection = Vector3D.construct()
     let n1: Vector3D = p2 - p1
     let n2: Vector3D = p4 - p3
     //  Intersect?
@@ -110,8 +110,8 @@ export class Euclidean2D {
     /* out */ p1: Vector3D,
     /* out */ p2: Vector3D,
   ): number {
-    p1 = new Vector3D()
-    p2 = new Vector3D()
+    p1 = Vector3D.construct()
+    p2 = Vector3D.construct()
     //  A useful page describing the cases in this function is:
     //  http://ozviz.wasp.uwa.edu.au/~pbourke/geometry/2circle/
     //  Maybe here now? http://paulbourke.net/geometry/circlesphere/
@@ -176,8 +176,8 @@ export class Euclidean2D {
     /* out */ p1: Vector3D,
     /* out */ p2: Vector3D,
   ): number {
-    p1 = new Vector3D()
-    p2 = new Vector3D()
+    p1 = Vector3D.construct()
+    p2 = Vector3D.construct()
     //  Distance from the circle center to the closest point on the line.
     let d: number = Euclidean2D.DistancePointLine(
       circle.Center,
@@ -226,9 +226,9 @@ export class Euclidean2D {
     return 2
   }
 
-  ///  <summary>
-  ///  Reflects a point in a line defined by two points.
-  ///  </summary>
+  // <summary>
+  // Reflects a point in a line defined by two points.
+  // </summary>
   static ReflectPointInLine(
     input: Vector3D,
     p1: Vector3D,
