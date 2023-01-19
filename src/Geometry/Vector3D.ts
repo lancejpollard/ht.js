@@ -168,6 +168,18 @@ export class Vector3D {
     )
   }
 
+  Add(v2: Vector3D): Vector3D {
+    return Vector3D.Add(this, v2)
+  }
+
+  Negate(): Vector3D {
+    return Vector3D.Negate(this)
+  }
+
+  Subtract(v2: Vector3D): Vector3D {
+    return Vector3D.Subtract(this, v2)
+  }
+
   static Negate(v: Vector3D): Vector3D {
     return Vector3D.construct4d(v.X * -1, v.Y * -1, v.Z * -1, v.W * -1)
   }

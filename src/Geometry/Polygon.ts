@@ -215,7 +215,7 @@ export class Polygon extends ITransformable {
   }
 
   get Normal(): Vector3D {
-    return this.NormalAfterTransform(() => {}, v)
+    return this.NormalAfterTransform(v => v)
   }
 
   ///  <summary>
@@ -536,7 +536,7 @@ export class Polygon extends ITransformable {
   ///  Warning, this suffers from FP tolerance issues,
   ///  when the polygon has arc segments with very large radii (for instance).
   ///  </summary>
-  #IsPointInside(p: Vector3D, ray: Circle): boolean {
+  IsPointInside(p: Vector3D, ray: Circle): boolean {
     //  We use the ray casting since that will work for arcs as well.
     //  NOTE: This impl is known to not be fully general yet,
     //          since some issues won't arise in MagicTile.
@@ -551,7 +551,7 @@ export class Polygon extends ITransformable {
       this.GetIntersectionPoints(ray).ToArray()
     //  Keep only the positive, distinct ones.
     iPoints = iPoints
-      .Where(() => {}, v.X > p.X)
+      .Where(v => v.X > p.X)
       .Distinct(new HighToleranceVectorEqualityComparer())
       .ToArray()
     //  Even number of intersection points means we're outside, odd means inside
@@ -568,13 +568,11 @@ export class Polygon extends ITransformable {
 export class PolygonEqualityComparer extends IEqualityComparer<Polygon> {
   Equals(poly1: Polygon, poly2: Polygon): boolean {
     let orderedVerts1: Array<Vector3D> = poly1.Vertices.OrderBy(
-      () => {},
-      v,
+      v => v
       new Vector3DComparer(),
     ).ToArray()
     let orderedVerts2: Array<Vector3D> = poly2.Vertices.OrderBy(
-      () => {},
-      v,
+      v => v
       new Vector3DComparer(),
     ).ToArray()
     if (orderedVerts1.Length != orderedVerts2.Length) {

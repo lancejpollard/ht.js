@@ -1,7 +1,8 @@
 // Class for generalized circles (lines are a limiting case).
 
-import { isInfinite, Tolerance } from '@Math/Utils'
+import { isInfinite, Tolerance, Utils } from '@Math/Utils'
 import { Euclidean2D } from './Euclidean2D'
+import { IEqualityComparer } from './IEqualityComparer'
 import { Segment, SegmentType } from './Polygon'
 import { ITransformable } from './Transformable'
 import { Vector3D } from './Vector3D'
@@ -47,7 +48,12 @@ export class Circle implements ITransformable {
   }
 
   Clone(): Circle {
-    return MemberwiseClone()
+    const next = new Circle()
+    next.Center = this.Center
+    next.Radius = this.Radius
+    next.P1 = this.P1
+    next.P2 = this.P2
+    return next
   }
 
   // Construct a circle from 3 points
@@ -346,20 +352,26 @@ export class Circle implements ITransformable {
 // which does not in general coincide with the Euclidean circle center.
 
 export class CircleNE extends Circle implements ITransformable {
-  // constructor() {}
-
-  constructor(c: Circle, centerNE: Vector3D) {
-    this.Center = c.Center
-    this.Radius = c.Radius
-    this.P1 = c.P1
-    this.P2 = c.P2
-    this.CenterNE = centerNE
+  static constructFromCircle(c: Circle, centerNE: Vector3D) {
+    const self = new CircleNE()
+    self.Center = c.Center
+    self.Radius = c.Radius
+    self.P1 = c.P1
+    self.P2 = c.P2
+    self.CenterNE = centerNE
+    return self
   }
 
   CenterNE: Vector3D
 
   Clone(): CircleNE {
-    return MemberwiseClone()
+    const next = new CircleNE()
+    next.Center = this.Center
+    next.Radius = this.Radius
+    next.P1 = this.P1
+    next.P2 = this.P2
+    next.CenterNE = this.CenterNE
+    return next
   }
 
   Reflect(c: Circle) {
@@ -396,8 +408,8 @@ export class CircleNE extends Circle implements ITransformable {
       //  We are inside if the test point is on the same side
       //  as the non-Euclidean center.
       return Euclidean2D.SameSideOfLine(
-        P1,
-        P2,
+        this.P1,
+        this.P2,
         testPoint,
         this.CenterNE,
       )
@@ -436,11 +448,11 @@ export class CircleNE extends Circle implements ITransformable {
       return false
     }
 
-    if (dx + (dy <= r)) {
+    if (dx + dy <= r) {
       return true
     }
 
-    return dx * dx + (dy * dy <= r * r)
+    return dx * dx + dy * dy <= r * r
   }
 
   static IsPointInsideFast(c: CircleNE, testPoint: Vector3D): boolean {
@@ -448,7 +460,9 @@ export class CircleNE extends Circle implements ITransformable {
   }
 }
 
-export class CircleNE_EqualityComparer extends IEqualityComparer<CircleNE> {
+export class CircleNE_EqualityComparer
+  implements IEqualityComparer<CircleNE>
+{
   //  ZZZ - I wonder if we want to do normalization of lines before comparing.
   Equals(c1: CircleNE, c2: CircleNE): boolean {
     let radiusEqual: boolean =
@@ -476,7 +490,7 @@ export class CircleNE_EqualityComparer extends IEqualityComparer<CircleNE> {
       return (
         c.Center.GetHashCode() |
         (c.CenterNE.GetHashCode() |
-          Math.round(c.Radius, decimals).GetHashCode())
+          Utils.Round(c.Radius, decimals).GetHashCode())
       )
       // The operator should be an XOR ^ instead of an OR, but not available in CodeDOM
       // The operator should be an XOR ^ instead of an OR, but not available in CodeDOM

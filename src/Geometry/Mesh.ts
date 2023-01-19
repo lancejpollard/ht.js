@@ -91,8 +91,7 @@ export class Mesh {
 
   Clone(): Mesh {
     let clone: Mesh = new Mesh()
-    clone.MeshTriangles = this.MeshTriangles.Select(() => {},
-    t).ToArray()
+    clone.MeshTriangles = this.MeshTriangles.Select(t => t, t).ToArray()
     return clone
   }
 

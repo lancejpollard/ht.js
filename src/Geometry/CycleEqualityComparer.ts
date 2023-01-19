@@ -6,8 +6,8 @@ export class CycleEqualityComparer
       return false
     }
 
-    let sorted1: Array<number> = c1.OrderBy(() => {}, i).ToArray()
-    let sorted2: Array<number> = c2.OrderBy(() => {}, i).ToArray()
+    let sorted1: Array<number> = c1.OrderBy(i => i).ToArray()
+    let sorted2: Array<number> = c2.OrderBy(i => i).ToArray()
     for (let i: number = 0; i < sorted1.Length; i++) {
       if (sorted1[i] != sorted2[i]) {
         return false

@@ -1,7 +1,7 @@
 // Class with some hackish methods for dealing with points projected to infinite.
 
+import { Complex } from '@Geometry/Complex'
 import { Vector3D } from '@Geometry/Vector3D'
-import { isInfinite } from './Utils'
 
 export class UtilsInfinity {
   static InfinityVector: Vector3D = Vector3D.construct3d(
@@ -16,41 +16,45 @@ export class UtilsInfinity {
   )
 
   static LargeFiniteVector: Vector3D = Vector3D.construct3d(
-    FiniteScale,
-    FiniteScale,
-    FiniteScale,
+    10000,
+    10000,
+    10000,
   )
 
   /* const */ static FiniteScale: number = 10000
 
   /* const */ static InfiniteScale: number = 500000
 
-  static IsInfinite(input: Vector3D): boolean {
+  static IsInfiniteVector3D(input: Vector3D): boolean {
     //  XXX - ugly hack I'd like to improve.
     return (
-      isInfinite(input.X) ||
-      isInfinite(input.Y) ||
-      isInfinite(input.Z) ||
-      isInfinite(input.W) ||
+      UtilsInfinity.IsInfiniteNumber(input.X) ||
+      UtilsInfinity.IsInfiniteNumber(input.Y) ||
+      UtilsInfinity.IsInfiniteNumber(input.Z) ||
+      UtilsInfinity.IsInfiniteNumber(input.W) ||
       input.Abs() > this.InfiniteScale
     )
   }
 
-  static IsInfinite(input: Complex): boolean {
-    return isInfinite(input.Real) || isInfinite(input.Imaginary)
+  static IsInfiniteComplex(input: Complex): boolean {
+    return (
+      UtilsInfinity.IsInfiniteNumber(input.Real) ||
+      UtilsInfinity.IsInfiniteNumber(input.Imaginary)
+    )
   }
 
-  static IsInfinite(input: number): boolean {
+  static IsInfiniteNumber(input: number): boolean {
     return (
       Number.isNaN(input) ||
-      isInfinite(input) ||
+      input == Number.POSITIVE_INFINITY ||
+      input == Number.NEGATIVE_INFINITY ||
       input >= this.InfiniteScale
     )
   }
 
   static InfinitySafe(input: Vector3D): Vector3D {
-    if (isInfinite(input)) {
-      return Infinity.LargeFiniteVector
+    if (UtilsInfinity.IsInfiniteVector3D(input)) {
+      return UtilsInfinity.LargeFiniteVector
     }
 
     return input

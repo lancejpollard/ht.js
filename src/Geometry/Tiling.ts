@@ -1,7 +1,7 @@
 import { Mobius } from '@Math/Mobius'
 import { Circle, CircleNE } from './Circle'
 import { Geometry } from './Geometry'
-import { Polygon } from './Polygon'
+import { Polygon, Segment } from './Polygon'
 import { PolytopeProjection } from './PolytopeProjection'
 import { Slicer } from './Slicer'
 import { Tile } from './Tile'
@@ -183,7 +183,7 @@ export class Tiling {
   // Clips the tiling to the interior of a circle.
 
   Clip(c: Circle, interior: boolean = true) {
-    Slicer.Clip(/* ref */ this.m_tiles, c, interior)
+    this.m_tiles = Slicer.Clip(this.m_tiles, c, interior)
   }
 
   // Will clone the tile, transform it and add it to our tiling.
@@ -196,7 +196,7 @@ export class Tiling {
 
     let clone: Tile = tile.Clone()
     clone.Transform(this.TilingConfig.M)
-    this.m_tiles.Add(clone)
+    this.m_tiles.push(clone)
     this.TilePositions[clone.Boundary.Center] = clone
     return true
   }
@@ -214,7 +214,7 @@ export class Tiling {
     let testCenter: Vector3D = this.TilingConfig.M.Apply(
       newVertexCircle.CenterNE,
     )
-    return !completed.ContainsKey(testCenter)
+    return !completed.hasOwnProperty(testCenter)
   }
 
   ReflectRecursive(
@@ -222,12 +222,13 @@ export class Tiling {
     completed: Record<Vector3D, boolean>,
   ) {
     //  Breadth first recursion.
-    if (0 == tiles.Count) {
+    if (0 == tiles.length) {
       return
     }
 
     let reflected: Array<Tile> = new Array<Tile>()
-    for (let tile: Tile in tiles) {
+
+    for (let tile of tiles) {
       //  We don't want to reflect tiles living out at infinity.
       //  Strange things happen, and we can still get the full tiling without doing this.
       if (tile.HasPointsProjectedToInfinity) {
@@ -235,23 +236,26 @@ export class Tiling {
       }
 
       //  Are we done?
-      if (this.m_tiles.Count >= this.TilingConfig.MaxTiles) {
+      if (this.m_tiles.length >= this.TilingConfig.MaxTiles) {
         return
       }
 
-      for (let s: number = 0; s < tile.Boundary.NumSides; s++) {
-        let seg: Segment = tile.Boundary.Segments[s]
-        if (!this.NewTileAfterReflect(tile, seg, completed)) {
+      const n = tile.Boundary?.NumSides ?? 0
+
+      for (let s: number = 0; s < n; s++) {
+        let seg: Segment | undefined = tile.Boundary?.Segments[s]
+        if (!seg || !this.NewTileAfterReflect(tile, seg, completed)) {
           continue
         }
 
         let newBase: Tile = tile.Clone()
         newBase.Reflect(seg)
+
         if (this.TransformAndAdd(newBase)) {
           console.assert(
-            !completed.ContainsKey(newBase.Boundary.Center),
+            !completed.hasOwnProperty(newBase.Boundary.Center),
           )
-          reflected.Add(newBase)
+          reflected.push(newBase)
           completed[newBase.Boundary.Center] = true
         }
       }
@@ -263,24 +267,24 @@ export class Tiling {
   // The number of tiles.
 
   get Count(): number {
-    return this.m_tiles.Count
+    return this.m_tiles.length
   }
 
   // Access to all the tiles.
 
-  get Tiles(): IEnumerable<Tile> {
+  get Tiles(): Array<Tile> {
     return this.m_tiles
   }
 
   // Retrieve all the polygons in this tiling that we want to draw.
 
-  get Polygons(): IEnumerable<Polygon> {
-    return this.m_tiles.Select(() => {}, t.Drawn)
+  get Polygons(): Array<Polygon> {
+    return this.m_tiles.Select(t => t.Drawn)
   }
 
   // Retreive all the (non-Euclidean) vertex circles in this tiling.
 
-  get Circles(): IEnumerable<CircleNE> {
-    return this.m_tiles.Select(() => {}, t.VertexCircle)
+  get Circles(): Array<CircleNE> {
+    return this.m_tiles.Select(t => t.VertexCircle)
   }
 }

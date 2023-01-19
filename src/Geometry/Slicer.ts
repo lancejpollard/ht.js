@@ -1,3 +1,10 @@
+import { Mobius } from '@Math/Mobius'
+import { Circle, CircleNE } from './Circle'
+import { Geometry } from './Geometry'
+import { Polygon } from './Polygon'
+import { Tile } from './Tile'
+import { Vector3D } from './Vector3D'
+
 class IntersectionPoint {
   Location: Vector3D
 
@@ -5,6 +12,7 @@ class IntersectionPoint {
 
   Index: number
 }
+
 //
 //  ZZZ - It sure would be nice to clear up the implementation of SlicePolygon (to make it more clear).
 //  I didn't comment things very well, and it is difficult to tell what is going on!
@@ -14,14 +22,13 @@ export class Slicer {
   // Input circle may be a line.
 
   // <remarks>The input polygon might get reversed</remarks>
-  static SlicePolygon(
+  static SlicePolygonWithGeometry(
     p: Polygon,
     c: CircleNE,
     g: Geometry,
     thickness: number,
-    /* out */ output: Array<Polygon>,
+    output: Array<Polygon>,
   ) {
-    output = new Array<Polygon>()
     //  Setup the two slicing circles.
     let c2: CircleNE = c.Clone()
     let c1: CircleNE = c.Clone()
@@ -29,28 +36,32 @@ export class Slicer {
     const pointOnCircle: Vector3D = c.IsLine
       ? c.P1
       : c.Center + Vector3D.construct2d(c.Radius, 0)
+
     m.Hyperbolic2(g, c1.CenterNE, pointOnCircle, thickness / 2)
     c1.Transform(m)
     m.Hyperbolic2(g, c2.CenterNE, pointOnCircle, (thickness / 2) * -1)
     c2.Transform(m)
+
     //  ZZZ - alter Clip method to work on Polygons and use that.
     //  Slice it up.
-    let sliced2: Array<Polygon>
-    let sliced1: Array<Polygon>
-    Slicer.SlicePolygon(p, c1, /* out */ sliced1)
-    Slicer.SlicePolygon(p, c2, /* out */ sliced2)
+    let sliced2: Array<Polygon> = new Array<Polygon>()
+    let sliced1: Array<Polygon> = new Array<Polygon>()
+
+    Slicer.SlicePolygon(p, c1, sliced1)
+    Slicer.SlicePolygon(p, c2, sliced2)
+
     //  Keep the ones we want.
-    for (let newPoly: Polygon in sliced1) {
+    for (let newPoly of sliced1) {
       let outside: boolean = !c1.IsPointInsideNE(newPoly.CentroidApprox)
       if (outside) {
-        output.Add(newPoly)
+        output.push(newPoly)
       }
     }
 
-    for (let newPoly: Polygon in sliced2) {
+    for (let newPoly of sliced2) {
       let inside: boolean = c2.IsPointInsideNE(newPoly.CentroidApprox)
       if (inside) {
-        output.Add(newPoly)
+        output.push(newPoly)
       }
     }
   }
@@ -61,7 +72,7 @@ export class Slicer {
   static SlicePolygon(
     p: Polygon,
     c: Circle,
-    /* out */ output: Array<Polygon>,
+    output: Array<Polygon>,
   ): boolean {
     return Slicer.SlicePolygonInternal(p, c, /* out */ output)
   }
@@ -74,24 +85,25 @@ export class Slicer {
     keepInside: boolean,
   ) {
     let newTiles: Array<Tile> = new Array<Tile>()
-    for (let t: Tile in tiles) {
-      let sliced: Array<Polygon>
+    for (let t of tiles) {
+      let sliced: Array<Polygon> = []
       Slicer.SlicePolygon(t.Drawn, c, /* out */ sliced)
-      for (let p: Polygon in sliced) {
+      for (let p of sliced) {
         let insideCircle: boolean =
-          (p.CentroidApprox - c.Center).Abs() < c.Radius
+          p.CentroidApprox.Subtract(c.Center).Abs() < c.Radius
+
         if (
           (keepInside && insideCircle) ||
           (!keepInside && !insideCircle)
         ) {
-          newTiles.Add(
+          newTiles.push(
             Tile.constructWithBoundary(t.Boundary, p, t.Geometry),
           )
         }
       }
     }
 
-    tiles = newTiles
+    return newTiles
   }
 
   static #SlicePolygonInternal(
@@ -273,7 +285,7 @@ export class Slicer {
   // increment determines the direction we are walking.
   // NOTE: when walking from i1 -> i2 along c, we should be moving through the interior of the polygon.
 
-  static #WalkPolygon(
+  static WalkPolygon(
     parent: Polygon,
     walking: Polygon,
     c: Circle,
@@ -315,7 +327,7 @@ export class Slicer {
 
       //  Do we need to splice in at this point?
       let segEnd: Vector3D = current.P2
-      if (iPoints.Select(() => {}, p.Location).Contains(segEnd)) {
+      if (iPoints.Select(p => p.Location).Contains(segEnd)) {
         current = Slicer.SplicedArc(
           parent,
           c,

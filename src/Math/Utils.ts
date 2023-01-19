@@ -1,3 +1,5 @@
+import { UtilsInfinity } from './Infinity'
+
 export class DoubleEqualityComparer extends IEqualityComparer {
   constructor(tol: number) {
     this.m_tolerance = tol
@@ -121,7 +123,5 @@ export class Utils {
 }
 
 export function isInfinite(val: number): boolean {
-  return (
-    val == Number.POSITIVE_INFINITY || val == Number.NEGATIVE_INFINITY
-  )
+  return UtilsInfinity.IsInfiniteNumber(val)
 }

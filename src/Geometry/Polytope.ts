@@ -305,7 +305,7 @@ export class SkewPolyhedron {
   // This might end up being useful if we need to optimize.
   // http://mathoverflow.net/questions/67960/cycle-of-length-4-in-an-undirected-graph
 
-  static #FindCyclesRecursive(
+  static FindCyclesRecursive(
     cycles: Array<Array<number>>,
     cycleLength: number,
     lookup: Record<number, Array<GraphEdge>>,
@@ -313,7 +313,7 @@ export class SkewPolyhedron {
     if (cycles[0].Count - 1 == cycleLength) {
       //  Return the ones where we ended where we started.
       let result: Array<Array<number>> = cycles
-        .Where(() => {}, c.First() == c.Last())
+        .Where(c => c.First() == c.Last())
         .ToArray()
       return result
     }
