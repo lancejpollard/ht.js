@@ -274,7 +274,7 @@ export class Isometry implements ITransform {
     if (g == Geometry.Spherical) {
       //  If inverted matches the orientation, we need a reflection.
       let inverted: boolean = poly1.IsInverted
-      if (!(inverted | poly1.Orientation)) {
+      if (!(inverted || poly1.Orientation)) {
         this.Reflection = homeVertexCircle
       }
 

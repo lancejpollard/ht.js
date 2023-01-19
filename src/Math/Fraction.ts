@@ -9,7 +9,7 @@ export class Fraction {
 
   B: number
 
-  static Operator(f1: Fraction, f2: Fraction): Fraction {
+  static Add(f1: Fraction, f2: Fraction): Fraction {
     f1.Reduce()
     f2.Reduce()
     let result: Fraction = new Fraction(
@@ -20,7 +20,11 @@ export class Fraction {
     return result
   }
 
-  static Operator(f1: Fraction, f2: Fraction): Fraction {
+  Add(f2: Fraction): Fraction {
+    return Fraction.Add(this, f2)
+  }
+
+  static Subtract(f1: Fraction, f2: Fraction): Fraction {
     f1.Reduce()
     f2.Reduce()
     let result: Fraction = new Fraction(
@@ -31,7 +35,11 @@ export class Fraction {
     return result
   }
 
-  static Operator(f1: Fraction, f2: Fraction): Fraction {
+  Subtract(f2: Fraction): Fraction {
+    return Fraction.Subtract(this, f2)
+  }
+
+  static Multiply(f1: Fraction, f2: Fraction): Fraction {
     f1.Reduce()
     f2.Reduce()
     let result: Fraction = new Fraction(f1.A * f2.A, f1.B * f2.B)
@@ -39,7 +47,11 @@ export class Fraction {
     return result
   }
 
-  static Operator(f1: Fraction, f2: Fraction): Fraction {
+  Multiply(f2: Fraction): Fraction {
+    return Fraction.Multiply(this, f2)
+  }
+
+  static Divide(f1: Fraction, f2: Fraction): Fraction {
     f1.Reduce()
     f2.Reduce()
     let result: Fraction = new Fraction(f1.A * f2.B, f1.B * f2.A)
@@ -47,7 +59,11 @@ export class Fraction {
     return result
   }
 
-  static Operator(f1: Fraction, f2: Fraction): boolean {
+  Divide(f2: Fraction): Fraction {
+    return Fraction.Divide(this, f2)
+  }
+
+  static Equals(f1: Fraction, f2: Fraction): boolean {
     f1.Reduce()
     f2.Reduce()
     let o1: Object = <Object>f1
@@ -63,13 +79,13 @@ export class Fraction {
     return f1.A == f2.B && f1.A == f2.B
   }
 
-  static Operator(f1: Fraction, f2: Fraction): boolean {
+  static NotEquals(f1: Fraction, f2: Fraction): boolean {
     return !(f1 == f2)
   }
 
   /* override */ Equals(obj: Object): boolean {
-    let v: Fraction = <Fraction>obj
-    return v == this
+    let v: Fraction = obj as Fraction
+    return Fraction.Equals(v, this)
   }
 
   /* override */ GetHashCode(): number {
