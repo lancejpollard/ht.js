@@ -13,10 +13,9 @@ years.
 
 - [roice3/Honeycombs](https://github.com/roice3/Honeycombs)
 - [thoszhang/hyperbolic-tiling](https://github.com/thoszhang/hyperbolic-tiling)
-- [knexator/hyperbolic-canvas](https://github.com/knexator/hyperbolic-canvas)
+- [knexator/hyperbolic-tiling](https://github.com/knexator/hyperbolic-tiling)
 - [mountain/hyperbolic-wythoff](https://github.com/mountain/hyperbolic-wythoff)
 - [cduck/hyperbolic](https://github.com/cduck/hyperbolic)
-- [CSharp to TypeScript](http://www.carlosag.net/tools/codetranslator/)
 
 ## Papers
 
@@ -27,6 +26,9 @@ years.
 
 - [Poincaré half-plane model](https://en.wikipedia.org/wiki/Poincar%C3%A9_half-plane_model)
 - [Wythoff construction](https://en.wikipedia.org/wiki/Wythoff_construction)
+- [List of hyperbolic tilings](https://en.wikipedia.org/wiki/Lists_of_uniform_tilings_on_the_sphere,_plane,_and_hyperbolic_plane)
+- [CSharp to TypeScript](http://www.carlosag.net/tools/codetranslator/)
+- [CSharp codebase](https://github.com/microsoft/referencesource/blob/master/mscorlib/system/collections/ienumerable.cs)
 
 ## Dev
 

@@ -1,3 +1,4 @@
+import { CircleNE } from './Circle'
 import { Vector3D } from './Vector3D'
 
 export class HighToleranceVectorEqualityComparer extends IEqualityComparer<Vector3D> {

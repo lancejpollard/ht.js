@@ -1,31 +1,22 @@
+import { UtilsInfinity } from '@Math/Infinity'
 import { Isometry } from '@Math/Isometry'
 import { Mobius } from '@Math/Mobius'
-import { isInfinite } from '@Math/Utils'
 import { CircleNE } from './Circle'
 import { Geometry } from './Geometry'
 import { Polygon, Segment } from './Polygon'
+import { Spherical2D } from './Spherical2D'
 import { Vector3D } from './Vector3D'
 
 export class Tile {
-  static construct() {
-    const tile = new Tile()
-    tile.Isometry = Isometry.constructUnity()
-    tile.EdgeIncidences = new Array<Tile>()
-    tile.VertexIndicences = new Array<Tile>()
-    return tile
-  }
-
-  static constructWithBoundary(
-    boundary: Polygon,
-    drawn: Polygon,
-    geometry: Geometry,
-  ) {
-    const tile = new Tile()
-    tile.Boundary = boundary
-    tile.Drawn = drawn
-    tile.Geometry = geometry
+  constructor(boundary: Polygon, drawn: Polygon, geometry: Geometry) {
+    this.Isometry = Isometry.constructUnity()
+    this.EdgeIncidences = new Array<Tile>()
+    this.VertexIndicences = new Array<Tile>()
+    this.Boundary = boundary
+    this.Drawn = drawn
+    this.Geometry = geometry
     //  Make the vertex circle.
-    tile.VertexCircle = boundary.CircumCircle
+    this.VertexCircle = boundary.CircumCircle
     //  ZZZ - we shouldn't do this here (I did it for the slicing study page).
     // VertexCircle.Radius = 1.0;
     //
@@ -39,16 +30,15 @@ export class Tile {
     //  (1 + 1.0/20) for {3,9}
     //  cuts at 1/3rd
     //  2/Math.sqrt(3) for {3,6}
-    return tile
   }
 
-  Boundary?: Polygon
+  Boundary: Polygon
 
-  Drawn?: Polygon
+  Drawn: Polygon
 
-  VertexCircle?: CircleNE
+  VertexCircle: CircleNE
 
-  Geometry?: Geometry
+  Geometry: Geometry
 
   // The center of this tile.
 
@@ -61,40 +51,37 @@ export class Tile {
   // or copied during a clone.  It is meant to be set once at tiling
   // generation time.
 
-  Isometry?: Isometry
+  Isometry: Isometry
 
   // Used to track edge-adjacent tiles in a tiling.
 
-  EdgeIncidences?: Array<Tile>
+  EdgeIncidences: Array<Tile>
 
   // Used to track vertex-adjacent tiles in a tiling.
 
   VertexIndicences?: Array<Tile>
 
   Clone(): Tile {
-    let next: Tile = Tile.construct()
-    next.Boundary = this.Boundary?.Clone()
-    next.Drawn = this.Drawn?.Clone()
+    let next: Tile = new Tile(this.Boundary, this.Drawn, this.Geometry)
     next.VertexCircle = this.VertexCircle?.Clone()
-    next.Geometry = this.Geometry
     return next
   }
 
   Reflect(s: Segment) {
     this.Boundary.Reflect(s)
     this.Drawn.Reflect(s)
-    this.VertexCircle.Reflect(s)
+    this.VertexCircle.ReflectSegment(s)
   }
 
   // Apply a Mobius transform to us.
 
-  Transform(m: Mobius) {
+  TransformMobius(m: Mobius) {
     this.Boundary.Transform(m)
     this.Drawn.Transform(m)
     this.VertexCircle.Transform(m)
   }
 
-  Transform(i: Isometry) {
+  TransformIsometry(i: Isometry) {
     this.Boundary.Transform(i)
     this.Drawn.Transform(i)
     this.VertexCircle.Transform(i)
@@ -108,13 +95,16 @@ export class Tile {
       return false
     }
 
-    if (isInfinite(this.Boundary.Center)) {
+    if (UtilsInfinity.IsInfiniteVector3D(this.Boundary.Center)) {
       return true
     }
 
     //  We also need to check the edges.
     for (let s of this.Boundary.Segments) {
-      if (isInfinite(s.P1) || isInfinite(s.P2)) {
+      if (
+        UtilsInfinity.IsInfiniteVector3D(s.P1) ||
+        UtilsInfinity.IsInfiniteVector3D(s.P2)
+      ) {
         return true
       }
     }
@@ -157,19 +147,19 @@ export class Tile {
   // because of the possibility of breaking existing puzzles.
 
   static ShrinkTileCorrect(/* ref */ tile: Tile, shrinkFactor: number) {
-    let scaleFunc: System.Func<Vector3D, number, Vector3D> = null
+    let scaleFunc: (v: Vector3D, s: number) => Vector3D
     switch (tile.Geometry) {
       case Geometry.Euclidean:
-        scaleFunc = (v, s) => v * s
+        scaleFunc = (v: Vector3D, s: number) => v.MultiplyWithNumber(s)
         break
       case Geometry.Spherical:
-        scaleFunc = (v, s) => {
+        scaleFunc = (v: Vector3D, s: number) => {
           // Move to spherical norm, scale, then move back to euclidean.
           const scale = Spherical2D.s2eNorm(
             Spherical2D.e2sNorm(v.Abs()) * s,
           )
           v.Normalize()
-          return v * scale
+          return v.MultiplyWithNumber(scale)
         }
         break
       case Geometry.Hyperbolic:
@@ -182,12 +172,16 @@ export class Tile {
   // This will trim back the tile using an equidistant curve.
   // It assumes the tile is at the origin.
 
-  static ShrinkTile(/* ref */ tile: Tile, shrinkFactor: number) {
+  static ShrinkTile(tile: Tile, shrinkFactor: number) {
     //  This code is not correct in non-Euclidean cases!
     //  But it works reasonable well for small shrink factors.
     //  For example, you can easily use this function to grow a hyperbolic tile beyond the disk.
     let m: Mobius = Mobius.construct()
-    m.Hyperbolic(tile.Geometry, Vector3D.construct(), shrinkFactor)
+    m.Hyperbolic(
+      tile.Geometry,
+      Vector3D.construct().ToComplex(),
+      shrinkFactor,
+    )
     tile.Drawn.Transform(m)
     return
   }

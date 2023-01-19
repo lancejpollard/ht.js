@@ -1,7 +1,10 @@
 import { Circle, CircleNE } from '@Geometry/Circle'
 import { Complex } from '@Geometry/Complex'
+import { Geometry } from '@Geometry/Geometry'
 import { Polygon } from '@Geometry/Polygon'
+import { Tile } from '@Geometry/Tile'
 import { ITransform } from '@Geometry/Transformable'
+import { Vector3D } from '@Geometry/Vector3D'
 import { Mobius } from './Mobius'
 
 // Class to represent an isometry.
@@ -37,7 +40,6 @@ export class Isometry implements ITransform {
     return Isometry.constructFromIsometry(this)
   }
 
-
   // Mobius Transform for this isometry.
 
   get Mobius(): Mobius {
@@ -50,7 +52,6 @@ export class Isometry implements ITransform {
 
   m_mobius: Mobius
 
-
   // Defines the circle (or line) in which to reflect for this isometry.
   // Null if we don't want to include a reflection.
 
@@ -62,7 +63,6 @@ export class Isometry implements ITransform {
     m_reflection = value
     this.CacheCircleInversion(m_reflection)
   }
-
 
   // Whether or not we are reflected.
 
@@ -77,9 +77,7 @@ export class Isometry implements ITransform {
 
   #m_cache2: Mobius
 
-
   // Composition operator.
-  >
   static Operator(i1: Isometry, i2: Isometry): Isometry {
     //  ZZZ - Probably a better way.
     //  We'll just apply both isometries to a canonical set of points,
@@ -116,16 +114,12 @@ export class Isometry implements ITransform {
     return result
   }
 
-
   // Applies an isometry to a vector.
-
-  // <remarks>Use the complex number version if you can.</remarks>
   Apply(z: Vector3D): Vector3D {
     let cInput: Complex = z
     let cOutput: Complex = this.Apply(cInput)
     return Vector3D.FromComplex(cOutput)
   }
-
 
   // Applies an isometry to a complex number.
 
@@ -138,10 +132,8 @@ export class Isometry implements ITransform {
     return z
   }
 
-
   // Does a circle inversion on an arbitrary circle.
-
-  #CacheCircleInversion(inversionCircle: Circle) {
+  CacheCircleInversion(inversionCircle: Circle) {
     if (inversionCircle == null) {
       return
     }
@@ -154,23 +146,23 @@ export class Isometry implements ITransform {
       p2 = inversionCircle.P2
       p3 = (p1 + p2) / 2
     } else {
-      p1 =
-        inversionCircle.Center + Vector3D.construct2d(inversionCircle.Radius, 0)
-      p2 =
-        inversionCircle.Center +
-        Vector3D.construct2d(inversionCircle.Radius * -1, 0)
-      p3 =
-        inversionCircle.Center + Vector3D.construct2d(0, inversionCircle.Radius)
+      p1 = inversionCircle.Center.Add(
+        Vector3D.construct2d(inversionCircle.Radius, 0),
+      )
+      p2 = inversionCircle.Center.Add(
+        Vector3D.construct2d(inversionCircle.Radius * -1, 0),
+      )
+      p3 = inversionCircle.Center.Add(
+        Vector3D.construct2d(0, inversionCircle.Radius),
+      )
     }
 
     this.CacheCircleInversion(p1, p2, p3)
   }
 
-
   // Does a circle inversion in an arbitrary, generalized circle.
   // IOW, the three points may be collinear, in which case we are talking about a reflection.
-
-  #CacheCircleInversion(c1: Complex, c2: Complex, c3: Complex) {
+  CacheCircleInversion(c1: Complex, c2: Complex, c3: Complex) {
     let toUnitCircle: Mobius = Mobius.construct()
     toUnitCircle.MapPoints(
       c1,
@@ -184,31 +176,28 @@ export class Isometry implements ITransform {
     this.m_cache2 = this.m_cache1.Inverse()
   }
 
-  #ApplyCachedCircleInversion(input: Complex): Complex {
+  ApplyCachedCircleInversion(input: Complex): Complex {
     let result: Complex = this.m_cache1.Apply(input)
     result = this.CircleInversion(result)
     result = this.m_cache2.Apply(result)
     return result
   }
 
-  static #IsNaN(c: Complex): boolean {
+  static IsNaN(c: Complex): boolean {
     return Number.isNaN(c.Real) || Number.isNaN(c.Imaginary)
   }
 
-
   // This will reflect a point in an origin centered circle.
 
-  #CircleInversion(input: Complex): Complex {
+  CircleInversion(input: Complex): Complex {
     if (Isometry.IsNaN(input)) {
       return Complex.Zero
     }
 
-    return Complex.One / Complex.Conjugate(input)
+    return Complex.One.Divide(Complex.Conjugate(input))
   }
 
-
   // Does a Euclidean reflection across a line.
-
 
   // Returns a new Isometry that is the inverse of us.
 
@@ -223,7 +212,6 @@ export class Isometry implements ITransform {
     }
   }
 
-
   // Returns an isometry which represents a reflection across the x axis.
 
   static ReflectX(): Isometry {
@@ -235,7 +223,6 @@ export class Isometry implements ITransform {
     i.Reflection = reflection
     return i
   }
-
 
   // Calculates an isometry by taking a tile boundary polygon to a home.
 
@@ -308,7 +295,6 @@ export class Isometry implements ITransform {
       // Trace.WriteLine( "oh no!" );
     }
   }
-
 
   // Simple helper to transform an array of vertices using an isometry.
   // Warning! Allocates a new array.

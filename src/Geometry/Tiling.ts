@@ -69,7 +69,7 @@ export class Tiling {
 
     this.TransformAndAdd(tile)
     let tiles: Array<Tile> = new Array<Tile>()
-    tiles.Add(tile)
+    tiles.push(tile)
     let completed: Record<Vector3D, boolean> = new Record<
       Vector3D,
       boolean
@@ -87,7 +87,7 @@ export class Tiling {
     tiles: Array<Tile>,
     g: Geometry,
   ) {
-    for (let tile: Tile in tiles) {
+    for (let tile of tiles) {
       tile.Isometry.CalculateFromTwoPolygons(home, tile, g)
     }
   }
@@ -279,12 +279,12 @@ export class Tiling {
   // Retrieve all the polygons in this tiling that we want to draw.
 
   get Polygons(): Array<Polygon> {
-    return this.m_tiles.Select(t => t.Drawn)
+    return this.m_tiles.map(t => t.Drawn).filter(t => Boolean(t))
   }
 
   // Retreive all the (non-Euclidean) vertex circles in this tiling.
 
   get Circles(): Array<CircleNE> {
-    return this.m_tiles.Select(t => t.VertexCircle)
+    return this.m_tiles.map(t => t.VertexCircle).filter(t => t)
   }
 }

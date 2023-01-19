@@ -167,7 +167,7 @@ export class Circle implements ITransformable {
 
   // Reflect ourselves about another circle.
 
-  Reflect(c: Circle) {
+  ReflectCircle(c: Circle) {
     this.ReflectInternal(c)
   }
 
@@ -199,7 +199,7 @@ export class Circle implements ITransformable {
 
   // Reflect ourselves about a segment.
 
-  Reflect(s: Segment) {
+  ReflectSegment(s: Segment) {
     if (SegmentType.Arc == s.Type) {
       this.ReflectInternal(s.Circle)
     } else {
@@ -374,13 +374,13 @@ export class CircleNE extends Circle implements ITransformable {
     return next
   }
 
-  Reflect(c: Circle) {
-    super.Reflect(c)
+  ReflectCircle(c: Circle) {
+    super.ReflectCircle(c)
     this.CenterNE = c.ReflectPoint(this.CenterNE)
   }
 
-  Reflect(s: Segment) {
-    super.Reflect(s)
+  ReflectSegment(s: Segment) {
+    super.ReflectSegment(s)
     this.CenterNE = s.ReflectPoint(this.CenterNE)
   }
 

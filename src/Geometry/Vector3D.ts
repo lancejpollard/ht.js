@@ -176,6 +176,10 @@ export class Vector3D {
     return Vector3D.Negate(this)
   }
 
+  MultiplyWithNumber(n: number): Vector3D {
+    return Vector3D.MultiplyVectorByNumber(this, n)
+  }
+
   Subtract(v2: Vector3D): Vector3D {
     return Vector3D.Subtract(this, v2)
   }
