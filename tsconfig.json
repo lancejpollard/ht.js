@@ -21,15 +21,6 @@
     },
     "declarationMap": true
   },
-  "include": [
-    "src/**/*.ts",
-    "Extra/Mesh.ts",
-    "Extra/Statistics.ts",
-    "Extra/SphericalModels.ts",
-    "Todo/Polytope.ts",
-    "Todo/Sphere.ts",
-    "Todo/Mesh.ts",
-    "Todo/Fraction.ts"
-  ],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist", "dist.test", "Todo", "Extra"]
 }

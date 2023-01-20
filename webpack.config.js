@@ -13,7 +13,12 @@ module.exports = {
     rules: [
       {
         test: /\.ts$/,
-        use: 'ts-loader',
+        use: {
+          loader: 'ts-loader',
+          options: {
+            configFile: './tsconfig.test.json',
+          },
+        },
         exclude: /node_modules/,
       },
     ],
@@ -24,5 +29,9 @@ module.exports = {
   },
   resolve: {
     extensions: ['.ts', '.js'],
+    alias: {
+      '@Math': path.resolve(__dirname, './src/Math'),
+      '@Geometry': path.resolve(__dirname, './src/Geometry'),
+    },
   },
 }

@@ -1,6 +1,5 @@
 import { DonHatch } from '@Math/DonHatch'
 import { Mobius } from '@Math/Mobius'
-import assert from 'assert'
 import { Geometry } from './Geometry'
 import { Metric } from './Metric'
 import { Spherical2D } from './Spherical2D'

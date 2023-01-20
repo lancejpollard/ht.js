@@ -4,11 +4,11 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "dev": "npx webpack --watch",
+    "dev": "npx webpack --watch --stats-error-details",
     "build": "tsc",
     "watch": "tsc --watch",
     "clean": "rm -rf dist",
-    "test": "tsc --watch --p tsconfig.test.json"
+    "test": "tsc --watch --p tsconfig.test.json --out dist/example.js"
   },
   "files": [
     "dist",

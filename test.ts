@@ -1,4 +1,6 @@
 import * as PIXI from 'pixi.js'
+import { Tiling } from './src/Geometry/Tiling'
+import { TilingConfig } from './src/Geometry/TilingConfig'
 
 const app = new PIXI.Application({
   width: 800,
@@ -6,6 +8,13 @@ const app = new PIXI.Application({
 })
 
 const sprites = {}
+
+const config = new TilingConfig(3, 7, 1000)
+const tiling = new Tiling(config)
+tiling.Generate()
+console.log('here', tiling)
+// const polygons = tiling.m_tiles.map(tile => tile.Boundary)
+// SVG.WritePolygons('example.svg', polygons)
 
 // document.body.appendChild(app.view as HTMLCanvasElement)
 
