@@ -4,22 +4,18 @@ import { Complex } from '@Geometry/Complex'
 import { Vector3D } from '@Geometry/Vector3D'
 
 export class UtilsInfinity {
-  static InfinityVector: Vector3D = Vector3D.construct3d(
-    Number.POSITIVE_INFINITY,
-    Number.POSITIVE_INFINITY,
-    Number.POSITIVE_INFINITY,
-  )
+  static InfinityVector = () =>
+    Vector3D.construct3d(
+      Number.POSITIVE_INFINITY,
+      Number.POSITIVE_INFINITY,
+      Number.POSITIVE_INFINITY,
+    )
 
-  static InfinityComplex: Complex = new Complex(
-    Number.POSITIVE_INFINITY,
-    Number.POSITIVE_INFINITY,
-  )
+  static InfinityComplex = () =>
+    new Complex(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY)
 
-  static LargeFiniteVector: Vector3D = Vector3D.construct3d(
-    10000,
-    10000,
-    10000,
-  )
+  static LargeFiniteVector = () =>
+    Vector3D.construct3d(10000, 10000, 10000)
 
   /* const */ static FiniteScale: number = 10000
 
@@ -54,7 +50,7 @@ export class UtilsInfinity {
 
   static InfinitySafe(input: Vector3D): Vector3D {
     if (UtilsInfinity.IsInfiniteVector3D(input)) {
-      return UtilsInfinity.LargeFiniteVector
+      return UtilsInfinity.LargeFiniteVector()
     }
 
     return input

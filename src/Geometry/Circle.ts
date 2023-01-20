@@ -258,7 +258,7 @@ export class Circle implements ITransformable {
       return Euclidean2D.ReflectPointInLine(p, this.P1, this.P2)
     } else {
       //  Handle infinities.
-      let infinityVector: Vector3D = UtilsInfinity.InfinityVector
+      let infinityVector: Vector3D = UtilsInfinity.InfinityVector()
       if (p.Compare(this.Center)) {
         return infinityVector
       }

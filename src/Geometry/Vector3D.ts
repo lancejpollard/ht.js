@@ -1,4 +1,4 @@
-import { assert, assertNumber, Tolerance, Utils } from '@Math/Utils'
+import { assertNumber, Tolerance, Utils } from '@Math/Utils'
 import { Complex } from './Complex'
 import { IComparer } from './IComparer'
 

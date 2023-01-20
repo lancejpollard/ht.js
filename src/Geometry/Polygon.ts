@@ -50,7 +50,7 @@ export class Polygon implements ITransformable {
       newPoly.Segments.push(s.Clone())
     }
 
-    newPoly.Center = this.Center
+    newPoly.Center = this.Center.Clone()
     return newPoly
   }
 
@@ -621,9 +621,9 @@ export class Segment implements ITransformable {
   Clone(): Segment {
     let newSeg: Segment = new Segment()
     newSeg.Type = this.Type
-    newSeg.P1 = this.P1
-    newSeg.P2 = this.P2
-    newSeg.Center = this.Center
+    newSeg.P1 = this.P1.Clone()
+    newSeg.P2 = this.P2.Clone()
+    newSeg.Center = this.Center.Clone()
     newSeg.Clockwise = this.Clockwise
     return newSeg
   }

@@ -344,7 +344,7 @@ export class Mobius implements ITransform {
 
     let result: Vector3D = this.ApplyVector3D(z)
     if (UtilsInfinity.IsInfiniteVector3D(result)) {
-      return UtilsInfinity.InfinityVector
+      return UtilsInfinity.InfinityVector()
     }
 
     return result

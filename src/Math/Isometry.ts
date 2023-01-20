@@ -43,7 +43,7 @@ export class Isometry implements ITransform {
     const reflection = this.Reflection
       ? this.Reflection.Clone()
       : undefined
-    return new Isometry(this.Mobius, reflection)
+    return new Isometry(this.Mobius.Clone(), reflection)
   }
 
   // Mobius Transform for this isometry.
