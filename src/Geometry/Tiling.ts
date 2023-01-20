@@ -54,12 +54,12 @@ export class Tiling {
     let completed: Record<number, boolean> = {}
     completed[tile.Boundary.Center.GetHashCode()] = true
     this.ReflectRecursive(tiles, completed)
-    Tiling.FillOutIsometries(
-      tile,
-      this.m_tiles,
-      this.TilingConfig.Geometry,
-    )
-    this.FillOutIncidences()
+    // Tiling.FillOutIsometries(
+    //   tile,
+    //   this.m_tiles,
+    //   this.TilingConfig.Geometry,
+    // )
+    // this.FillOutIncidences()
   }
 
   // This will fill out all the tiles with the isometry that will take them back to a home tile.

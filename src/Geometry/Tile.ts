@@ -62,8 +62,12 @@ export class Tile {
   VertexIndicences: Array<Tile>
 
   Clone(): Tile {
-    let next: Tile = new Tile(this.Boundary, this.Drawn, this.Geometry)
-    next.VertexCircle = this.VertexCircle?.Clone()
+    let next: Tile = new Tile(
+      this.Boundary.Clone(),
+      this.Drawn.Clone(),
+      this.Geometry,
+    )
+    next.VertexCircle = this.VertexCircle.Clone()
     return next
   }
 

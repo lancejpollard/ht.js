@@ -67,7 +67,12 @@ export class Circle implements ITransformable {
   }
 
   Clone(): Circle {
-    const next = new Circle(this.P1, this.P2, this.Center, this.Radius)
+    const next = new Circle(
+      this.P1.Clone(),
+      this.P2.Clone(),
+      this.Center.Clone(),
+      this.Radius,
+    )
     return next
   }
 
@@ -417,11 +422,11 @@ export class CircleNE extends Circle implements ITransformable {
 
   Clone(): CircleNE {
     const next = new CircleNE(
-      this.P1,
-      this.P2,
-      this.Center,
+      this.P1.Clone(),
+      this.P2.Clone(),
+      this.Center.Clone(),
       this.Radius,
-      this.CenterNE,
+      this.CenterNE.Clone(),
     )
     return next
   }
