@@ -24,7 +24,7 @@ export class Mobius implements ITransform {
     const self = new Mobius()
     self.A = a
     self.B = b
-    self.C = d
+    self.C = c
     self.D = d
     return self
   }
@@ -199,6 +199,15 @@ export class Mobius implements ITransform {
 
     //  Compose them (multiply in reverse order).
     this.Merge(m3.Multiply(m2).Multiply(m1))
+  }
+
+  Clone(): Mobius {
+    return Mobius.construct4d(
+      this.A.Clone(),
+      this.B.Clone(),
+      this.C.Clone(),
+      this.D.Clone(),
+    )
   }
 
   // Allow a hyperbolic transformation using an absolute offset.

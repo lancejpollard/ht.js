@@ -427,6 +427,13 @@ export class Vector3D {
     return result
   }
 
+  Rotate90(): void {
+    let component1 = this.X
+    let component2 = this.Y
+    this.X = -component2
+    this.Y = component1
+  }
+
   // 3D -> 2D projection.
 
   CentralProject(cameraDist: number): Vector3D {

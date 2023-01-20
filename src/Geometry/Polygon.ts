@@ -889,12 +889,10 @@ export class Segment implements ITransformable {
     //  NOTE: We must calc this before altering the endpoints.
     let mid: Vector3D = this.Midpoint
     if (UtilsInfinity.IsInfiniteVector3D(mid)) {
-      mid = this.P2.MultiplyWithNumber(UtilsInfinity.FiniteScale)
+      mid = UtilsInfinity.IsInfiniteVector3D(this.P1)
+        ? this.P2.MultiplyWithNumber(UtilsInfinity.FiniteScale)
+        : this.P1.MultiplyWithNumber(UtilsInfinity.FiniteScale)
     }
-
-    mid = UtilsInfinity.IsInfiniteVector3D(this.P1)
-      ? this.P2.MultiplyWithNumber(UtilsInfinity.FiniteScale)
-      : this.P1.MultiplyWithNumber(UtilsInfinity.FiniteScale)
 
     this.P1 = transform.ApplyVector3D(this.P1)
     this.P2 = transform.ApplyVector3D(this.P2)
@@ -911,6 +909,7 @@ export class Segment implements ITransformable {
     ) {
       this.Type = SegmentType.Arc
       this.Center = temp.Center
+      console.log(this.Center.Clone())
       //  Work out the orientation of the arc.
       let t1: Vector3D = this.P1.Subtract(this.Center)
       let t2: Vector3D = mid.Subtract(this.Center)

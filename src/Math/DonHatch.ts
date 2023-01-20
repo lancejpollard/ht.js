@@ -44,7 +44,7 @@ export class DonHatch {
 
   static acosh(x: number): number {
     return (
-      2 * Math.log( Math.sqrt( ( x + 1 ) * .5 ) + Math.sqrt( ( x - 1 ) * .5 ) );
+      2 * Math.log(Math.sqrt((x + 1) * 0.5) + Math.sqrt((x - 1) * 0.5))
     )
   }
 

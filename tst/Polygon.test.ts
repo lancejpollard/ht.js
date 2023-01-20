@@ -26,7 +26,7 @@ const t = new Tiling(c)
 t.Generate()
 
 var m2 = new Mobius()
-m2.Isometry(Geometry.Hyperbolic, 0, new Complex(-1, 0))
+m2.Isometry(Geometry.Hyperbolic, 0, new Complex(1.0, 0))
 
 var m = new Mobius()
 m.Hyperbolic(Geometry.Hyperbolic, Vector3D.construct().ToComplex(), 1.0)
@@ -56,10 +56,31 @@ eq(
     .join(' : '),
 )
 
-// eq(m2, hypMobIso)
-eq(m, hypMobius)
+eq(
+  JSONSelect.match('.m_real', m).slice(0, 3).join(' : '),
+  JSONSelect.match('.Real', hypMobius).slice(0, 3).join(' : '),
+)
 
-console.log(t.Tiles[0].Drawn)
+eq(t.Tiles[0].Drawn.Segments.length, tilingData.Segments.length)
+
+console.log(t.Tiles[0].Drawn, tilingData)
+eq(
+  JSONSelect.match(
+    ':root > .Center > .X, :root > .Center > .Y',
+    t.Tiles[0].Drawn,
+  ).join(' : '),
+  JSONSelect.match(
+    ':root > .Center > .X, :root > .Center > .Y',
+    tilingData,
+  ).join(' : '),
+)
+eq(
+  JSONSelect.match(
+    ':root > * > .P1, :root > * > .P2',
+    t.Tiles[0].Drawn,
+  ),
+  JSONSelect.match(':root > * > .P1, :root > * > .P2', tilingData),
+)
 
 eq(
   JSONSelect.match(

@@ -102,8 +102,8 @@ export class Circle implements ITransformable {
 
     b1.Normalize()
     b2.Normalize()
-    b1.RotateXY(Math.PI / 2)
-    b2.RotateXY(Math.PI / 2)
+    b1.Rotate90()
+    b2.Rotate90()
 
     let output = Euclidean2D.IntersectionLineLine(
       m1,
@@ -124,10 +124,12 @@ export class Circle implements ITransformable {
 
     console.assert(
       Tolerance.Equal(this.Radius, p2.Subtract(this.Center).Abs()),
+      'Tolerance.Equal(this.Radius, p2.Subtract(this.Center).Abs())',
     )
 
     console.assert(
       Tolerance.Equal(this.Radius, p3.Subtract(this.Center).Abs()),
+      'Tolerance.Equal(this.Radius, p3.Subtract(this.Center).Abs())',
     )
 
     return true
