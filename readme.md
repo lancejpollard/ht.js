@@ -1,7 +1,6 @@
 # ht.js
 
-Hyperbolic tessellations and cellular automata in the 2D plane in
-JavaScript.
+Hyperbolic tessellations in the 2D plane in JavaScript.
 
 <p align='center'>
   <img src='https://github.com/lancejpollard/hca.js/blob/make/7.png?raw=true' height='500'>
