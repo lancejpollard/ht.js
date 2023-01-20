@@ -7,12 +7,12 @@ const { fileURLToPath } = require('url')
 module.exports = {
   context: path.resolve(__dirname),
   devtool: 'inline-source-map',
-  entry: './test.ts',
+  entry: './test.tsx',
   mode: 'development',
   module: {
     rules: [
       {
-        test: /\.ts$/,
+        test: /\.tsx?$/,
         use: {
           loader: 'ts-loader',
           options: {
@@ -28,7 +28,7 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
   },
   resolve: {
-    extensions: ['.ts', '.js'],
+    extensions: ['.ts', '.tsx', '.js'],
     alias: {
       '@Math': path.resolve(__dirname, './src/Math'),
       '@Geometry': path.resolve(__dirname, './src/Geometry'),

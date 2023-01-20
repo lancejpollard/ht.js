@@ -62,7 +62,7 @@ eq(
 
 eq(t.Tiles[0].Drawn.Segments.length, tilingData.Segments.length)
 
-console.log(t.Tiles[0].Drawn, tilingData)
+// console.log(t.Tiles[0].Drawn, tilingData)
 eq(
   JSONSelect.match(
     ':root > .Center > .X, :root > .Center > .Y',
@@ -84,6 +84,18 @@ eq(
     tilingData,
   ).join(' : '),
   ':root > .Segments > .P1, :root > .Segments > .P2',
+)
+
+eq(
+  JSONSelect.match(
+    ':root > .Segments > .Angle, :root > .Segments > .Angle',
+    t.Tiles[0].Drawn,
+  ).join(' : '),
+  JSONSelect.match(
+    ':root > .Segments > .Angle, :root > .Segments > .Angle',
+    tilingData,
+  ).join(' : '),
+  ':root > .Segments > .Angle, :root > .Segments > .Angle',
 )
 
 eq(

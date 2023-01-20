@@ -1,28 +1,38 @@
 import * as PIXI from 'pixi.js'
 import { Tiling } from './src/Geometry/Tiling'
 import { TilingConfig } from './src/Geometry/TilingConfig'
-
+import TilingDisplay from './tst/Tiling'
 import './tst/Vector3D.test'
 import './tst/Polygon.test'
 import { Polygon } from './src/Geometry/Polygon'
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+
+const config = new TilingConfig(7, 3, 1000)
+const tiling = new Tiling(config)
+tiling.Generate()
+
+const reactDiv = document.querySelector('#react')
+assertElement(reactDiv)
+const reactBase = createRoot(reactDiv)
+
+reactBase.render(<TilingDisplay data={tiling} />)
+
+const pixiDiv = document.querySelector('#pixi')
 
 const app = new PIXI.Application({
   width: 800,
   height: 600,
 })
 
-// const sprites = {}
+const sprites = {}
 
-// const config = new TilingConfig(7, 3, 1000)
-// const tiling = new Tiling(config)
-// tiling.Generate()
-// console.log(tiling)
 // // console.log(tiling.m_tiles[0].Boundary)
 // // console.log('here', tiling)
 // const polygons = tiling.m_tiles.map(tile => tile.Boundary)
 // // SVG.WritePolygons('example.svg', polygons)
 
-// document.body.appendChild(app.view as HTMLCanvasElement)
+// pixiDiv.appendChild(app.view as HTMLCanvasElement)
 
 // // //create a texture
 
@@ -42,12 +52,21 @@ const app = new PIXI.Application({
 //   const sprite = new PIXI.Sprite(PIXI.Texture.WHITE)
 //   sprite.tint = 0xff0000
 
+//   let scaleFactor = 300
+//   let offset = 0
+
 //   // sprites[tile.hash()] = sprite
 
 //   const points: Array<PIXI.IPointData> = []
 //   input.Segments.forEach(seg => {
-//     const a = { x: seg.P1.X, y: seg.P1.Y }
-//     const b = { x: seg.P2.X, y: seg.P2.Y }
+//     const a = {
+//       x: offset + scaleFactor * seg.P1.X,
+//       y: offset + scaleFactor * seg.P1.Y,
+//     }
+//     const b = {
+//       x: offset + scaleFactor * seg.P2.X,
+//       y: offset + scaleFactor * seg.P2.Y,
+//     }
 //     points.push(a, b)
 //   })
 
@@ -81,3 +100,11 @@ const app = new PIXI.Application({
 // // })
 
 // // // Geodesic(tile.Geometry, currentPosition, tile.VertexCircle.Center)
+
+function assertElement(obj: object | null): asserts obj is HTMLElement {
+  if (obj instanceof HTMLElement) {
+    return
+  }
+
+  throw new Error('Not an HTML element')
+}
