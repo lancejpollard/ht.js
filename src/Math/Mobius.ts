@@ -52,10 +52,6 @@ export class Mobius implements ITransform {
 
   D: Complex
 
-  ToString(): string {
-    return `A: ${this.A} B: ${this.B} C: ${this.C} D: ${this.D}`
-  }
-
   static Multiply(m1: Mobius, m2: Mobius): Mobius {
     let result: Mobius = Mobius.construct4d(
       m1.A.Multiply(m2.A).Add(m1.B.Multiply(m2.C)),
@@ -116,7 +112,7 @@ export class Mobius implements ITransform {
 
     switch (g) {
       case Geometry.Spherical:
-        this.C = Complex.Conjugate(P).Multiply(T.Negate())
+        this.C = Complex.Conjugate(P).Multiply(T).Negate()
         break
       case Geometry.Euclidean:
         this.C = new Complex(0, 0)
@@ -192,8 +188,8 @@ export class Mobius implements ITransform {
     //  Scale.
     let m2: Mobius = Mobius.construct()
     m2.A = new Complex(scale, 0)
-    m2.C = new Complex(0, 0)
     m2.B = new Complex(0, 0)
+    m2.C = new Complex(0, 0)
     m2.D = new Complex(1, 0)
 
     //  Back.
@@ -202,7 +198,7 @@ export class Mobius implements ITransform {
     m3.Isometry(g, 0, fixedPlus)
 
     //  Compose them (multiply in reverse order).
-    this.Merge(m3.Multiply(m2.Multiply(m1)))
+    this.Merge(m3.Multiply(m2).Multiply(m1))
   }
 
   // Allow a hyperbolic transformation using an absolute offset.

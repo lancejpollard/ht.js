@@ -13,7 +13,7 @@ export class TilingConfig {
     this.P = p
     this.Q = q
     this.MaxTiles = maxTiles
-    this.Shrink = 1
+    this.Shrink = 1.0
     this.M.Unity()
   }
 

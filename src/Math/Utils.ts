@@ -112,10 +112,9 @@ export class Utils {
 
   static Round(value: number, digits?: number): number {
     if (digits) {
-      return (
-        Math.round(
-          (value + Number.EPSILON) * Math.pow(10, digits - 1),
-        ) / Math.pow(10, digits - 1)
+      return Math.round(
+        ((value + Number.EPSILON) * Math.pow(10, digits - 1)) /
+          Math.pow(10, digits - 1),
       )
     }
 

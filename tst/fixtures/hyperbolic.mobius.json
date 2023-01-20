@@ -1,0 +1,38 @@
+{
+  "A": {
+    "Real": 1,
+    "Imaginary": 0,
+    "Magnitude": 1,
+    "Phase": 0
+  },
+  "B": {
+    "Real": 0,
+    "Imaginary": 0,
+    "Magnitude": 0,
+    "Phase": 0
+  },
+  "C": {
+    "Real": 0,
+    "Imaginary": 0,
+    "Magnitude": 0,
+    "Phase": 0
+  },
+  "D": {
+    "Real": 1,
+    "Imaginary": 0,
+    "Magnitude": 1,
+    "Phase": 0
+  },
+  "Trace": {
+    "Real": 2,
+    "Imaginary": 0,
+    "Magnitude": 2,
+    "Phase": 0
+  },
+  "TraceSquared": {
+    "Real": 4,
+    "Imaginary": 0,
+    "Magnitude": 4,
+    "Phase": 0
+  }
+}

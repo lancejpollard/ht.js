@@ -1,16 +1,35 @@
 import { Polygon } from '../src/Geometry/Polygon'
 import * as jsondiffpatch from 'jsondiffpatch'
-import j_a from './Polygon/1.json'
+import j_a from './fixtures/1.json'
+import tilingData from './fixtures/tiling.tile.Drawn.json'
+import hypMobius from './fixtures/hyperbolic.mobius.json'
+import hypMobIso from './fixtures/hyp.mob.iso.json'
 import _ from 'lodash'
 import JSONSelect from 'JSONSelect'
 import { Geometry2D } from '../src/Geometry/Geometry2D'
 import { Geometry } from '../src/Geometry/Geometry'
 import { DonHatch } from '../src/Math/DonHatch'
+import { Utils } from '../src/Math/Utils'
+import { Mobius } from '../src/Math/Mobius'
+import { Tiling } from '../src/Geometry/Tiling'
+import { TilingConfig } from '../src/Geometry/TilingConfig'
+import { Vector3D } from '../src/Geometry/Vector3D'
+import { Complex } from '../src/Geometry/Complex'
 
 const difftool = jsondiffpatch.create()
 
 const p = new Polygon()
 p.CreateRegular(7, 3)
+
+const c = new TilingConfig(7, 3, 1000)
+const t = new Tiling(c)
+t.Generate()
+
+var m2 = new Mobius()
+m2.Isometry(Geometry.Hyperbolic, 0, new Complex(-1, 0))
+
+var m = new Mobius()
+m.Hyperbolic(Geometry.Hyperbolic, Vector3D.construct().ToComplex(), 1.0)
 
 console.log()
 eq(Geometry.Hyperbolic, Geometry2D.GetGeometry(7, 3))
@@ -21,17 +40,41 @@ eq(0.30074261874637903, Geometry2D.GetNormalizedCircumRadius(7, 3))
 
 eq(p.Segments.length, j_a.Segments.length)
 eq(
-  JSONSelect.match(':root > * > .Center .X', p.Segments).join(':'),
-  JSONSelect.match(':root > * > .Center .X', j_a.Segments).join(':'),
+  JSONSelect.match(':root > * > .Center .X', p.Segments)
+    .map(round)
+    .join(' : '),
+  JSONSelect.match(':root > * > .Center .X', j_a.Segments)
+    .map(round)
+    .join(' : '),
 )
-// )
-// eq(
-//   j(p.Segments[0].Center),
-//   j(_.pick(j_a.Segments[0].Center, ['X', 'Y', 'Z', 'W'])),
-// )
-// function str(vec: Polygon): string {
-//   return `${vec.X}:${vec.Y}:${vec.Z}:${vec.W}`
-// }
+eq(
+  JSONSelect.match(':root > * > .Center .Y', p.Segments)
+    .map(round)
+    .join(' : '),
+  JSONSelect.match(':root > * > .Center .Y', j_a.Segments)
+    .map(round)
+    .join(' : '),
+)
+
+// eq(m2, hypMobIso)
+eq(m, hypMobius)
+
+console.log(t.Tiles[0].Drawn)
+
+eq(
+  JSONSelect.match(
+    ':root > .Segments > * > .Center > .X',
+    tilingData,
+  ).join(' : '),
+  JSONSelect.match(
+    ':root > .Segments  > * > .Center > .X',
+    t.Tiles[0].Drawn,
+  ).join(' : '),
+)
+
+function round(n: number): number {
+  return Utils.Round(n, 8)
+}
 
 // CreateRegular
 
@@ -51,7 +94,9 @@ function j(o: object) {
 
 function eq(a: any, s: any) {
   if (a != s) {
-    console.log(j(a), j(s))
+    console.log(j(a))
+    console.log()
+    console.log(j(s))
     throw new Error('Mismatch')
   }
 }
