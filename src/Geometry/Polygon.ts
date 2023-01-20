@@ -587,15 +587,15 @@ export class Polygon implements ITransformable {
     return inside
   }
 
-  GetHashCode(): number {
-    //  Is this ok? (I'm assuming ^ operator commutes, and order of applying doesn't matter)
-    let hCode: number = 0
+  GetHashCode(): string {
+    const array: Array<string> = []
+
     for (let v of this.Vertices) {
-      hCode = hCode ^ v.GetHashCode()
+      array.push(v.GetHashCode())
     }
 
     // The operator should be an XOR ^ instead of an OR, but not available in CodeDOM
-    return hCode
+    return array.join(':')
   }
 }
 
@@ -1099,4 +1099,14 @@ function Vector3DCompare(v1: Vector3D, v2: Vector3D): number {
 
   // Making it here means we are equal.
   return 0
+}
+
+function hashCode(str: string) {
+  var hash = 0,
+    i = 0,
+    len = str.length
+  while (i < len) {
+    hash = ((hash << 5) - hash + str.charCodeAt(i++)) << 0
+  }
+  return hash
 }

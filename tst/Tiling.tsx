@@ -8,8 +8,8 @@ type TilingPropsType = {
 
 export default function TilingDisplay({ data }: TilingPropsType) {
   const paths: Array<string> = []
-  const scalingFactor = 500
-  const offset = 200
+  const scalingFactor = 200
+  const offset = 400
 
   data.m_tiles.forEach(tile => {
     let path = Path()

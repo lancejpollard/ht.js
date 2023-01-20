@@ -26,7 +26,7 @@ export class Tiling {
 
   // A Record from tile centers to tiles.
 
-  TilePositions: Record<number, Tile>
+  TilePositions: Record<string, Tile>
 
   // Generate ourselves from a tiling config.
 
@@ -51,7 +51,7 @@ export class Tiling {
     this.TransformAndAdd(tile)
     let tiles: Array<Tile> = []
     tiles.push(tile)
-    let completed: Record<number, boolean> = {}
+    let completed: Record<string, boolean> = {}
     completed[tile.Boundary.Center.GetHashCode()] = true
     this.ReflectRecursive(tiles, completed)
     Tiling.FillOutIsometries(
@@ -75,7 +75,7 @@ export class Tiling {
   }
 
   static TryGetTile(
-    edges: Record<number, Array<Tile>>,
+    edges: Record<string, Array<Tile>>,
     edge: Vector3D,
     ref: { passThrough: Array<unknown> },
   ) {
@@ -88,8 +88,8 @@ export class Tiling {
   // If performance became an issue, we could do some of this at tile generation time.
 
   FillOutIncidences() {
-    const Edges: Record<number, Array<Tile>> = {}
-    const Vertices: Record<number, Array<Tile>> = {}
+    const Edges: Record<string, Array<Tile>> = {}
+    const Vertices: Record<string, Array<Tile>> = {}
 
     for (let t of this.m_tiles) {
       for (let edge of t.Boundary.EdgeMidpoints) {
@@ -203,7 +203,7 @@ export class Tiling {
 
   ReflectRecursive(
     tiles: Array<Tile>,
-    completed: Record<number, boolean>,
+    completed: Record<string, boolean>,
   ) {
     //  Breadth first recursion.
     if (0 == tiles.length) {
