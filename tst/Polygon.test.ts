@@ -73,6 +73,7 @@ eq(
     ':root > .Center > .X, :root > .Center > .Y',
     tilingData,
   ).join(' : '),
+  ':root > .Center > .X, :root > .Center > .Y',
 )
 eq(
   JSONSelect.match(
@@ -113,8 +114,9 @@ function j(o: object) {
   return JSON.stringify(o, null, 2)
 }
 
-function eq(a: any, s: any) {
+function eq(a: any, s: any, x?: string) {
   if (a != s) {
+    console.log(x)
     console.log(j(a))
     console.log()
     console.log(j(s))

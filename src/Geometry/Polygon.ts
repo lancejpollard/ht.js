@@ -909,7 +909,6 @@ export class Segment implements ITransformable {
     ) {
       this.Type = SegmentType.Arc
       this.Center = temp.Center
-      console.log(this.Center.Clone())
       //  Work out the orientation of the arc.
       let t1: Vector3D = this.P1.Subtract(this.Center)
       let t2: Vector3D = mid.Subtract(this.Center)

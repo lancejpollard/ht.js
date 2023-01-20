@@ -210,10 +210,10 @@ export class Circle implements ITransformable {
       //  Grab 2 points to reflect to P1/P2.
       //  We'll use the 2 points that are 120 degrees from c.Center.
       let v: Vector3D = c.Center.Subtract(this.Center)
-      v.RotateXY(2 * (Math.PI / 3))
+      v.RotateXY((2 * Math.PI) / 3)
 
       this.P1 = c.ReflectPoint(this.Center.Add(v))
-      v.RotateXY(2 * (Math.PI / 3))
+      v.RotateXY((2 * Math.PI) / 3)
 
       this.P2 = c.ReflectPoint(this.Center.Add(v))
       this.Radius = Number.POSITIVE_INFINITY
@@ -224,7 +224,7 @@ export class Circle implements ITransformable {
       let a: number = this.Radius
       let k: number = c.Radius
       let v: Vector3D = this.Center.Subtract(c.Center)
-      let s: number = k * (k / (v.MagSquared() - a * a))
+      let s: number = (k * k) / (v.MagSquared() - a * a)
 
       this.Center = c.Center.Add(v.MultiplyWithNumber(s))
       this.Radius = Math.abs(s) * a
@@ -258,7 +258,7 @@ export class Circle implements ITransformable {
         return infinityVector
       }
 
-      if (p == infinityVector) {
+      if (p.Equals(infinityVector)) {
         return this.Center
       }
 
@@ -268,7 +268,7 @@ export class Circle implements ITransformable {
       v.Normalize()
 
       return this.Center.Add(
-        v.MultiplyWithNumber(this.Radius * (this.Radius / d)),
+        v.MultiplyWithNumber((this.Radius * this.Radius) / d),
       )
     }
   }
@@ -516,43 +516,5 @@ export class CircleNE extends Circle implements ITransformable {
 
   static IsPointInsideFast(c: CircleNE, testPoint: Vector3D): boolean {
     return c.IsPointInsideFast(testPoint)
-  }
-}
-
-export class CircleNE_EqualityComparer
-  implements IEqualityComparer<CircleNE>
-{
-  //  ZZZ - I wonder if we want to do normalization of lines before comparing.
-  Equals(c1: CircleNE, c2: CircleNE): boolean {
-    let radiusEqual: boolean =
-      Tolerance.Equal(c1.Radius, c2.Radius) ||
-      (isInfinite(c1.Radius) && isInfinite(c2.Radius))
-
-    if (c1.IsLine) {
-      return c1.P1 == c2.P1 && c1.P2 == c2.P2 && radiusEqual
-    } else {
-      return (
-        c1.Center == c2.Center &&
-        c1.CenterNE == c2.CenterNE &&
-        radiusEqual
-      )
-    }
-  }
-
-  GetHashCode(c: CircleNE): number {
-    if (c.IsLine) {
-      return c.P1.GetHashCode() ^ c.P2.GetHashCode()
-    } else {
-      let inverse: number = 1 / Tolerance.Threshold
-      // The operator should be an XOR ^ instead of an OR, but not available in CodeDOM
-      let decimals: number = Math.log10(inverse)
-      return (
-        c.Center.GetHashCode() ^
-        c.CenterNE.GetHashCode() ^
-        Utils.Round(c.Radius, decimals)
-      )
-      // The operator should be an XOR ^ instead of an OR, but not available in CodeDOM
-      // The operator should be an XOR ^ instead of an OR, but not available in CodeDOM
-    }
   }
 }
