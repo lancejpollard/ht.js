@@ -43,7 +43,6 @@ export default function TilingDisplay({ data }: TilingPropsType) {
       <h1>Tiling Test</h1>
       <svg
         version="1.1"
-        id="Ebene_1"
         xmlns="http://www.w3.org/2000/svg"
         x="0px"
         y="0px"
