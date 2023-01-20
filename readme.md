@@ -1,4 +1,4 @@
-# HCA.js
+# ht.js
 
 Hyperbolic tessellations and cellular automata in the 2D plane in
 JavaScript.
