@@ -1,4 +1,4 @@
-import { Tolerance, Utils } from '@Math/Utils'
+import { assert, assertNumber, Tolerance, Utils } from '@Math/Utils'
 import { Complex } from './Complex'
 import { IComparer } from './IComparer'
 
@@ -69,7 +69,7 @@ export class Vector3D {
     return v.ToComplex()
   }
 
-  static Equals(v1: Vector3D, v2: Vector3D): boolean {
+  static Equals(v1: Vector3D, v2: object): boolean {
     return v1.Compare(v2)
   }
 
@@ -77,9 +77,8 @@ export class Vector3D {
     return !(v1 == v2)
   }
 
-  /* override */ Equals(obj: Object): boolean {
-    let v = obj as Vector3D
-    return v.Equals(this)
+  /* override */ Equals(obj: object): boolean {
+    return Vector3D.Equals(this, obj)
   }
 
   /* override */ GetHashCode(): number {
@@ -112,37 +111,42 @@ export class Vector3D {
     // return X.GetHashCode() ^ Y.GetHashCode() ^ Z.GetHashCode();
   }
 
-  CompareWithThreshold(
-    other: Vector3D,
-    threshold: number = 0,
-  ): boolean {
-    //  NOTE: This is here because when the vector is infinite, it fails the tolerance checks below.
-    if (
-      this.X == other.X &&
-      this.Y == other.Y &&
-      this.Z == other.Z &&
-      this.W == other.W
-    ) {
-      return true
+  CompareWithThreshold(other: object, threshold: number = 0): boolean {
+    if ('X' in other && 'Y' in other && 'Z' in other && 'W' in other) {
+      assertNumber(other.X)
+      assertNumber(other.Y)
+      assertNumber(other.Z)
+      assertNumber(other.W)
+      //  NOTE: This is here because when the vector is infinite, it fails the tolerance checks below.
+      if (
+        this.X == other.X &&
+        this.Y == other.Y &&
+        this.Z == other.Z &&
+        this.W == other.W
+      ) {
+        return true
+      }
+
+      if ('DNE' in other && this.DNE && other.DNE) {
+        return true
+      }
+
+      if ('DNE' in other && (this.DNE || other.DNE)) {
+        return false
+      }
+
+      return (
+        Tolerance.EqualWithThreshold(this.X, other.X, threshold) &&
+        Tolerance.EqualWithThreshold(this.Y, other.Y, threshold) &&
+        Tolerance.EqualWithThreshold(this.Z, other.Z, threshold) &&
+        Tolerance.EqualWithThreshold(this.W, other.W, threshold)
+      )
     }
 
-    if (this.DNE && other.DNE) {
-      return true
-    }
-
-    if (this.DNE || other.DNE) {
-      return false
-    }
-
-    return (
-      Tolerance.EqualWithThreshold(this.X, other.X, threshold) &&
-      Tolerance.EqualWithThreshold(this.Y, other.Y, threshold) &&
-      Tolerance.EqualWithThreshold(this.Z, other.Z, threshold) &&
-      Tolerance.EqualWithThreshold(this.W, other.W, threshold)
-    )
+    return false
   }
 
-  Compare(other: Vector3D): boolean {
+  Compare(other: object): boolean {
     return this.CompareWithThreshold(other, Tolerance.Threshold)
   }
 

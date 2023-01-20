@@ -129,6 +129,12 @@ export function assert(val: unknown): asserts val is object {
   }
 }
 
+export function assertNumber(val: unknown): asserts val is number {
+  if (!_.isNumber(val)) {
+    throw new Error('Invalid object')
+  }
+}
+
 export function isInfinite(val: number): boolean {
   return UtilsInfinity.IsInfiniteNumber(val)
 }
