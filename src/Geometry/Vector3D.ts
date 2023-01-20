@@ -74,7 +74,7 @@ export class Vector3D {
   }
 
   static NotEquals(v1: Vector3D, v2: Vector3D): boolean {
-    return !(v1 == v2)
+    return !Vector3D.Equals(v1, v2)
   }
 
   /* override */ Equals(obj: object): boolean {

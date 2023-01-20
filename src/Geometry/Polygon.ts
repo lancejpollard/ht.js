@@ -57,7 +57,7 @@ export class Polygon implements ITransformable {
   CreateRegular(p: number, q: number) {
     this.Clear()
 
-    let points: Array<Vector3D> = new Array<Vector3D>()
+    let points: Array<Vector3D> = []
     let g: Geometry = Geometry2D.GetGeometry(p, q)
     let circumRadius: number = Geometry2D.GetNormalizedCircumRadius(
       p,
@@ -108,7 +108,7 @@ export class Polygon implements ITransformable {
           const piq = q == -1 ? 0 : Math.PI / q // Handle q infinite.
           //  Handle q infinite.
           let t1: number = Math.PI / p
-          let t2: number = Math.PI / 2 - (piq - t1)
+          let t2: number = Math.PI / 2 - piq - t1
           let factor: number = (Math.tan(t1) / Math.tan(t2) + 1) / 2
           newSegment.Center = newSegment.P1.Add(
             newSegment.P2,

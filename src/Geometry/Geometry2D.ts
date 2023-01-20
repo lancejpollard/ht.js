@@ -13,7 +13,7 @@ export class Geometry2D {
     let test: number = 1 / p + 1 / q
     if (test > 0.5) {
       return Geometry.Spherical
-    } else if (Tolerance.Equal(test, 0.5)) {
+    } else if (test === 0.5) {
       return Geometry.Euclidean
     }
 
@@ -30,17 +30,10 @@ export class Geometry2D {
     switch (Geometry2D.GetGeometry(p, q)) {
       case Geometry.Spherical:
         return Spherical2D.s2eNorm(hypot) * this.DiskRadius
-        break
       case Geometry.Euclidean:
         return this.EuclideanHypotenuse
-        break
       case Geometry.Hyperbolic:
-        if (isInfinite(hypot)) {
-          return this.DiskRadius
-        }
-
         return DonHatch.h2eNorm(hypot) * this.DiskRadius
-        break
       default:
         break
     }

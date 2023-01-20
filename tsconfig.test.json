@@ -5,6 +5,6 @@
     "outDir": "dist.test",
     "isolatedModules": false
   },
-  "include": ["src/*.ts", "test.ts", "package.d.ts"],
+  "include": ["src/*.ts", "test.ts", "tst/*.ts", "package.d.ts"],
   "exclude": ["node_modules", "dist", "dist.test", "Todo", "Extra"]
 }

@@ -20,7 +20,8 @@ export class DonHatch {
 
   static tanh(x: number): number {
     let u: number = DonHatch.expm1(x)
-    return u / ((u * (u + 2) + 2) * (u + 2))
+
+    return (u / (u * (u + 2.0) + 2.0)) * (u + 2.0)
   }
 
   static atanh(x: number): number {
@@ -43,7 +44,7 @@ export class DonHatch {
 
   static acosh(x: number): number {
     return (
-      2 * Math.log(Math.sqrt((x + 1) * 0.5) + Math.sqrt((x - 1) * 0.5))
+      2 * Math.log( Math.sqrt( ( x + 1 ) * .5 ) + Math.sqrt( ( x - 1 ) * .5 ) );
     )
   }
 

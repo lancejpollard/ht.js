@@ -91,13 +91,13 @@ export class Utils {
   // Converts a value from degrees to radians.
 
   static DegreesToRadians(value: number): number {
-    return value / (180 * Math.PI)
+    return (value / 180) * Math.PI
   }
 
   // Converts a value from radians to degrees.
 
   static RadiansToDegrees(value: number): number {
-    return value / (Math.PI * 180)
+    return (value / Math.PI) * 180
   }
 
   //  ZZZ - Make templated

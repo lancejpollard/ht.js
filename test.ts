@@ -2,6 +2,9 @@ import * as PIXI from 'pixi.js'
 import { Tiling } from './src/Geometry/Tiling'
 import { TilingConfig } from './src/Geometry/TilingConfig'
 
+import './tst/Vector3D.test'
+import './tst/Polygon.test'
+
 const app = new PIXI.Application({
   width: 800,
   height: 600,
@@ -11,8 +14,9 @@ const sprites = {}
 
 const config = new TilingConfig(3, 7, 1000)
 const tiling = new Tiling(config)
-tiling.Generate()
-console.log('here', tiling)
+// tiling.Generate()
+// console.log(tiling.m_tiles[0].Boundary)
+// console.log('here', tiling)
 // const polygons = tiling.m_tiles.map(tile => tile.Boundary)
 // SVG.WritePolygons('example.svg', polygons)
 

@@ -49,7 +49,7 @@ export class Tiling {
     }
 
     this.TransformAndAdd(tile)
-    let tiles: Array<Tile> = new Array<Tile>()
+    let tiles: Array<Tile> = []
     tiles.push(tile)
     let completed: Record<number, boolean> = {}
     completed[tile.Boundary.Center.GetHashCode()] = true
