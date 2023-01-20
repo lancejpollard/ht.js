@@ -81,6 +81,7 @@ eq(
     t.Tiles[0].Drawn,
   ),
   JSONSelect.match(':root > * > .P1, :root > * > .P2', tilingData),
+  ':root > * > .P1, :root > * > .P2',
 )
 
 eq(
