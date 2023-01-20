@@ -78,13 +78,13 @@ export class Tile {
   TransformMobius(m: Mobius) {
     this.Boundary.TransformMobius(m)
     this.Drawn.TransformMobius(m)
-    this.VertexCircle.Transform(m)
+    this.VertexCircle.TransformMobius(m)
   }
 
   TransformIsometry(i: Isometry) {
     this.Boundary.TransformIsometry(i)
     this.Drawn.TransformIsometry(i)
-    this.VertexCircle.Transform(i)
+    this.VertexCircle.TransformIsometry(i)
   }
 
   // Helper method to see if we have points projected to infinity.

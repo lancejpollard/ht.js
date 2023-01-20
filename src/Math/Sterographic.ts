@@ -1,9 +1,10 @@
-import { isInfinite } from '@Math/Utils'
-import { Vector3D } from './Vector3D'
+import { Vector3D } from '../Geometry/Vector3D'
+import { UtilsInfinity } from './Infinity'
+import { Tolerance } from './Utils'
 
 export class Sterographic {
   static PlaneToSphereSafe(planePoint: Vector3D): Vector3D {
-    if (isInfinite(planePoint)) {
+    if (UtilsInfinity.IsInfiniteVector3D(planePoint)) {
       return Vector3D.construct3d(0, 0, 1)
     }
 
@@ -30,7 +31,7 @@ export class Sterographic {
   }
 
   static R3toS3(p: Vector3D): Vector3D {
-    if (isInfinite(p)) {
+    if (UtilsInfinity.IsInfiniteVector3D(p)) {
       return Vector3D.construct4d(0, 0, 0, 1)
     }
 

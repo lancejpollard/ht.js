@@ -30,6 +30,11 @@ export class Vector3D {
     return self
   }
 
+  static construct1d(x: number) {
+    const self = new Vector3D(x, 0, 0, 0)
+    return self
+  }
+
   static construct() {
     const self = new Vector3D(0, 0, 0, 0)
     return self

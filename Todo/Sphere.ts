@@ -1,6 +1,6 @@
 import { Tolerance } from '@Math/Utils'
-import { Circle3D } from '../src/Geometry/Circle3D'
-import { Vector3D } from '../src/Geometry/Vector3D'
+import { Circle3D } from '../Geometry/Circle3D'
+import { Vector3D } from '../Geometry/Vector3D'
 
 export class Sphere {
   constructor() {

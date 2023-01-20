@@ -291,11 +291,11 @@ export class NearTree {
 }
 
 export class NearTreeObject {
-  get ID(): Object {}
+  ID?: Object
 
-  set ID(value: Object) {}
+  Location: Vector3D
 
-  get Location(): Vector3D {}
-
-  set Location(value: Vector3D) {}
+  constructor() {
+    this.Location = Vector3D.construct()
+  }
 }

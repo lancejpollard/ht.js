@@ -219,7 +219,7 @@ export class Isometry implements ITransform {
       return new Isometry(inverse)
     } else {
       let reflection: Circle = this.Reflection.Clone()
-      reflection.Transform(inverse)
+      reflection.TransformMobius(inverse)
       return new Isometry(inverse, reflection)
     }
   }
@@ -228,7 +228,7 @@ export class Isometry implements ITransform {
 
   static ReflectX(): Isometry {
     let i: Isometry = Isometry.constructUnity()
-    let reflection: Circle = new Circle(
+    let reflection: Circle = Circle.construct2d(
       Vector3D.construct(),
       Vector3D.construct2d(1, 0),
     )

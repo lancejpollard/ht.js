@@ -1,6 +1,37 @@
 import { UtilsInfinity } from '@Math/Infinity'
 import { Sterographic } from './Sterographic'
-import { Vector3D } from '../src/Geometry/Vector3D'
+import { Vector3D } from '../Geometry/Vector3D'
+import { isInfinite, Tolerance } from './Utils'
+import { Euclidean2D } from '@Geometry/Euclidean2D'
+
+export class SphericalCoords {
+  // x,y,z -> r,theta,phi
+  static CartesianToSpherical(v: Vector3D): Vector3D {
+    let r = v.Abs()
+    if (Tolerance.Zero(r)) {
+      return Vector3D.construct()
+    }
+
+    return Vector3D.construct3d(
+      r,
+      Math.acos(v.Z / r),
+      Math.atan2(v.Y, v.X),
+    )
+  }
+
+  // r,theta,phi -> x,y,z
+  static SphericalToCartesian(v: Vector3D): Vector3D {
+    if (Tolerance.Zero(v.Abs())) {
+      return Vector3D.construct()
+    }
+
+    return Vector3D.construct3d(
+      v.X * Math.sin(v.Y) * Math.cos(v.Z),
+      v.X * Math.sin(v.Y) * Math.sin(v.Z),
+      v.X * Math.cos(v.Y),
+    )
+  }
+}
 
 export enum SphericalModel {
   Sterographic,
@@ -23,6 +54,8 @@ export enum SphericalModel {
 }
 
 export class SphericalModels {
+  static m_gScale: number = 0.5
+
   static StereoToGnomonic(p: Vector3D): Vector3D {
     let sphere: Vector3D = Sterographic.PlaneToSphere(p)
     //  We can only represent the lower hemisphere.
@@ -39,21 +72,25 @@ export class SphericalModels {
   }
 
   static GnomonicToStereo(g: Vector3D): Vector3D {
-    m_gScale
+    g = g.Divide(this.m_gScale)
+
     let dot: number = g.Dot(g)
     //  X^2 + Y^2
     let z: number = (1 / Math.sqrt(dot + 1)) * -1
-    return g * (z / (z - 1))
+
+    return g.MultiplyWithNumber(z / (z - 1))
   }
 
-  static StereoToEqualVolume(p: Vector3D): Vector3D {
+  static StereoToEqualVolumeWithVector(p: Vector3D): Vector3D {
     let result: Vector3D = p
     result.Normalize()
-    result = result * SphericalModels.StereoToEqualVolume(p.Abs())
+    result = result.MultiplyWithNumber(
+      SphericalModels.StereoToEqualVolume(p.Abs()),
+    )
     return result
   }
 
-  static #StereoToEqualVolume(dist: number): number {
+  static StereoToEqualVolume(dist: number): number {
     if (isInfinite(dist)) {
       return 1
     }
@@ -64,22 +101,26 @@ export class SphericalModels {
     w = w * -1
     //  Because I derived formula from north pole.
     let t: number =
-      Math.PI / 2 - (w * Math.sqrt(1 - w * w) - Math.Asin(w))
-    let r: number = Math.Pow(t * (3 / 2), 1 / 3)
+      Math.PI / 2 - w * Math.sqrt(1 - w * w) - Math.asin(w)
+
+    let r: number = Math.pow(t * (3 / 2), 1 / 3)
+
     return r
   }
 
-  static StereoToEqualArea(p: Vector3D): Vector3D {
+  static StereoToEqualAreaWithVector3D(p: Vector3D): Vector3D {
     let result: Vector3D = p
     result.Normalize()
-    result = result * SphericalModels.StereoToEqualArea(p.Abs())
+    result = result.MultiplyWithNumber(
+      SphericalModels.StereoToEqualArea(p.Abs()),
+    )
     return result
   }
 
   ///  <summary>
   ///  https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection
   ///  </summary>
-  static #StereoToEqualArea(dist: number): number {
+  static StereoToEqualArea(dist: number): number {
     if (isInfinite(dist)) {
       return 1
     }
@@ -91,36 +132,40 @@ export class SphericalModels {
     return r / 2
   }
 
-  static EqualAreaToStereo(p: Vector3D): Vector3D {
+  static EqualAreaToStereoWithVector3D(p: Vector3D): Vector3D {
     let result: Vector3D = p
     result.Normalize()
-    result = result * SphericalModels.EqualAreaToStereo(p.Abs())
+    result = result.MultiplyWithNumber(
+      SphericalModels.EqualAreaToStereo(p.Abs()),
+    )
     return result
   }
 
   ///  <summary>
   ///  https://en.wikipedia.org/wiki/Lambert_azimuthal_equal-area_projection
   ///  </summary>
-  static #EqualAreaToStereo(dist: number): number {
+  static EqualAreaToStereo(dist: number): number {
     if (dist > 1) {
       throw new Error('Argument Error')
     }
 
-    let v: Vector3D = new Vector3D(1, 2 * Math.acos(dist), 0)
+    let v: Vector3D = Vector3D.construct3d(1, 2 * Math.acos(dist), 0)
     v = Sterographic.SphereToPlane(
       SphericalCoords.SphericalToCartesian(v),
     )
     return v.Abs()
   }
 
-  static StereoToEquidistant(p: Vector3D): Vector3D {
+  static StereoToEquidistantWithVector3D(p: Vector3D): Vector3D {
     let result: Vector3D = p
     result.Normalize()
-    result = result * SphericalModels.StereoToEquidistant(p.Abs())
+    result = result.MultiplyWithNumber(
+      SphericalModels.StereoToEquidistant(p.Abs()),
+    )
     return result
   }
 
-  static #StereoToEquidistant(dist: number): number {
+  static StereoToEquidistant(dist: number): number {
     if (isInfinite(dist)) {
       return 1
     }
@@ -130,27 +175,31 @@ export class SphericalModels {
     let w: number = (dot - 1) / (dot + 1)
     let x: number = Math.sqrt(1 - w * w)
     let r: number = Euclidean2D.AngleToCounterClock(
-      new Vector3D(0, -1),
-      new Vector3D(x, w),
+      Vector3D.construct2d(0, -1),
+      Vector3D.construct2d(x, w),
     )
+
     return r / Math.PI
   }
 
-  static EquidistantToStereo(p: Vector3D): Vector3D {
+  static EquidistantToStereoWithVector3D(p: Vector3D): Vector3D {
     let result: Vector3D = p
     result.Normalize()
-    result = result * SphericalModels.EquidistantToStereo(p.Abs())
+    result = result.MultiplyWithNumber(
+      SphericalModels.EquidistantToStereo(p.Abs()),
+    )
     return result
   }
 
-  static #EquidistantToStereo(dist: number): number {
+  static EquidistantToStereo(dist: number): number {
     if (dist > 1) {
       throw new Error('Argument Error')
     }
 
-    let v: Vector3D = new Vector3D(0, -1)
+    let v: Vector3D = Vector3D.construct2d(0, -1)
     v.RotateXY(dist * Math.PI)
-    v = Sterographic.SphereToPlane(new Vector3D(v.X, 0, v.Y))
+    v = Sterographic.SphereToPlane(Vector3D.construct3d(v.X, 0, v.Y))
+
     return v.Abs()
   }
 
@@ -159,7 +208,7 @@ export class SphericalModels {
     //  y is the latitude
     //  x is the longitude
     //  Assume inputs go from -1 to 1.
-    let spherical: Vector3D = new Vector3D(
+    let spherical: Vector3D = Vector3D.construct3d(
       1,
       Math.PI / (2 * (1 - v.Y)),
       v.X * Math.PI,
@@ -173,7 +222,7 @@ export class SphericalModels {
 
   static SinusoidalToStereo(v: Vector3D): Vector3D {
     let lat: number = Math.PI / (2 * (1 - v.Y))
-    let spherical: Vector3D = new Vector3D(
+    let spherical: Vector3D = Vector3D.construct3d(
       1,
       lat,
       Math.PI * (v.X / Math.cos(lat - Math.PI / 2)),
@@ -190,11 +239,12 @@ export class SphericalModels {
   ///  http://archive.bridgesmathart.org/2013/bridges2013-217.pdf
   ///  </summary>
   static MercatorToStereo(v: Vector3D): Vector3D {
-    v = v * Math.PI
+    v = v.MultiplyWithNumber(Math.PI)
+
     //  Input is [-1,1]
-    let lat: number = 2 * Math.Atan(Math.exp(v.Y)) - Math.PI / 2
+    let lat: number = 2 * Math.atan(Math.exp(v.Y)) - Math.PI / 2
     let inclination: number = lat + Math.PI / 2
-    let spherical: Vector3D = new Vector3D(1, inclination, v.X)
+    let spherical: Vector3D = Vector3D.construct3d(1, inclination, v.X)
     let onBall: Vector3D =
       SphericalCoords.SphericalToCartesian(spherical)
 
@@ -215,6 +265,4 @@ export class SphericalModels {
     v.Z = Math.sqrt(1 - t)
     return Sterographic.SphereToPlane(v)
   }
-
-  static m_gScale: number = 0.5
 }

@@ -345,7 +345,7 @@ export class Polygon implements ITransformable {
   }
 
   get CircumCircle(): CircleNE {
-    let result: CircleNE = new CircleNE()
+    let result: CircleNE = CircleNE.construct()
 
     if (this.Segments.length > 2) {
       result.From3Points(
@@ -360,7 +360,7 @@ export class Polygon implements ITransformable {
   }
 
   get InCircle(): CircleNE {
-    let result: CircleNE = new CircleNE()
+    let result: CircleNE = CircleNE.construct()
 
     if (this.Segments.length > 2) {
       result.From3Points(
@@ -503,7 +503,7 @@ export class Polygon implements ITransformable {
     //  We'll try two more times, and let the majority win (only need one more vote).
     //  Since not many polygons will actually make it here, these extra calculations are ok.
     //  It does seem to help a lot.
-    let ray: Circle = new Circle()
+    let ray: Circle = Circle.construct()
     ray.From2Points(
       this.Center,
       this.Center.Add(Vector3D.construct2d(103, 10007)),
@@ -526,7 +526,7 @@ export class Polygon implements ITransformable {
   ///  </summary>
   IsPointInsideParanoid(p: Vector3D): boolean {
     let insideCount: number = 0
-    let ray: Circle = new Circle()
+    let ray: Circle = Circle.construct()
     if (this.IsPointInside(p)) {
       insideCount++
     }
@@ -551,7 +551,7 @@ export class Polygon implements ITransformable {
   IsPointInside(p: Vector3D): boolean {
     //  ZZZ - Our "ray" will be half a circle for now.
     //          (We'll throw out intersections where x <= p.X)
-    let ray: Circle = new Circle()
+    let ray: Circle = Circle.construct()
     // ray.From3Points( p + new Vector3D( -500, 1 ), p, p + new Vector3D( 500, 1 ) );        // Circle was too huge (r ~= 125000), which caused tolerance issues.
     // ray.From3Points( p + new Vector3D( -103, 1 ), p, p + new Vector3D( 193, 1 ) );        // primes! (r ~= 10000)  Still suffering
     ray.From2Points(p, p.Add(Vector3D.construct2d(10007, 103)))
@@ -656,7 +656,7 @@ export class Segment implements ITransformable {
     newSeg.Type = SegmentType.Arc
     newSeg.P1 = start
     newSeg.P2 = end
-    let c: Circle = new Circle()
+    let c: Circle = Circle.construct()
     c.From3Points(start, mid, end)
     newSeg.Center = c.Center
     //  Obtain vectors from center point of circle (as if at the origin)
@@ -717,7 +717,7 @@ export class Segment implements ITransformable {
       }
     }
 
-    this.m_circle = new Circle()
+    this.m_circle = Circle.construct()
     this.m_circle.Center = this.Center
     this.m_circle.Radius = this.Radius
 
@@ -842,7 +842,7 @@ export class Segment implements ITransformable {
 
     mid = s.ReflectPoint(mid)
     //  Can we make a circle out of the reflected points?
-    let temp: Circle = new Circle()
+    let temp: Circle = Circle.construct()
 
     if (
       !UtilsInfinity.IsInfiniteVector3D(this.P1) &&
@@ -901,7 +901,7 @@ export class Segment implements ITransformable {
     mid = transform.ApplyVector3D(mid)
 
     //  Can we make a circle out of the transformed points?
-    let temp: Circle = new Circle()
+    let temp: Circle = Circle.construct()
 
     if (
       !UtilsInfinity.IsInfiniteVector3D(this.P1) &&

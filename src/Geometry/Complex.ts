@@ -4,9 +4,8 @@
 
 import { isInfinite } from '@Math/Utils'
 import { IEquatable } from './IEquitable'
-import { IFormattable } from './IFormattable'
 
-export class Complex implements IEquatable<Complex>, IFormattable {
+export class Complex implements IEquatable<Complex> {
   //  --------------SECTION: Private Data members ----------- //
   m_real: number
 
@@ -52,6 +51,10 @@ export class Complex implements IEquatable<Complex>, IFormattable {
       magnitude * Math.cos(phase),
       magnitude * Math.sin(phase),
     )
+  }
+
+  Clone() {
+    return new Complex(this.m_real, this.m_imaginary)
   }
 
   Negate(): Complex {

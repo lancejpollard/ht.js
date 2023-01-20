@@ -396,6 +396,17 @@ export class CircleNE extends Circle implements ITransformable {
     this.CenterNE = centerNE
   }
 
+  static construct() {
+    const self = new CircleNE(
+      Vector3D.construct(),
+      Vector3D.construct(),
+      Vector3D.construct(),
+      1,
+      Vector3D.construct(),
+    )
+    return self
+  }
+
   static constructFromCircle(c: Circle, centerNE: Vector3D) {
     const self = new CircleNE(c.P1, c.P2, c.Center, c.Radius, centerNE)
     return self

@@ -52,23 +52,24 @@ export class Matrix4D {
     return result
   }
 
-  static Operator(m1: Matrix4D, m2: Matrix4D): Matrix4D {
+  static Add(m1: Matrix4D, m2: Matrix4D): Matrix4D {
     let result: Matrix4D = new Matrix4D()
     for (let i: number = 0; i < 4; i++) {
       for (let j: number = 0; j < 4; j++) {
-        result[(i, j)] = m1[(i, j)] + m2[(i, j)]
+        result.Data[i][j] = m1.Data[i][j] + m2.Data[i][j]
       }
     }
 
     return result
   }
 
-  static Operator(m1: Matrix4D, m2: Matrix4D): Matrix4D {
+  static Multiply(m1: Matrix4D, m2: Matrix4D): Matrix4D {
     let result: Matrix4D = new Matrix4D()
     for (let i: number = 0; i < 4; i++) {
       for (let j: number = 0; j < 4; j++) {
         for (let k: number = 0; k < 4; k++) {
-          result[(i, j)] = result[(i, j)] + m1[(i, k)] * m2[(k, j)]
+          result.Data[i][j] =
+            result.Data[i][j] + m1.Data[i][k] * m2.Data[k][j]
         }
       }
     }
@@ -76,11 +77,11 @@ export class Matrix4D {
     return result
   }
 
-  static Operator(m: Matrix4D, s: number): Matrix4D {
+  static MultiplyByNumber(m: Matrix4D, s: number): Matrix4D {
     let result: Matrix4D = new Matrix4D()
     for (let i: number = 0; i < 4; i++) {
       for (let j: number = 0; j < 4; j++) {
-        result[(i, j)] = m[(i, j)] * s
+        result.Data[i][j] = m.Data[i][j] * s
       }
     }
 
@@ -91,7 +92,7 @@ export class Matrix4D {
     let result: Matrix4D = new Matrix4D()
     for (let i: number = 0; i < 4; i++) {
       for (let j: number = 0; j < 4; j++) {
-        result[(i, j)] = m[(j, i)]
+        result.Data[i][j] = m.Data[j][i]
       }
     }
 
@@ -211,13 +212,20 @@ export class Matrix4D {
       for (let j: number = 0; j < i; j++) {
         //  result[j] is already unit length...
         //  result[i] -= (result[i] dot result[j])*result[j]
-        let iVec: Vector3D = result[i]
-        let jVec: Vector3D = result[j]
-        iVec = iVec - iVec.Dot(jVec) * jVec
-        result[i] = iVec
+        let iVec: Vector3D = Vector3D.constructFrom4dArray(
+          result.Data[i],
+        )
+        let jVec: Vector3D = Vector3D.constructFrom4dArray(
+          result.Data[j],
+        )
+        iVec = iVec.Subtract(jVec.MultiplyWithNumber(iVec.Dot(jVec)))
+        result.Data[i] = [iVec.X, iVec.Y, iVec.Z, iVec.W]
       }
 
-      result[i].Normalize()
+      let iVec: Vector3D = Vector3D.constructFrom4dArray(result.Data[i])
+      iVec.Normalize()
+
+      result.Data[i] = [iVec.X, iVec.Y, iVec.Z, iVec.W]
     }
 
     return result
@@ -226,21 +234,32 @@ export class Matrix4D {
   ///  <summary>
   ///  Gram-Schmidt orthonormalize
   ///  </summary>
-  static GramSchmidt(
+  static GramSchmidtOrthonormalize(
     input: Matrix4D,
-    innerProduct: Func<Vector3D, Vector3D, number>,
-    normalize: Func<Vector3D, Vector3D>,
+    innerProduct: (a: Vector3D, b: Vector3D) => number,
+    normalize: (v: Vector3D) => Vector3D,
   ): Matrix4D {
     let result: Matrix4D = input
     for (let i: number = 0; i < 4; i++) {
       for (let j: number = i + 1; j < 4; j++) {
-        let iVec: Vector3D = result[i]
-        let jVec: Vector3D = result[j]
-        iVec = iVec - innerProduct(iVec, jVec) * jVec
-        result[i] = iVec
+        let iVec: Vector3D = Vector3D.constructFrom4dArray(
+          result.Data[i],
+        )
+        let jVec: Vector3D = Vector3D.constructFrom4dArray(
+          result.Data[j],
+        )
+
+        iVec = iVec.Subtract(
+          jVec.MultiplyWithNumber(innerProduct(iVec, jVec)),
+        )
+
+        result.Data[i] = [iVec.X, iVec.Y, iVec.Z, iVec.W]
       }
 
-      result[i] = normalize(result[i])
+      let iVec: Vector3D = Vector3D.constructFrom4dArray(result.Data[i])
+      let oVec: Vector3D = normalize(iVec)
+
+      result.Data[i] = [oVec.X, oVec.Y, oVec.Z, oVec.W]
     }
 
     return result
@@ -257,13 +276,27 @@ export class Matrix4D {
       input.Z,
       input.W,
     )
-    for (let i: number = 0; i < 4; i++) {
-      result[i] =
-        copy[0] * this[(i, 0)] +
-        copy[1] * this[(i, 1)] +
-        copy[2] * this[(i, 2)] +
-        copy[3] * this[(i, 3)]
-    }
+
+    result.X =
+      copy.X * this.Data[0][0] +
+      copy.Y * this.Data[0][1] +
+      copy.Z * this.Data[0][2] +
+      copy.W * this.Data[0][3]
+    result.Y =
+      copy.X * this.Data[1][0] +
+      copy.Y * this.Data[1][1] +
+      copy.Z * this.Data[1][2] +
+      copy.W * this.Data[1][3]
+    result.Z =
+      copy.X * this.Data[2][0] +
+      copy.Y * this.Data[2][1] +
+      copy.Z * this.Data[2][2] +
+      copy.W * this.Data[2][3]
+    result.W =
+      copy.X * this.Data[3][0] +
+      copy.Y * this.Data[3][1] +
+      copy.Z * this.Data[3][2] +
+      copy.W * this.Data[3][3]
 
     return result
   }
@@ -277,10 +310,10 @@ export class Matrix4D {
     c2: number,
   ): Matrix4D {
     let result: Matrix4D = Matrix4D.Identity()
-    result[(c1, c1)] = Math.cos(angle)
-    result[(c1, c2)] = Math.sin(angle) * -1
-    result[(c2, c1)] = Math.sin(angle)
-    result[(c2, c2)] = Math.cos(angle)
+    result.Data[c1][c1] = Math.cos(angle)
+    result.Data[c1][c2] = Math.sin(angle) * -1
+    result.Data[c2][c1] = Math.sin(angle)
+    result.Data[c2][c2] = Math.cos(angle)
     return result
   }
 }

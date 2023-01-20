@@ -2,7 +2,7 @@ import { DonHatch } from '@Math/DonHatch'
 import { Mobius } from '@Math/Mobius'
 import { Complex } from './Complex'
 import { Geometry } from './Geometry'
-import { SphericalModels } from '../../Extra/SphericalModels'
+import { SphericalModels } from '../Math/SphericalModels'
 import { Vector3D } from './Vector3D'
 
 export enum HyperbolicModel {
@@ -90,7 +90,7 @@ export class HyperbolicModels {
   static m_upperInv: Mobius
 
   static PoincareToUpper(v: Vector3D): Vector3D {
-    v = this.Upper.Apply(v)
+    v = this.Upper.ApplyVector3D(v)
     return v
   }
 
@@ -111,39 +111,52 @@ export class HyperbolicModels {
 
   static PoincareToBand(v: Vector3D): Vector3D {
     let z: Complex = v.ToComplex()
-    z =
-      2 /
-      (Math.PI *
+    z = new Complex(2, 0).Divide(
+      new Complex(Math.PI, 0).Multiply(
         Complex.Log(
           new Complex(1, 0)
             .Add(z)
             .Divide(new Complex(1, 0).Subtract(z)),
-        ))
+        ),
+      ),
+    )
     return Vector3D.FromComplex(z)
   }
 
   static BandToPoincare(v: Vector3D): Vector3D {
     let vc: Complex = v.ToComplex()
-    vc =
-      (Complex.Exp(Math.PI * (vc / 2)) - 1) /
-      (Complex.Exp(Math.PI * (vc / 2)) + 1)
-    return Vector3D.FromComplex(vc)
+    let pivc = new Complex(Math.PI, 0).Multiply(vc)
+    let pivc2 = pivc.Divide(new Complex(2, 0))
+    let a = Complex.Exp(pivc2).Subtract(new Complex(1, 0))
+    let b = Complex.Exp(pivc2.Clone()).Add(new Complex(1, 0))
+    let c = a.Divide(b)
+    return Vector3D.FromComplex(c)
   }
 
   // <param name="a">The Euclidean period of the tiling in the band model.</param>
   static BandToRing(v: Vector3D, P: number, k: number): Vector3D {
     let vc: Complex = v.ToComplex()
     let i: Complex = new Complex(0, 1)
-    vc = Complex.Exp(2 * (Math.PI * (i * ((vc + i) / (k * P)))))
-    return Vector3D.FromComplex(vc)
+    let pi2 = 2 * Math.PI
+    let pi2i = new Complex(pi2, 0).Multiply(i)
+    let vci = vc.Add(i)
+    let pi2i_vci = pi2i.Multiply(vci)
+    let kp = k * P
+    let div = pi2i_vci.Divide(new Complex(kp, 0))
+    let x = Complex.Exp(div)
+    return Vector3D.FromComplex(x)
   }
 
   // <param name="a">The Euclidean period of the tiling in the band model.</param>
   static RingToBand(v: Vector3D, P: number, k: number): Vector3D {
     let vc: Complex = v.ToComplex()
     let i: Complex = new Complex(0, 1)
-    vc = (P * (k * (i * (Complex.Log(vc) / (2 * Math.PI)))) - i) * -1
-    return Vector3D.FromComplex(vc)
+    let pk = -P * k
+    let pki = new Complex(pk, 0).Multiply(i)
+    let pkivc = pki.Multiply(Complex.Log(vc))
+    let div = pkivc.Divide(new Complex(2 * Math.PI, 0))
+    let x = div.Subtract(new Complex(1, 0))
+    return Vector3D.FromComplex(x)
   }
 
   static RingToPoincare(v: Vector3D, P: number, k: number): Vector3D {
@@ -156,27 +169,34 @@ export class HyperbolicModels {
     //  Conformally map disk to ellipse with a > 1 and b = 1;
     //  https://math.stackexchange.com/questions/1582608/conformally-mapping-an-ellipse-into-the-unit-circle
     //  https://www.physicsforums.com/threads/conformal-mapping-unit-circle-ellipse.218014/
-    let a: number = 0.9
-    let b: number = 1
-    let alpha: number = (a + b) / 2
-    let beta: number = (a - b) / 2
+    // let a: number = 0.9
+    // let b: number = 1
+    // let alpha: number = (a + b) / 2
+    // let beta: number = (a - b) / 2
     //  disk -> ellipse
     //  Complex result = alpha * z + beta / z;
     let off: number = cen.Abs()
-    let foil: System.Func<Complex, Complex> = (foil = z => {
+    let foil = (z: Complex): Complex => {
       //w *= 1 + Math.Sqrt( 2 );
       //Vector3D cen = new Vector3D( -off, -off );
-      const rad = 1 + off // cen.Dist( new Vector3D( 1, 0 ) );
-      z *= rad
-      z += cen.ToComplex()
+      let rad = 1 + off // cen.Dist( new Vector3D( 1, 0 ) );
+      z = z.Multiply(new Complex(rad, 0))
+      z = z.Add(cen.ToComplex())
       return z
-    })
+    }
 
     //  ellipse->disk
-    let r1: Complex = w + Complex.Sqrt(w * w - 1)
-    let r2: Complex = w - Complex.Sqrt(w * w - 1)
+    let r1: Complex = w.Add(
+      Complex.Sqrt(w.Multiply(w).Subtract(new Complex(1, 0))),
+    )
+
+    let r2: Complex = w.Subtract(
+      Complex.Sqrt(w.Multiply(w).Subtract(new Complex(1, 0))),
+    )
+
     r1 = foil(r1)
     r2 = foil(r2)
+
     if (r1.Magnitude <= 1) {
       w = r1
     } else {
@@ -189,7 +209,9 @@ export class HyperbolicModels {
   static EquidistantToPoincareWithVector3D(p: Vector3D): Vector3D {
     let result: Vector3D = p
     result.Normalize()
-    result = result * HyperbolicModels.EquidistantToPoincare(p.Abs())
+    result = result.MultiplyWithNumber(
+      HyperbolicModels.EquidistantToPoincareWithNumber(p.Abs()),
+    )
     return result
   }
 
@@ -197,14 +219,16 @@ export class HyperbolicModels {
     return DonHatch.h2eNorm(dist)
   }
 
-  static EqualAreaToPoincare(p: Vector3D): Vector3D {
+  static EqualAreaToPoincareWithVector(p: Vector3D): Vector3D {
     let result: Vector3D = p
     result.Normalize()
-    result = result * HyperbolicModels.EqualAreaToPoincare(p.Abs())
+    result = result.MultiplyWithNumber(
+      HyperbolicModels.EqualAreaToPoincare(p.Abs()),
+    )
     return result
   }
 
-  static #EqualAreaToPoincare(dist: number): number {
+  static EqualAreaToPoincare(dist: number): number {
     let h: number = 2 * DonHatch.asinh(dist)
     return DonHatch.h2eNorm(h)
   }
