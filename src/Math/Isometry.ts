@@ -273,14 +273,14 @@ export class Isometry implements ITransform {
     }
 
     //  Same?
-    let p3: Vector3D = poly1.Segments[2].P1
-    let p1: Vector3D = poly1.Segments[0].P1
-    let p2: Vector3D = poly1.Segments[1].P1
-    let w3: Vector3D = poly2.Segments[2].P1
-    let w1: Vector3D = poly2.Segments[0].P1
-    let w2: Vector3D = poly2.Segments[1].P1
+    let p1 = poly1.Segments[0].P1
+    let p2 = poly1.Segments[1].P1
+    let p3 = poly1.Segments[2].P1
+    let w1 = poly2.Segments[0].P1
+    let w2 = poly2.Segments[1].P1
+    let w3 = poly2.Segments[2].P1
 
-    if (p1 == w1 && p2 == w2 && p3 == w3) {
+    if (p1.Equals(w1) && p2.Equals(w2) && p3.Equals(w3)) {
       this.Mobius = Mobius.Identity()
       return
     }
