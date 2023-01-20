@@ -171,6 +171,13 @@ export class Vector3D {
     )
   }
 
+  DivideMagnitude(s: number): void {
+    this.X /= s
+    this.Y /= s
+    this.Z /= s
+    this.W /= s
+  }
+
   static Add(v1: Vector3D, v2: Vector3D): Vector3D {
     return Vector3D.construct4d(
       v1.X + v2.X,
@@ -248,7 +255,7 @@ export class Vector3D {
       return false
     }
 
-    this.Divide(magnitude)
+    this.DivideMagnitude(magnitude)
     return true
   }
 

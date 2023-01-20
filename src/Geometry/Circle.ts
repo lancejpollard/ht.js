@@ -434,24 +434,25 @@ export class CircleNE extends Circle implements ITransformable {
   ReflectCircle(c: Circle) {
     super.ReflectCircle(c)
 
+    console.log('a')
     this.CenterNE = c.ReflectPoint(this.CenterNE)
   }
 
   ReflectSegment(s: Segment) {
     super.ReflectSegment(s)
-
+    console.log('b')
     this.CenterNE = s.ReflectPoint(this.CenterNE)
   }
 
   TransformMobius(m: Mobius) {
     super.TransformMobius(m)
-
+    console.log('c')
     this.CenterNE = m.ApplyVector3D(this.CenterNE)
   }
 
   TransformIsometry(i: Isometry) {
     super.TransformIsometry(i)
-
+    console.log('d')
     this.CenterNE = i.ApplyVector3D(this.CenterNE)
   }
 

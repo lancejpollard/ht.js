@@ -135,6 +135,7 @@ export class Tile {
         // bool use = ( poly.Length > 0.01 ) && ( poly.Center.Abs() < 10 );
         // bool use = ( poly.Center.Abs() < 0.9 );    // Only disk
         let c: CircleNE = this.VertexCircle
+        debugger
         let use: boolean = c.CenterNE.Abs() < 0.9999
         return use
       default:
