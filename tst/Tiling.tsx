@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Tiling } from '../src/Geometry/Tiling'
 import Path from 'paths-js/path'
 
@@ -7,6 +7,8 @@ type TilingPropsType = {
 }
 
 export default function TilingDisplay({ data }: TilingPropsType) {
+  const [tick, update] = useState(0)
+
   const paths: Array<string> = []
   const scalingFactor = 200
   const offset = 400
@@ -50,9 +52,14 @@ export default function TilingDisplay({ data }: TilingPropsType) {
         viewBox="0 0 1024 1024"
         enableBackground="new 0 0 1024 1024"
         xmlSpace="preserve"
+        onClick={() => {
+          update(x => x + 1)
+        }}
       >
         {paths.map(path => (
           <path
+            stroke="white"
+            strokeWidth={4}
             d={path}
             key={path}
             fill="#333"
