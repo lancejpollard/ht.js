@@ -30,6 +30,7 @@ years.
 - [List of hyperbolic tilings](https://en.wikipedia.org/wiki/Lists_of_uniform_tilings_on_the_sphere,_plane,_and_hyperbolic_plane)
 - [CSharp to TypeScript](http://www.carlosag.net/tools/codetranslator/)
 - [CSharp codebase](https://github.com/microsoft/referencesource/blob/master/mscorlib/system/collections/ienumerable.cs)
+- https://docs.google.com/document/d/1vUQPHvO4zOy5S1fyQIWMcy7vyzTvu5OYrUI6jmjpG90/edit
 
 ## Dev
 

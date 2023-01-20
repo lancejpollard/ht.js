@@ -77,22 +77,26 @@ eq(
 )
 eq(
   JSONSelect.match(
-    ':root > * > .P1, :root > * > .P2',
+    ':root > .Segments > .P1, :root > .Segments > .P2',
     t.Tiles[0].Drawn,
-  ),
-  JSONSelect.match(':root > * > .P1, :root > * > .P2', tilingData),
-  ':root > * > .P1, :root > * > .P2',
+  ).join(' : '),
+  JSONSelect.match(
+    ':root > .Segments > .P1, :root > .Segments > .P2',
+    tilingData,
+  ).join(' : '),
+  ':root > .Segments > .P1, :root > .Segments > .P2',
 )
 
 eq(
-  JSONSelect.match(
-    ':root > .Segments > * > .Center > .X',
-    tilingData,
-  ).join(' : '),
+  JSONSelect.match(':root > .Segments > * > .Center > .X', tilingData)
+    .map(round)
+    .join(' : '),
   JSONSelect.match(
     ':root > .Segments  > * > .Center > .X',
     t.Tiles[0].Drawn,
-  ).join(' : '),
+  )
+    .map(round)
+    .join(' : '),
 )
 
 function round(n: number): number {

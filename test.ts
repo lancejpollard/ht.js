@@ -4,6 +4,7 @@ import { TilingConfig } from './src/Geometry/TilingConfig'
 
 import './tst/Vector3D.test'
 import './tst/Polygon.test'
+import { Polygon } from './src/Geometry/Polygon'
 
 const app = new PIXI.Application({
   width: 800,
@@ -12,22 +13,22 @@ const app = new PIXI.Application({
 
 const sprites = {}
 
-const config = new TilingConfig(3, 7, 1000)
+const config = new TilingConfig(7, 3, 1000)
 const tiling = new Tiling(config)
-// tiling.Generate()
+tiling.Generate()
 // console.log(tiling.m_tiles[0].Boundary)
 // console.log('here', tiling)
-// const polygons = tiling.m_tiles.map(tile => tile.Boundary)
+const polygons = tiling.m_tiles.map(tile => tile.Boundary)
 // SVG.WritePolygons('example.svg', polygons)
 
-// document.body.appendChild(app.view as HTMLCanvasElement)
+document.body.appendChild(app.view as HTMLCanvasElement)
 
 // //create a texture
 
 // tesselation.addEventListener('tile:attach', attachSprite)
 // tesselation.addEventListener('tile:detach', detachSprite)
 
-// tessellation.tiles.forEach(attachSprite)
+polygons.forEach(attachSprite)
 
 // function detachSprite(tile) {
 //   const sprite = sprites[tile.hash()]
@@ -36,30 +37,37 @@ const tiling = new Tiling(config)
 //   }
 // }
 
-// function attachSprite(tile) {
-//   const sprite = new PIXI.Sprite(PIXI.Texture.WHITE)
-//   sprite.tint = 0xff0000
+function attachSprite(input: Polygon) {
+  const sprite = new PIXI.Sprite(PIXI.Texture.WHITE)
+  sprite.tint = 0xff0000
 
-//   sprites[tile.hash()] = sprite
+  // sprites[tile.hash()] = sprite
 
-//   const polygon = new PIXI.Polygon(tile.Boundary.Segments)
-//   const mask = new PIXI.Graphics()
-//   mask.hitArea = polygon
-//   mask.interactive = true
-//   mask.beginFill(0xff0000)
-//   mask.drawPolygon(polygon)
-//   sprite.mask = mask
+  const points: Array<PIXI.IPointData> = []
+  input.Segments.forEach(seg => {
+    const a = { x: seg.P1.X, y: seg.P1.Y }
+    const b = { x: seg.P2.X, y: seg.P2.Y }
+    points.push(a, b)
+  })
 
-//   sprite.onmouseover = () => {
-//     sprite.alpha = 0.5
-//   }
+  const polygon = new PIXI.Polygon(points)
+  const mask = new PIXI.Graphics()
+  mask.hitArea = polygon
+  mask.interactive = true
+  mask.beginFill(0xff0000)
+  mask.drawPolygon(polygon)
+  sprite.mask = mask
 
-//   sprite.onmouseout = () => {
-//     sprite.alpha = 1
-//   }
+  sprite.onmouseover = () => {
+    sprite.alpha = 0.5
+  }
 
-//   app.stage.addChild(sprite)
-// }
+  sprite.onmouseout = () => {
+    sprite.alpha = 1
+  }
+
+  app.stage.addChild(sprite)
+}
 
 // app.ticker.add(delta => {
 //   // Add the time to our total elapsed time
