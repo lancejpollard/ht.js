@@ -4,14 +4,14 @@ import { Tile } from '../src/Geometry/Tile'
 import { Vector3D } from '../src/Geometry/Vector3D'
 
 export class Mesh {
+  MeshTriangles: Array<MeshTriangle>
+
   constructor() {
     this.MeshTriangles = new Array<MeshTriangle>()
   }
 
-  MeshTriangles: Array<MeshTriangle>
-
   Append(m: Mesh) {
-    this.MeshTriangles.AddRange(m.MeshTriangles)
+    this.MeshTriangles.push(...m.MeshTriangles)
   }
 
   BuildIndexes(
@@ -19,73 +19,77 @@ export class Mesh {
     /* out */ normals: Array<Vector3D>,
     /* out */ faces: Array<Array<number>>,
   ) {
-    let vertMap: Record<Vector3D, number> = new Record<
-      Vector3D,
-      number
-    >()
-    let triMap: Record<Vector3D, Array<MeshTriangle>> = new Record<
-      Vector3D,
-      Array<MeshTriangle>
-    >()
+
+
+    let vertMap: Record<string, number> = {}
+
+    let triMap: Record<string, Array<MeshTriangle>> = {}
+
     let current: number = 0
-    for (let tri: MeshTriangle in this.MeshTriangles) {
+
+    for (let tri in this.MeshTriangles) {
       let idx: number
-      if (!vertMap.TryGetValue(tri.a, /* out */ idx)) {
-        current++
+
+      if (!(tri.a in vertMap)) {
+        vertMap[tri.a] = current++;
+      } else {
+        idx = vertMap[tri.a]
       }
 
-      vertMap[tri.a] = current
-      if (!vertMap.TryGetValue(tri.b, /* out */ idx)) {
-        current++
+      if (!(tri.b in vertMap)) {
+        vertMap[tri.b] = current++;
+      } else {
+        idx = vertMap[tri.b]
       }
 
-      vertMap[tri.b] = current
-      if (!vertMap.TryGetValue(tri.c, /* out */ idx)) {
-        current++
+      if (!(tri.c in vertMap)) {
+        vertMap[tri.c] = current++;
+      } else {
+        idx = vertMap[tri.c]
       }
 
-      vertMap[tri.c] = current
       let list: Array<MeshTriangle>
-      if (!triMap.TryGetValue(tri.a, /* out */ list)) {
-        list = new Array<MeshTriangle>()
+      if (!(tri.a in triMap)) {
+        triMap[tri.a] = list = new Array<MeshTriangle>()
+      } else {
+        list = triMap[tri.a]
       }
+      list.push(tri)
 
-      triMap[tri.a] = new Array<MeshTriangle>()
-      list.Add(tri)
-      if (!triMap.TryGetValue(tri.b, /* out */ list)) {
-        list = new Array<MeshTriangle>()
+      if (!(tri.b in triMap)) {
+        triMap[tri.b] = list = new Array<MeshTriangle>()
+      } else {
+        list = triMap[tri.b]
       }
+      list.push(tri)
 
-      triMap[tri.b] = new Array<MeshTriangle>()
-      list.Add(tri)
-      if (!triMap.TryGetValue(tri.c, /* out */ list)) {
-        list = new Array<MeshTriangle>()
+      if (!(tri.c in triMap)) {
+        triMap[tri.c] = list = new Array<MeshTriangle>()
+      } else {
+        list = triMap[tri.c]
       }
-
-      triMap[tri.c] = new Array<MeshTriangle>()
-      list.Add(tri)
+      list.push(tri)
     }
 
     let _verts: Array<Vector3D> = new Array<Vector3D>()
     let _normals: Array<Vector3D> = new Array<Vector3D>()
     for (let kvp in vertMap) {
       let v: Vector3D = kvp.Key
-      _verts.Add(v)
+      _verts.push(v)
       let normal: Vector3D = Vector3D.construct()
       let tris: Array<MeshTriangle> = triMap[v]
       for (let tri: MeshTriangle in tris) {
         normal = normal + tri.Normal
       }
+      
+      normal /= tris.length;
 
-      tris.Count
-      _normals.Add(normal)
+      _normals.push(normal)
     }
 
-    verts = _verts.ToArray()
-    normals = _normals.ToArray()
     faces = new Array<Array<number>>()
-    for (let tri: MeshTriangle in this.MeshTriangles) {
-      faces.Add([vertMap[tri.a], vertMap[tri.b], vertMap[tri.c]])
+    for (let tri in this.MeshTriangles) {
+      faces.push([vertMap[tri.a], vertMap[tri.b], vertMap[tri.c]])
     }
   }
 
@@ -151,10 +155,10 @@ export class Mesh {
     for (let i: number = 0; i < end; i++) {
       let idx1: number = i
       let idx2 = i == d1.Length - 1 ? 0 : i + 1
-      this.MeshTriangles.Add(
+      this.MeshTriangles.push(
         new Mesh.MeshTriangle(d1[idx1], d2[idx1], d1[idx2]),
       )
-      this.MeshTriangles.Add(
+      this.MeshTriangles.push(
         new Mesh.MeshTriangle(d1[idx2], d2[idx1], d2[idx2]),
       )
     }
@@ -216,9 +220,9 @@ export class Mesh {
         seg.Midpoint,
         Vector3D.construct(),
       )
-      poly.Segments.Add(segA)
-      poly.Segments.Add(segB)
-      poly.Segments.Add(segC)
+      poly.Segments.push(segA)
+      poly.Segments.push(segB)
+      poly.Segments.push(segC)
       let coords: Array<Vector3D> = TextureHelper.TextureCoords(
         poly,
         Geometry.Hyperbolic,
@@ -234,7 +238,7 @@ export class Mesh {
         let v1: Vector3D = coords[elements[idx1]]
         let v2: Vector3D = coords[elements[idx2]]
         let v3: Vector3D = coords[elements[idx3]]
-        templateTris.Add(new MeshTriangle(v1, v2, v3))
+        templateTris.push(new MeshTriangle(v1, v2, v3))
       }
     }
 
@@ -355,7 +359,7 @@ export class Mesh {
         )
       }
 
-      completed.Add(boundarySeg.Midpoint)
+      completed.push(boundarySeg.Midpoint)
     }
   }
 
@@ -374,7 +378,7 @@ export class Mesh {
 
   static CheckAndAdd(mesh: Mesh, tri: MeshTriangle, boundary: Polygon) {
     if (Mesh.Check(tri, boundary)) {
-      mesh.MeshTriangles.Add(tri)
+      mesh.MeshTriangles.push(tri)
     }
   }
 }

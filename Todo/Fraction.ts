@@ -1,13 +1,14 @@
 export class Fraction {
+
+  A: number
+
+  B: number
+
   constructor(a: number, b: number = 1) {
     this.A = a
     this.B = b
     this.Reduce()
   }
-
-  A: number
-
-  B: number
 
   static Add(f1: Fraction, f2: Fraction): Fraction {
     f1.Reduce()

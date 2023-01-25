@@ -4,6 +4,11 @@ import { Vector3D } from '@Geometry/Vector3D'
 import { Fraction } from './Fraction'
 
 export class Golden {
+
+  A: Fraction
+
+  B: Fraction
+
   constructor(a: Fraction, b: Fraction) {
     this.A = a
     this.B = b
@@ -11,9 +16,6 @@ export class Golden {
 
   static tau: number = (1 + Math.sqrt(5)) / 2
 
-  A: Fraction
-
-  B: Fraction
 
   static Add(g1: Golden, g2: Golden): Golden {
     return new Golden(g1.A.Add(g2.A), g1.B.Add(g2.B))
