@@ -2,9 +2,19 @@
 
 Hyperbolic tessellations in the 2D plane in JavaScript.
 
+<br/>
+<br/>
 <p align='center'>
-  <img src='https://github.com/lancejpollard/ht.js/blob/make/7.png?raw=true' height='500'>
+  <img src='https://github.com/lancejpollard/ht.js/blob/make/7-3.png?raw=true' height='500'>
 </p>
+<br/>
+<br/>
+<p align='center'>
+  <img src='https://github.com/lancejpollard/ht.js/blob/make/3-7.png?raw=true' height='200'>
+  <img src='https://github.com/lancejpollard/ht.js/blob/make/5-4.png?raw=true' height='200'>
+  <img src='https://github.com/lancejpollard/ht.js/blob/make/9-3.png?raw=true' height='200'>
+</p>
+<br/>
 
 ## Overview
 

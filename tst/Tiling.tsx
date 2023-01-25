@@ -58,6 +58,7 @@ export default function TilingDisplay({ data }: TilingPropsType) {
         {paths.map(path => (
           <path
             stroke="white"
+            strokeLinecap="round"
             strokeWidth={4}
             d={path}
             key={path}

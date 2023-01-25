@@ -8,7 +8,7 @@ import { Polygon } from './src/Geometry/Polygon'
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 
-const config = new TilingConfig(7, 3, 1000)
+const config = new TilingConfig(7, 4, 1000)
 const tiling = new Tiling(config)
 tiling.Generate()
 
