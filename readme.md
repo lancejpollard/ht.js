@@ -5,7 +5,7 @@ Hyperbolic tessellations in the 2D plane in JavaScript.
 <br/>
 <br/>
 <p align='center'>
-  <img src='https://github.com/lancejpollard/ht.js/blob/make/7-3.png?raw=true' height='500'>
+  <img src='https://github.com/lancejpollard/ht.js/blob/make/7-3.gif?raw=true' height='500'>
 </p>
 <br/>
 <br/>
