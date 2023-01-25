@@ -3,6 +3,15 @@ import { Complex } from './Complex'
 import { IComparer } from './IComparer'
 
 export class Vector3D {
+
+  X: number
+
+  Y: number
+
+  Z: number
+
+  W: number
+
   constructor(x: number, y: number, z: number, w: number) {
     this.X = x
     this.Y = y
@@ -40,13 +49,6 @@ export class Vector3D {
     return self
   }
 
-  X: number
-
-  Y: number
-
-  Z: number
-
-  W: number
 
   /* override */ ToString(): string {
     return `${this.X},${this.Y},${this.Z},${this.W}`
