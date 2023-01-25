@@ -36,8 +36,8 @@ export default function TilingDisplay({ data }: TilingPropsType) {
         y: offset + scalingFactor * seg.P1.Y,
       }
       const b = {
-        x: offset + scalingFactor * seg.P1.X,
-        y: offset + scalingFactor * seg.P1.Y,
+        x: offset + scalingFactor * seg.P2.X,
+        y: offset + scalingFactor * seg.P2.Y,
       }
 
       if (i === 0) {
@@ -73,7 +73,7 @@ export default function TilingDisplay({ data }: TilingPropsType) {
           <path
             stroke="white"
             strokeLinecap="round"
-            strokeWidth={4}
+            strokeWidth={1}
             d={path}
             key={path}
             fill="#333"
