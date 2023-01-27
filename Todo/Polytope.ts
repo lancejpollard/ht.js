@@ -1,4 +1,6 @@
 import { GraphEdge } from '@Math/Graph'
+import { Matrix4D } from '@Math/Matrix4D'
+import { Tolerance } from '@Math/Utils'
 import { Polygon } from '../src/Geometry/Polygon'
 import { Vector3D } from '../src/Geometry/Vector3D'
 
@@ -12,7 +14,7 @@ export class SkewPolyhedron {
       let angle2: number = angleInc / 2
       for (let j: number = 0; j < num; j++) {
         let polyPoints: Array<Vector3D> = new Array<Vector3D>()
-        polyPoints.Add(
+        polyPoints.push(
           Vector3D.construct4d(
             Math.cos(angle2),
             Math.sin(angle2),
@@ -20,7 +22,7 @@ export class SkewPolyhedron {
             Math.sin(angle1),
           ),
         )
-        polyPoints.Add(
+        polyPoints.push(
           Vector3D.construct4d(
             Math.cos(angle2),
             Math.sin(angle2),
@@ -28,7 +30,7 @@ export class SkewPolyhedron {
             Math.sin(angle1 + angleInc),
           ),
         )
-        polyPoints.Add(
+        polyPoints.push(
           Vector3D.construct4d(
             Math.cos(angle2 + angleInc),
             Math.sin(angle2 + angleInc),
@@ -36,7 +38,7 @@ export class SkewPolyhedron {
             Math.sin(angle1 + angleInc),
           ),
         )
-        polyPoints.Add(
+        polyPoints.push(
           Vector3D.construct4d(
             Math.cos(angle2 + angleInc),
             Math.sin(angle2 + angleInc),
@@ -46,7 +48,7 @@ export class SkewPolyhedron {
         )
         let poly: Polygon = new Polygon()
         poly.CreateEuclidean(polyPoints)
-        polys.Add(poly)
+        polys.push(poly)
         angle2 = angle2 + angleInc
       }
 
@@ -64,7 +66,7 @@ export class SkewPolyhedron {
       1,
       2,
     )
-    for (let poly: Polygon in polys) {
+    for (let poly of polys) {
       poly.Rotate(m1)
       poly.Rotate(m2)
     }
@@ -152,9 +154,9 @@ export class SkewPolyhedron {
       Vector3D.construct4d(0, 4 / Math.sqrt(6), 1 / Math.sqrt(3), 1),
       Vector3D.construct4d(0, 4 / Math.sqrt(6), 1 / Math.sqrt(3), -1),
       Vector3D.construct4d(0, 4 / Math.sqrt(6), 1 / Math.sqrt(3), 1) *
-        -1,
+      -1,
       Vector3D.construct4d(0, 4 / Math.sqrt(6), 1 / Math.sqrt(3), -1) *
-        -1,
+      -1,
       Vector3D.construct4d(
         5 / Math.sqrt(10),
         (3 / Math.sqrt(6)) * -1,
@@ -208,13 +210,13 @@ export class SkewPolyhedron {
     //  Nice starting orientation.
     let m: Matrix4D = new Matrix4D()
     m.Data = []
-    ;[0.62, -0.66, -0.07, -0.41]
-    ;[0.68, 0.22, 0.3, 0.64]
-    ;[-0.08, 0.04, 0.93, -0.36]
-    ;[-0.37, -0.72, 0.21, 0.54]
+      ;[0.62, -0.66, -0.07, -0.41]
+      ;[0.68, 0.22, 0.3, 0.64]
+      ;[-0.08, 0.04, 0.93, -0.36]
+      ;[-0.37, -0.72, 0.21, 0.54]
 
     m = Matrix4D.GramSchmidt(m)
-    for (let poly: Polygon in result) {
+    for (let poly in result) {
       poly.Rotate(m)
     }
 
@@ -226,11 +228,8 @@ export class SkewPolyhedron {
     edgeLength: number,
     p: number,
   ): Array<Polygon> {
-    let lookup: Record<number, Array<GraphEdge>> = new Record<
-      number,
-      Array<GraphEdge>
-    >()
-    for (let i: number = 0; i < coords.Length; i++) {
+    let lookup: Record<number, Array<GraphEdge>> = {}
+    for (let i: number = 0; i < coords.length; i++) {
       lookup[i] = new Array<GraphEdge>()
     }
 
@@ -240,9 +239,9 @@ export class SkewPolyhedron {
       for (let j: number = i + 1; j < coords.Length; j++) {
         if (Tolerance.Equal(coords[i].Dist(coords[j]), edgeLength)) {
           let e: GraphEdge = new GraphEdge(i, j)
-          allEdges.Add(e)
-          lookup[i].Add(e)
-          lookup[j].Add(e)
+          allEdges.push(e)
+          lookup[i] = e
+          lookup[j] = e
         }
       }
     }
@@ -250,7 +249,7 @@ export class SkewPolyhedron {
     //  Find all cycles of length p.
     let cycles: Array<Array<number>> = new Array<Array<number>>()
     for (let i: number = 0; i < coords.Length; i++) {
-      cycles.Add(new Array<number>([i]))
+      cycles.push(new Array<number>([i]))
     }
 
     cycles = SkewPolyhedron.FindCyclesRecursive(cycles, p, lookup)
@@ -258,16 +257,16 @@ export class SkewPolyhedron {
     for (let cycle: Array<number> in cycles) {
       //  Don't include the start vertex.
       //  This is important for the Distinct check below.
-      cycle.RemoveAt(cycle.Count - 1)
+      cycle.RemoveAt(cycle.length - 1)
     }
 
     cycles = cycles.Distinct(new CycleEqualityComparer())
     //  Now turn into polygons.
     let result: Array<Polygon> = new Array<Polygon>()
-    for (let cycle: Array<number> in cycles) {
+    for (let cycle in cycles) {
       let points: Array<Vector3D> = new Array<Vector3D>()
       for (let i: number in cycle) {
-        points.Add(coords[i])
+        points.push(coords[i])
       }
 
       //  Normalize vertices to hypersphere.
@@ -282,7 +281,7 @@ export class SkewPolyhedron {
       //  Assume our polygons are regular and even-sized,
       //  in which case we can do a hackish check here.
       //  ZZZ - improve hack.
-      if (points.Count > 3) {
+      if (points.length > 3) {
         let coplanar: boolean = true
         let toCenter: number = points[0].Dist(poly.Center)
         if (
@@ -296,7 +295,7 @@ export class SkewPolyhedron {
         }
       }
 
-      result.Add(poly)
+      result.push(poly)
     }
 
     return result
@@ -310,7 +309,7 @@ export class SkewPolyhedron {
     cycleLength: number,
     lookup: Record<number, Array<GraphEdge>>,
   ): Array<Array<number>> {
-    if (cycles[0].Count - 1 == cycleLength) {
+    if (cycles[0].length - 1 == cycleLength) {
       //  Return the ones where we ended where we started.
       let result: Array<Array<number>> = cycles.Where(
         c => c.First() == c.Last(),
@@ -320,17 +319,17 @@ export class SkewPolyhedron {
     }
 
     let newCycles: Array<Array<number>> = new Array<Array<number>>()
-    for (let cycle: Array<number> in cycles) {
+    for (let cycle in cycles) {
       let last: number = cycle.Last()
-      for (let newEdge: GraphEdge in lookup[last]) {
+      for (let newEdge in lookup[last]) {
         let next: number = newEdge.Opposite(last)
         if (cycle.Count != cycleLength && cycle.Contains(next)) {
           continue
         }
 
         let newCycle: Array<number> = new Array<number>(cycle)
-        newCycle.Add(next)
-        newCycles.Add(newCycle)
+        newCycle.push(next)
+        newCycles.push(newCycle)
       }
     }
 

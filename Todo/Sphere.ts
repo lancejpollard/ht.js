@@ -1,23 +1,41 @@
 import { Tolerance } from '@Math/Utils'
 import { Circle3D } from '../Geometry/Circle3D'
+import { Euclidean3D } from '../Geometry/Euclidean3D'
 import { Vector3D } from '../Geometry/Vector3D'
 
 export class Sphere {
-  constructor() {
+  /*  constructor() {
+     this.Reset()
+   } */
+
+  m_center: Vector3D
+  m_radius: number
+  color: any
+  invert: boolean
+  offset: Vector3D
+  isPlane: boolean
+
+  constructor(center?: Vector3D, radius?: number) {
+    if (!(center && radius)) {
+      this.Reset()
+      return
+    }
+
     this.Reset()
+    this.Center = center
+    this.Radius = radius
   }
 
-  constructor(center: Vector3D, radius: number) {
-    this.Reset()
-    Center = center
-    Radius = radius
-  }
-
-  static Plane(normal: Vector3D): Sphere {
-    return Sphere.Plane(Vector3D.construct(), normal)
-  }
+  /*   static Plane(normal: Vector3D): Sphere {
+      return Sphere.Plane(Vector3D.construct(), normal)
+    } */
 
   static Plane(offset: Vector3D, normal: Vector3D): Sphere {
+
+    if (arguments.length == 0) {
+      return Sphere.Plane(Vector3D.construct(), normal)
+    }
+
     let result: Sphere = new Sphere()
     result.Center = normal
     result.Offset = offset
@@ -35,53 +53,57 @@ export class Sphere {
   // Our Center.
 
   get Center(): Vector3D {
-    return m_center
+    return this.m_center
   }
 
   set Center(value: Vector3D) {
-    m_center = value
+    this.m_center = value
     this.CalcNormal()
   }
 
-  m_center: Vector3D
+
 
   // Our Radius. As a limiting case, we support infinite radii.
   // The sphere is then a plane with a normal equal to the center, and an optional offset.
 
   get Radius(): number {
-    return m_radius
+    return this.m_radius
   }
 
   set Radius(value: number) {
-    m_radius = value
-    this.IsPlane = isInfinite(m_radius)
+    this.m_radius = value
+    this.IsPlane = isInfinite(this.m_radius)
     this.CalcNormal()
   }
 
-  m_radius: number
+  get Color(): any {
+    return this.color
+  }
 
-  get Color(): System.Drawing.Color {}
-
-  set Color(value: System.Drawing.Color) {}
+  set Color(value: any) { this.color = value }
 
   // Required for planes which do not go through the origin.
   // This can be any point on the plane.
   // XXX - A vector is not required...We could use a double.
 
-  get Offset(): Vector3D {}
+  get Offset(): Vector3D { return this.offset }
 
-  set Offset(value: Vector3D) {}
+  set Offset(value: Vector3D) { this.offset = value }
 
   // Used to track which part of the sphere is "inside".
 
-  get Invert(): boolean {}
+  get Invert(): boolean { 
+    return this.invert
+  }
 
-  set Invert(value: boolean) {}
+  set Invert(value: boolean) { 
+    this.invert=value
+  }
 
   // For planes, the normal.
 
   get Normal(): Vector3D {
-    return m_normal
+    return this.m_normal
   }
 
   m_normal: Vector3D = Vector3D.DneVector()
@@ -93,9 +115,13 @@ export class Sphere {
     }
   }
 
-  get IsPlane(): boolean {}
+  get IsPlane(): boolean {
+    return this.isPlane
+   }
 
-  set IsPlane(value: boolean) {}
+  set IsPlane(value: boolean) {
+    this.isPlane=value
+   }
 
   get ID(): Vector3D {
     if (this.IsPlane) {

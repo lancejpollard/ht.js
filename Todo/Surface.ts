@@ -21,16 +21,16 @@ export class Surface {
         continue
       }
 
-      result.Triangles.Add(new Mesh.Triangle(a, b, c))
+      result.Triangles.push(new Mesh.Triangle(a, b, c))
     }
 
     return result
   }
 
-  static Dini(uv: Vector3D): Vector3D {
+ /*  static Dini(uv: Vector3D): Vector3D {
     return Surface.Dini2(uv)
   }
-
+ */
   static Sech(val: number): number {
     return 1 / Math.cosh(val)
   }

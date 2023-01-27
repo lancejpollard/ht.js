@@ -27,7 +27,7 @@ export class Mesh {
 
     let current: number = 0
 
-    for (let tri in this.MeshTriangles) {
+    for (let tri of this.MeshTriangles) {
       let idx: number
 
       if (!(tri.a in vertMap)) {
@@ -73,12 +73,12 @@ export class Mesh {
 
     let _verts: Array<Vector3D> = new Array<Vector3D>()
     let _normals: Array<Vector3D> = new Array<Vector3D>()
-    for (let kvp in vertMap) {
-      let v: Vector3D = kvp.Key
+    for (let kvp of vertMap) {
+      let v: Vector3D = kvp //VertMap key
       _verts.push(v)
       let normal: Vector3D = Vector3D.construct()
       let tris: Array<MeshTriangle> = triMap[v]
-      for (let tri: MeshTriangle in tris) {
+      for (let tri in tris) {
         normal = normal + tri.Normal
       }
       
