@@ -78,7 +78,7 @@ export class Mesh {
       _verts.push(v)
       let normal: Vector3D = Vector3D.construct()
       let tris: Array<MeshTriangle> = triMap[v]
-      for (let tri in tris) {
+      for (let tri of tris) {
         normal = normal + tri.Normal
       }
       
@@ -88,7 +88,7 @@ export class Mesh {
     }
 
     faces = new Array<Array<number>>()
-    for (let tri in this.MeshTriangles) {
+    for (let tri of this.MeshTriangles) {
       faces.push([vertMap[tri.a], vertMap[tri.b], vertMap[tri.c]])
     }
   }
@@ -102,7 +102,7 @@ export class Mesh {
   // Scale our mesh (useful for shapeways models)
 
   Scale(scale: number) {
-    for (let i: number = 0; i < this.MeshTriangles.Count; i++) {
+    for (let i: number = 0; i < this.MeshTriangles.length; i++) {
       this.MeshTriangles[i] = new Mesh.MeshTriangle(
         this.MeshTriangles[i].a * scale,
         this.MeshTriangles[i].b * scale,
@@ -112,7 +112,7 @@ export class Mesh {
   }
 
   Rotate(angle: number) {
-    for (let i: number = 0; i < this.MeshTriangles.Count; i++) {
+    for (let i: number = 0; i < this.MeshTriangles.length; i++) {
       let a: Vector3D = this.MeshTriangles[i].a
       let b: Vector3D = this.MeshTriangles[i].b
       let c: Vector3D = this.MeshTriangles[i].c
@@ -126,7 +126,7 @@ export class Mesh {
   // Transform our mesh by some arbitrary function.
 
   Transform(transform: System.Func<Vector3D, Vector3D>) {
-    for (let i: number = 0; i < this.MeshTriangles.Count; i++) {
+    for (let i: number = 0; i < this.MeshTriangles.length; i++) {
       this.MeshTriangles[i] = new Mesh.MeshTriangle(
         transform(this.MeshTriangles[i].a),
         transform(this.MeshTriangles[i].b),
@@ -206,8 +206,8 @@ export class Mesh {
     //  Assume template centered at the origin.
     let template: Polygon = tiling.Tiles.First().Boundary
     let templateTris: Array<MeshTriangle> = new Array<MeshTriangle>()
-    for (let seg: Segment in template.Segments) {
-      let num: number = 1 + <number>(seg.Length * m_divisions)
+    for (let seg of template.Segments) {
+      let num: number = 1 + <number>(seg.Length * this.m_divisions)
       let a: Vector3D = Vector3D.construct()
       let b: Vector3D = seg.P1
       let c: Vector3D = seg.Midpoint
@@ -242,7 +242,7 @@ export class Mesh {
       }
     }
 
-    for (let tile: Tile in tiling.Tiles) {
+    for (let tile of tiling.Tiles) {
       let a: Vector3D = tile.Boundary.Segments[0].P1
       let b: Vector3D = tile.Boundary.Segments[1].P1
       let c: Vector3D = tile.Boundary.Segments[2].P1
@@ -267,7 +267,7 @@ export class Mesh {
         )
       }
 
-      for (let tri: MeshTriangle in templateTris) {
+      for (let tri of templateTris) {
         let transformed: MeshTriangle = new MeshTriangle(
           m.Apply(tri.a),
           m.Apply(tri.b),
@@ -294,10 +294,10 @@ export class Mesh {
       //  Find the incident segment.
       let d2: Segment = null
       let seg2: Segment = null
-      for (let incident: Tile in tile.EdgeIncidences) {
+      for (let incident of tile.EdgeIncidences) {
         for (
           let j: number = 0;
-          j < incident.Boundary.Segments.Count;
+          j < incident.Boundary.Segments.length;
           j++
         ) {
           if (

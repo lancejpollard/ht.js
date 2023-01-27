@@ -116,7 +116,7 @@ export class TextureHelper {
 
     temp.push(h2)
     let result: Array<Vector3D> = new Array<Vector3D>()
-    for (let v in temp) {
+    for (let v of temp) {
       let copy: Vector3D = v
       if (g == Geometry.Hyperbolic) {
         Sterographic.NormalizeToHyperboloid(/* ref */ copy)
@@ -177,7 +177,7 @@ export class TextureHelper {
       //  We make a triangle lattice for each segment.
       //  Think of the segment and the poly center making one big triangle,
       //  which is subdivided into smaller triangles.
-      for (let s: Segment in poly.Segments) {
+      for (let s of poly.Segments) {
         let s1: Array<Vector3D> =
           TextureHelper.SubdivideSegmentInGeometry(
             s.P1,
@@ -235,7 +235,7 @@ export class TextureHelper {
       g,
     )
     let result: Array<Vector3D> = new Array<Vector3D>()
-    for (let v: Vector3D in temp) {
+    for (let v of temp) {
       result.push(inverse.Apply(v))
     }
 
@@ -358,10 +358,8 @@ export class TextureHelper {
       numBaseTriangles,
       LOD,
     )
-    let edgeToTriangles: Record<GraphEdge, Array<number>> = new Record<
-      GraphEdge,
-      Array<number>
-    >()
+    let edgeToTriangles: Record<string, Array<number>> = {}
+
     for (let i: number = 0; i < textureElements.length / 3; i++) {
       let idx1: number = i * 3
       let idx2: number = i * 3 + 1
@@ -415,7 +413,7 @@ export class TextureHelper {
     incident.push(idx2)
     temp[idx1] = incident
 
-    for (let tris in edgeToTriangles.Values) {
+    for (let tris of edgeToTriangles.Values) {
       if (tris.length == 1) {
         continue
       } else if (tris.length == 2) {

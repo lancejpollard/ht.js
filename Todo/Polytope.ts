@@ -216,7 +216,7 @@ export class SkewPolyhedron {
       ;[-0.37, -0.72, 0.21, 0.54]
 
     m = Matrix4D.GramSchmidt(m)
-    for (let poly in result) {
+    for (let poly of result) {
       poly.Rotate(m)
     }
 
@@ -254,7 +254,7 @@ export class SkewPolyhedron {
 
     cycles = SkewPolyhedron.FindCyclesRecursive(cycles, p, lookup)
     //  Find the distinct ones.
-    for (let cycle: Array<number> in cycles) {
+    for (let cycle of cycles) {
       //  Don't include the start vertex.
       //  This is important for the Distinct check below.
       cycle.RemoveAt(cycle.length - 1)
@@ -263,14 +263,14 @@ export class SkewPolyhedron {
     cycles = cycles.Distinct(new CycleEqualityComparer())
     //  Now turn into polygons.
     let result: Array<Polygon> = new Array<Polygon>()
-    for (let cycle in cycles) {
+    for (let cycle of cycles) {
       let points: Array<Vector3D> = new Array<Vector3D>()
-      for (let i: number in cycle) {
+      for (let i in cycle) {
         points.push(coords[i])
       }
 
       //  Normalize vertices to hypersphere.
-      for (let i: number = 0; i < points.Count; i++) {
+      for (let i: number = 0; i < points.length; i++) {
         let normalized: Vector3D = points[i]
         normalized.Normalize()
         points[i] = normalized
@@ -319,9 +319,9 @@ export class SkewPolyhedron {
     }
 
     let newCycles: Array<Array<number>> = new Array<Array<number>>()
-    for (let cycle in cycles) {
+    for (let cycle of cycles) {
       let last: number = cycle.Last()
-      for (let newEdge in lookup[last]) {
+      for (let newEdge of lookup[last]) {
         let next: number = newEdge.Opposite(last)
         if (cycle.Count != cycleLength && cycle.Contains(next)) {
           continue
