@@ -1,25 +1,35 @@
 import { Geometry } from '@Geometry/Geometry'
 import { Polygon, Segment } from '@Geometry/Polygon'
 import { Sterographic } from '@Geometry/Sterographic'
+import { Mobius } from '@Math/Mobius'
 import { Vector3D } from '@Geometry/Vector3D'
 
 export class TextureHelper {
+
+  m_maxSubdivisions: number = 8;
+  elementIndices: Array<Array<number>>;
+
   constructor() {
     TextureHelper.SetLevels(3)
   }
 
   static SetLevels(levels: number): number {
-    m_maxSubdivisions = <number>Math.Pow(2, levels)
-    return m_maxSubdivisions
+    this.m_maxSubdivisions = Math.pow(2, levels)
+
+    return this.m_maxSubdivisions
   }
 
   // Stores the triangle element indices for different levels of detail.
   // There are 4 entries in the list, and the first entry will have the least detail.
   // The arrays specify indices into the texture coords, and represent triangle elements.
 
-  get ElementIndices(): Array<Array<number>> {}
+  get ElementIndices(): Array<Array<number>> {
+    return this.elementIndices
+  }
 
-  set ElementIndices(value: Array<Array<number>>) {}
+  set ElementIndices(value: Array<Array<number>>) {
+    this.elementIndices = value
+  }
 
   // Sets up our list of element indices
 
@@ -27,14 +37,14 @@ export class TextureHelper {
     // int numBaseTriangles = poly.Segments.Count == 3 ? 1 : poly.Segments.Count;    // For geodesic saddles.
     let numBaseTriangles: number = poly.Segments.Count
     this.ElementIndices = new Array<Array<number>>()
-    for (let i: number = 0; Math.Pow(2, i) <= m_maxSubdivisions; i++) {
-      this.ElementIndices.Add(
+    for (let i: number = 0; Math.pow(2, i) <= this.m_maxSubdivisions; i++) {
+      this.ElementIndices.push(
         TextureHelper.TextureElements(numBaseTriangles, i),
       )
     }
   }
 
-  static #m_maxSubdivisions: number = 8
+  // static #m_maxSubdivisions: number = 8
 
   //  Must be a power of 2.
   // ///////////////////////////////////////////////////////////// PLAYING AROUND WITH GEODESIC SADDLES
@@ -58,8 +68,8 @@ export class TextureHelper {
       g,
     )
     for (let i: number = 0; i < divisions; i++) {
-      points.AddRange(
-        TextureHelper.SubdivideSegmentInGeometry(
+      points.push(
+        ...TextureHelper.SubdivideSegmentInGeometry(
           s1[i],
           s2[i],
           divisions - i,
@@ -68,17 +78,16 @@ export class TextureHelper {
       )
     }
 
-    points.Add(seg1.P2)
-    return points.ToArray()
-  }
+    points.push(seg1.P2)
+    return points
 
   static CalcViaProjections(
-    p1: Vector3D,
-    p2: Vector3D,
-    p3: Vector3D,
-    divisions: number,
-    g: Geometry,
-  ): Array<Vector3D> {
+      p1: Vector3D,
+      p2: Vector3D,
+      p3: Vector3D,
+      divisions: number,
+      g: Geometry,
+    ): Array<Vector3D> {
     if (g == Geometry.Euclidean) {
       throw new Error('Not implemented')
     }
@@ -103,23 +112,23 @@ export class TextureHelper {
     let s2: Array<Vector3D> = seg2.Subdivide(divisions)
     for (let i: number = 0; i < divisions; i++) {
       let seg: Segment = Segment.Line(s1[i], s2[i])
-      temp.AddRange(seg.Subdivide(divisions - i))
+      temp.push(...seg.Subdivide(divisions - i))
     }
 
-    temp.Add(h2)
+    temp.push(h2)
     let result: Array<Vector3D> = new Array<Vector3D>()
-    for (let v: Vector3D in temp) {
+    for (let v of temp) {
       let copy: Vector3D = v
       if (g == Geometry.Hyperbolic) {
         Sterographic.NormalizeToHyperboloid(/* ref */ copy)
-        result.Add(Sterographic.HyperboloidToPlane(copy))
+        result.push(Sterographic.HyperboloidToPlane(copy))
       } else if (g == Geometry.Spherical) {
         copy.Normalize()
-        result.Add(Sterographic.SphereToPlane(copy))
+        result.push(Sterographic.SphereToPlane(copy))
       }
     }
 
-    return result.ToArray()
+    return result
   }
 
   static FindClosestPoint(
@@ -129,7 +138,7 @@ export class TextureHelper {
     let result: Vector3D = Vector3D.construct()
     let dist: number = double.MaxValue
     for (let t of list) {
-      let abs: number = (v - t).Abs()
+      let abs: number = Math.abs(v - t)
       if (abs < dist) {
         dist = abs
         result = t
@@ -151,7 +160,7 @@ export class TextureHelper {
     let divisions: number = m_maxSubdivisions
     let points: Array<Vector3D> = new Array<Vector3D>()
     if (0 == poly.Segments.Count) {
-      return points.ToArray()
+      return points
     }
 
     //  ZZZ - Should we do this different handling of triangles?
@@ -169,7 +178,7 @@ export class TextureHelper {
       //  We make a triangle lattice for each segment.
       //  Think of the segment and the poly center making one big triangle,
       //  which is subdivided into smaller triangles.
-      for (let s: Segment in poly.Segments) {
+      for (let s of poly.Segments) {
         let s1: Array<Vector3D> =
           TextureHelper.SubdivideSegmentInGeometry(
             s.P1,
@@ -185,8 +194,8 @@ export class TextureHelper {
             g,
           )
         for (let i: number = 0; i < divisions; i++) {
-          points.AddRange(
-            TextureHelper.SubdivideSegmentInGeometry(
+          points.push(
+            ...TextureHelper.SubdivideSegmentInGeometry(
               s1[i],
               s2[i],
               divisions - i,
@@ -195,11 +204,11 @@ export class TextureHelper {
           )
         }
 
-        points.Add(poly.Center)
+        points.push(poly.Center)
       }
     }
 
-    return points.ToArray()
+    return points
   }
 
   // Subdivides a segment from p1->p2 with the two endpoints not on the origin, in the respective geometry.
@@ -227,11 +236,11 @@ export class TextureHelper {
       g,
     )
     let result: Array<Vector3D> = new Array<Vector3D>()
-    for (let v: Vector3D in temp) {
-      result.Add(inverse.Apply(v))
+    for (let v of temp) {
+      result.push(inverse.Apply(v))
     }
 
-    return result.ToArray()
+    return result
   }
 
   // Equally subdivides a segment with a startpoint at the origin, in the respective geometry.
@@ -244,7 +253,7 @@ export class TextureHelper {
     let result: Array<Vector3D> = new Array<Vector3D>()
     if (radial.Type != SegmentType.Line) {
       console.assert(false)
-      return result.ToArray()
+      return result
     }
 
     switch (g) {
@@ -254,7 +263,7 @@ export class TextureHelper {
         let divLength: number = sLength / divisions
         for (let i: number = 0; i <= divisions; i++) {
           let temp: number = Spherical2D.s2eNorm(divLength * i)
-          result.Add(radial.P2 * (temp / eLength))
+          result.push(radial.P2 * (temp / eLength))
         }
 
         break
@@ -268,14 +277,14 @@ export class TextureHelper {
         let divLength: number = hLength / divisions
         for (let i: number = 0; i <= divisions; i++) {
           let temp: number = DonHatch.h2eNorm(divLength * i)
-          result.Add(radial.P2 * (temp / eLength))
+          result.push(radial.P2 * (temp / eLength))
         }
 
         break
         break
     }
 
-    return result.ToArray()
+    return result
   }
 
   // Returns the sum of all the integers up to and including n.
@@ -292,7 +301,7 @@ export class TextureHelper {
     LOD: number,
   ): Array<number> {
     let divisions: number = m_maxSubdivisions
-    let stride: number = divisions / <number>Math.Pow(2, LOD)
+    let stride: number = divisions / <number>Math.pow(2, LOD)
     //  9 + 8 + 7 + 6 + 5 + 4 + 3 + 2 + 1
     let numVertsPerSegment: number = TextureHelper.TriangularNumber(
       divisions + 1,
@@ -315,9 +324,9 @@ export class TextureHelper {
           let idx1: number = start1 + j
           let idx2: number = start1 + (j + stride)
           let idx3: number = start2 + j
-          result.Add(idx1)
-          result.Add(idx2)
-          result.Add(idx3)
+          result.push(idx1)
+          result.push(idx2)
+          result.push(idx3)
         }
 
         for (
@@ -328,47 +337,48 @@ export class TextureHelper {
           let idx1: number = start2 + j
           let idx2: number = start1 + (j + stride)
           let idx3: number = start2 + (j + stride)
-          result.Add(idx1)
-          result.Add(idx2)
-          result.Add(idx3)
+          result.push(idx1)
+          result.push(idx2)
+          result.push(idx3)
         }
       }
 
       offset = offset + numVertsPerSegment
     }
 
-    return result.ToArray()
+    return result
   }
 
   static ElementGraph(
     numBaseTriangles: number,
     LOD: number,
   ): Record<number, Array<number>> {
-    let result: Record<number, Array<number>> = new Record<
-      number,
-      Array<number>
-    >()
+    let result: Record<number, Array<number>> = {}
     //  Brute force.
     let textureElements: Array<number> = TextureHelper.TextureElements(
       numBaseTriangles,
       LOD,
     )
-    let edgeToTriangles: Record<GraphEdge, Array<number>> = new Record<
-      GraphEdge,
-      Array<number>
-    >()
-    for (let i: number = 0; i < textureElements.Length / 3; i++) {
+    let edgeToTriangles: Record<string, Array<number>> = {}
+
+    for (let i: number = 0; i < textureElements.length / 3; i++) {
       let idx1: number = i * 3
       let idx2: number = i * 3 + 1
       let idx3: number = i * 3 + 2
       let idx: System.Action<GraphEdge, number>
       let addEdge: System.Action<GraphEdge, number> = e
       let tris: Array<number>
-      if (!edgeToTriangles.TryGetValue(e, /* out */ tris)) {
+    /*   if (!edgeToTriangles.TryGetValue(e, /* out */ tris)) {
         tris = new Array<number>()
+      } * /
+
+      if (!(e in edgeToTriangles)) {
+        tris = new Array<number>()
+      } else {
+        tris = edgeToTriangles[e]
       }
 
-      tris.Add(idx)
+      tris.push(idx)
       edgeToTriangles[e] = tris
 
       addEdge(
@@ -385,24 +395,29 @@ export class TextureHelper {
       )
     }
 
-    let temp: Record<number, Array<number>> = new Record<
-      number,
-      Array<number>
-    >()
-    let idx2: System.Action<number, number>
-    let addIncident: System.Action<number, number> = idx1
+    let temp: Record<number, Array<number>> = {}
+
+    let idx2: any
+    let addIncident: any = idx1
     let incident: Array<number>
-    if (!temp.TryGetValue(idx1, /* out */ incident)) {
+
+    /* if (!temp.TryGetValue(idx1, /* out */ incident)) {
       incident = new Array<number>()
+    } */
+
+    if (!(idx1 in temp)) {
+      incident = new Array<number>()
+    } else {
+      incident = temp[idx1]
     }
 
-    incident.Add(idx2)
+    incident.push(idx2)
     temp[idx1] = incident
 
-    for (let tris in edgeToTriangles.Values) {
-      if (tris.Count == 1) {
+    for (let tris of edgeToTriangles.Values) {
+      if (tris.length == 1) {
         continue
-      } else if (tris.Count == 2) {
+      } else if (tris.length == 2) {
         addIncident(tris[0], tris[1])
         addIncident(tris[1], tris[0])
       } else {
@@ -410,13 +425,13 @@ export class TextureHelper {
       }
     }
 
-    let divisions: number = m_maxSubdivisions
+    let divisions: number = this.m_maxSubdivisions
     for (let i: number = 0; i < divisions; i++) {
       addIncident(i, -1)
     }
 
     for (let kvp in temp) {
-      result[kvp.Key] = kvp.Value.ToArray()
+      result[kvp] = temp[kvp]
     }
 
     return result
