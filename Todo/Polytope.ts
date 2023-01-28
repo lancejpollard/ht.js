@@ -82,37 +82,37 @@ export class SkewPolyhedron {
     //  http://eusebeia.dyndns.org/4d/bitrunc5cell
     let coords: Array<Vector3D> = [
       Vector3D.construct4d(0, 4 * b, 4 * c, 0),
-      Vector3D.construct4d(0, 4 * b, 4 * c, 0) * -1,
+      Vector3D.MultiplyVectorByNumber(Vector3D.construct4d(0, 4 * b, 4 * c, 0), -1),
       Vector3D.construct4d(0, 4 * b, 2 * c * -1, 2),
       Vector3D.construct4d(0, 4 * b, 2 * c * -1, -2),
-      Vector3D.construct4d(0, 4 * b, 2 * c * -1, 2) * -1,
-      Vector3D.construct4d(0, 4 * b, 2 * c * -1, -2) * -1,
+      Vector3D.MultiplyVectorByNumber(Vector3D.construct4d(0, 4 * b, 2 * c * -1, 2), -1),
+      Vector3D.MultiplyVectorByNumber(Vector3D.construct4d(0, 4 * b, 2 * c * -1, -2), -1),
       Vector3D.construct4d(a, b, 4 * c, 0),
-      Vector3D.construct4d(a, b, 4 * c, 0) * -1,
+      Vector3D.MultiplyVectorByNumber(Vector3D.construct4d(a, b, 4 * c, 0), -1),
       Vector3D.construct4d(a, b, 2 * c * -1, 2),
       Vector3D.construct4d(a, b, 2 * c * -1, -2),
-      Vector3D.construct4d(a, b, 2 * c * -1, 2) * -1,
-      Vector3D.construct4d(a, b, 2 * c * -1, -2) * -1,
+      Vector3D.MultiplyVectorByNumber(Vector3D.construct4d(a, b, 2 * c * -1, 2), -1),
+      Vector3D.MultiplyVectorByNumber(Vector3D.construct4d(a, b, 2 * c * -1, -2), -1),
       Vector3D.construct4d(a, 5 * b, 2 * c, 0),
-      Vector3D.construct4d(a, 5 * b, 2 * c, 0) * -1,
+      Vector3D.MultiplyVectorByNumber(Vector3D.construct4d(a, 5 * b, 2 * c, 0), -1),
       Vector3D.construct4d(a, 5 * b, c * -1, 1),
       Vector3D.construct4d(a, 5 * b, c * -1, -1),
-      Vector3D.construct4d(a, 5 * b, c * -1, 1) * -1,
-      Vector3D.construct4d(a, 5 * b, c * -1, -1) * -1,
+      Vector3D.MultiplyVectorByNumber(Vector3D.construct4d(a, 5 * b, c * -1, 1), -1),
+      Vector3D.MultiplyVectorByNumber(Vector3D.construct4d(a, 5 * b, c * -1, -1), -1),
       Vector3D.construct4d(a, 3 * b * -1, 0, 2),
       Vector3D.construct4d(a, 3 * b * -1, 0, -2),
-      Vector3D.construct4d(a, 3 * b * -1, 0, 2) * -1,
-      Vector3D.construct4d(a, 3 * b * -1, 0, -2) * -1,
+      Vector3D.MultiplyVectorByNumber(Vector3D.construct4d(a, 3 * b * -1, 0, 2), -1),
+      Vector3D.MultiplyVectorByNumber(Vector3D.construct4d(a, 3 * b * -1, 0, -2), -1),
       Vector3D.construct4d(a, 3 * b * -1, d, 1),
       Vector3D.construct4d(a, 3 * b * -1, d * -1, 1),
       Vector3D.construct4d(a, 3 * b * -1, d, -1),
       Vector3D.construct4d(a, 3 * b * -1, d * -1, -1),
-      Vector3D.construct4d(a, 3 * b * -1, d, 1) * -1,
-      Vector3D.construct4d(a, 3 * b * -1, d * -1, 1) * -1,
-      Vector3D.construct4d(a, 3 * b * -1, d, -1) * -1,
-      Vector3D.construct4d(a, 3 * b * -1, d * -1, -1) * -1,
+      Vector3D.MultiplyVectorByNumber(Vector3D.construct4d(a, 3 * b * -1, d, 1), -1),
+      Vector3D.MultiplyVectorByNumber(Vector3D.construct4d(a, 3 * b * -1, d * -1, 1), -1),
+      Vector3D.MultiplyVectorByNumber(Vector3D.construct4d(a, 3 * b * -1, d, -1), -1),
+      Vector3D.MultiplyVectorByNumber(Vector3D.construct4d(a, 3 * b * -1, d * -1, -1), -1),
     ]
-    let result: Array<Polygon> = LookForPolys(coords, 2, 6)
+    let result: Array<Polygon> = this.LookForPolys(coords, 2, 6)
     //  Nice starting orientation.
     let m: Matrix4D = new Matrix4D()
     m.Data = [
@@ -145,42 +145,46 @@ export class SkewPolyhedron {
         (2 / Math.sqrt(3)) * -1,
         0,
       ),
-      Vector3D.construct4d(
+      Vector3D.MultiplyVectorByNumber(Vector3D.construct4d(
         0,
         4 / Math.sqrt(6),
         (2 / Math.sqrt(3)) * -1,
         0,
-      ) * -1,
+      ), -1),
       Vector3D.construct4d(0, 4 / Math.sqrt(6), 1 / Math.sqrt(3), 1),
       Vector3D.construct4d(0, 4 / Math.sqrt(6), 1 / Math.sqrt(3), -1),
-      Vector3D.construct4d(0, 4 / Math.sqrt(6), 1 / Math.sqrt(3), 1) *
-      -1,
-      Vector3D.construct4d(0, 4 / Math.sqrt(6), 1 / Math.sqrt(3), -1) *
-      -1,
+      Vector3D.MultiplyVectorByNumber(Vector3D.construct4d(
+        0, 4 / Math.sqrt(6), 1 / Math.sqrt(3), 1
+      ), -1)
+      ,
+      Vector3D.MultiplyVectorByNumber(Vector3D.construct4d(
+        0, 4 / Math.sqrt(6), 1 / Math.sqrt(3), -1
+      ), -1)
+      ,
       Vector3D.construct4d(
         5 / Math.sqrt(10),
         (3 / Math.sqrt(6)) * -1,
         0,
         0,
       ),
-      Vector3D.construct4d(
+      Vector3D.MultiplyVectorByNumber(Vector3D.construct4d(
         5 / Math.sqrt(10),
         (3 / Math.sqrt(6)) * -1,
         0,
         0,
-      ) * -1,
+      ), -1),
       Vector3D.construct4d(
         5 / Math.sqrt(10),
         1 / Math.sqrt(6),
         (2 / Math.sqrt(3)) * -1,
         0,
       ),
-      Vector3D.construct4d(
+      Vector3D.MultiplyVectorByNumber(Vector3D.construct4d(
         5 / Math.sqrt(10),
         1 / Math.sqrt(6),
         (2 / Math.sqrt(3)) * -1,
         0,
-      ) * -1,
+      ), -1),
       Vector3D.construct4d(
         5 / Math.sqrt(10),
         1 / Math.sqrt(6),
@@ -193,27 +197,28 @@ export class SkewPolyhedron {
         1 / Math.sqrt(3),
         -1,
       ),
-      Vector3D.construct4d(
+      Vector3D.MultiplyVectorByNumber(Vector3D.construct4d(
         5 / Math.sqrt(10),
         1 / Math.sqrt(6),
         1 / Math.sqrt(3),
         1,
-      ) * -1,
-      Vector3D.construct4d(
+      ), -1),
+      Vector3D.MultiplyVectorByNumber(Vector3D.construct4d(
         5 / Math.sqrt(10),
         1 / Math.sqrt(6),
         1 / Math.sqrt(3),
         -1,
-      ) * -1,
+      ), -1),
     ]
-    let result: Array<Polygon> = LookForPolys(coords, 2, 4)
+
+    let result: Array<Polygon> = this.LookForPolys(coords, 2, 4)
     //  Nice starting orientation.
     let m: Matrix4D = new Matrix4D()
-    m.Data = []
-      ;[0.62, -0.66, -0.07, -0.41]
-      ;[0.68, 0.22, 0.3, 0.64]
-      ;[-0.08, 0.04, 0.93, -0.36]
-      ;[-0.37, -0.72, 0.21, 0.54]
+    m.Data = [
+      [0.62, -0.66, -0.07, -0.41],
+      [0.68, 0.22, 0.3, 0.64],
+      [-0.08, 0.04, 0.93, -0.36],
+      [-0.37, -0.72, 0.21, 0.54]]
 
     m = Matrix4D.GramSchmidt(m)
     for (let poly of result) {
@@ -235,8 +240,8 @@ export class SkewPolyhedron {
 
     //  First find all the edges.
     let allEdges: Array<GraphEdge> = new Array<GraphEdge>()
-    for (let i: number = 0; i < coords.Length; i++) {
-      for (let j: number = i + 1; j < coords.Length; j++) {
+    for (let i: number = 0; i < coords.length; i++) {
+      for (let j: number = i + 1; j < coords.length; j++) {
         if (Tolerance.Equal(coords[i].Dist(coords[j]), edgeLength)) {
           let e: GraphEdge = new GraphEdge(i, j)
           allEdges.push(e)
@@ -248,8 +253,8 @@ export class SkewPolyhedron {
 
     //  Find all cycles of length p.
     let cycles: Array<Array<number>> = new Array<Array<number>>()
-    for (let i: number = 0; i < coords.Length; i++) {
-      cycles.push(new Array<number>([i]))
+    for (let i: number = 0; i < coords.length; i++) {
+      cycles.push(new Array<number>(i))
     }
 
     cycles = SkewPolyhedron.FindCyclesRecursive(cycles, p, lookup)
@@ -257,7 +262,7 @@ export class SkewPolyhedron {
     for (let cycle of cycles) {
       //  Don't include the start vertex.
       //  This is important for the Distinct check below.
-      cycle.RemoveAt(cycle.length - 1)
+      cycle.splice(cycle.length - 1, 1)
     }
 
     cycles = cycles.Distinct(new CycleEqualityComparer())
@@ -320,14 +325,16 @@ export class SkewPolyhedron {
 
     let newCycles: Array<Array<number>> = new Array<Array<number>>()
     for (let cycle of cycles) {
-      let last: number = cycle.Last()
+
+      let last: number = cycle[cycle.length - 1]
+
       for (let newEdge of lookup[last]) {
         let next: number = newEdge.Opposite(last)
-        if (cycle.Count != cycleLength && cycle.Contains(next)) {
+        if (cycle.length != cycleLength && cycle.includes(next)) {
           continue
         }
 
-        let newCycle: Array<number> = new Array<number>(cycle)
+        let newCycle: Array<number> = new Array<number>(...cycle)
         newCycle.push(next)
         newCycles.push(newCycle)
       }

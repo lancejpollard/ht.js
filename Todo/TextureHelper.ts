@@ -1,12 +1,13 @@
 import { Geometry } from '@Geometry/Geometry'
 import { Polygon, Segment } from '@Geometry/Polygon'
 import { Sterographic } from '@Geometry/Sterographic'
+import { Mobius } from '@Math/Mobius'
 import { Vector3D } from '@Geometry/Vector3D'
 
 export class TextureHelper {
 
-  m_maxSubdivisions: number
-  elementIndices: Array<Array<number>>
+  m_maxSubdivisions: number = 8;
+  elementIndices: Array<Array<number>>;
 
   constructor() {
     TextureHelper.SetLevels(3)
@@ -36,14 +37,14 @@ export class TextureHelper {
     // int numBaseTriangles = poly.Segments.Count == 3 ? 1 : poly.Segments.Count;    // For geodesic saddles.
     let numBaseTriangles: number = poly.Segments.Count
     this.ElementIndices = new Array<Array<number>>()
-    for (let i: number = 0; Math.Pow(2, i) <= m_maxSubdivisions; i++) {
+    for (let i: number = 0; Math.pow(2, i) <= this.m_maxSubdivisions; i++) {
       this.ElementIndices.push(
         TextureHelper.TextureElements(numBaseTriangles, i),
       )
     }
   }
 
-  static #m_maxSubdivisions: number = 8
+  // static #m_maxSubdivisions: number = 8
 
   //  Must be a power of 2.
   // ///////////////////////////////////////////////////////////// PLAYING AROUND WITH GEODESIC SADDLES
@@ -400,7 +401,7 @@ export class TextureHelper {
     let addIncident: any = idx1
     let incident: Array<number>
 
-   /*  if (!temp.TryGetValue(idx1, /* out */ incident)) {
+    /* if (!temp.TryGetValue(idx1, /* out */ incident)) {
       incident = new Array<number>()
     } */
 
