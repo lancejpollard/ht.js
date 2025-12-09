@@ -8,15 +8,51 @@ import { Polygon } from './src/Geometry/Polygon'
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 
-const config = new TilingConfig(7, 3, 2000)
+const tilings: Array<React.ReactNode> = []
+// let p = 3
+// while (p < 10) {
+//   let q = 3
+//   while (q < 10) {
+//     const config = new TilingConfig(p, q, 2000)
+//     const tiling = new Tiling(config)
+//     tiling.Generate()
+//     tilings.push(
+//       <TilingDisplay
+//         key={`${p}-${q}`}
+//         data={tiling}
+//       />,
+//     )
+//     q++
+//   }
+//   p++
+// }
+
+const config = new TilingConfig(7, 3, 232)
 const tiling = new Tiling(config)
 tiling.Generate()
+tilings.push(
+  <TilingDisplay
+    gap={2.4}
+    data={tiling}
+  />,
+)
 
 const reactDiv = document.querySelector('#react')
 assertElement(reactDiv)
 const reactBase = createRoot(reactDiv)
 
-reactBase.render(<TilingDisplay data={tiling} />)
+reactBase.render(
+  <div
+    style={{
+      display: 'flex',
+      flexWrap: 'wrap',
+      gap: '16px',
+      padding: 64,
+    }}
+  >
+    {tilings}
+  </div>,
+)
 
 const pixiDiv = document.querySelector('#pixi')
 
